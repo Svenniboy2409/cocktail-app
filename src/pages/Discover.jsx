@@ -65,21 +65,6 @@ export default function Discover() {
       </div>
 
       <div className="filter-group">
-        <div className="filter-label">Base spirit</div>
-        <div className="chips">
-          {['All', ...spirits].map((s) => (
-            <button
-              key={s}
-              className={'chip' + (spirit === s ? ' active' : '')}
-              onClick={() => setSpirit(s)}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="filter-group">
         <div className="filter-label">Style</div>
         <div className="chips">
           {['All', ...TAGS].map((t) => (
@@ -89,6 +74,21 @@ export default function Discover() {
               onClick={() => setTag(t)}
             >
               {t}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="filter-group">
+        <div className="filter-label">Base spirit</div>
+        <div className="chips">
+          {['All', ...spirits].map((s) => (
+            <button
+              key={s}
+              className={'chip' + (spirit === s ? ' active' : '')}
+              onClick={() => setSpirit(s)}
+            >
+              {s}
             </button>
           ))}
         </div>
