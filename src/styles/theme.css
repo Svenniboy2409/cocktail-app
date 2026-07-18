@@ -128,16 +128,48 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 .search input::placeholder { color: var(--text-dim); }
 .search svg { flex: none; color: var(--text-dim); }
 
+.filter-group { margin-bottom: 14px; }
+.filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
 .chips {
   display: flex;
   gap: 8px;
   overflow-x: auto;
   padding-bottom: 6px;
-  margin: 0 -18px 18px;
+  margin: 0 -18px;
   padding-left: 18px;
   padding-right: 18px;
   scrollbar-width: none;
 }
+.filter-group .chips { margin-bottom: 0; }
+
+.result-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.clear-filters {
+  background: none;
+  border: none;
+  color: var(--amber);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+.clear-filters:hover { text-decoration: underline; }
 .chips::-webkit-scrollbar { display: none; }
 .chip {
   flex: none;

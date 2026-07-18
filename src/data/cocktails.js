@@ -1536,3 +1536,31 @@ export const cocktails = [
 ]
 
 export const cocktailById = (id) => cocktails.find((c) => c.id === id)
+
+// Base spirits / categories used for filtering. Ordered so the most common
+// spirits appear first; anything not listed is appended alphabetically.
+const SPIRIT_ORDER = [
+  'Gin',
+  'Vodka',
+  'Whiskey',
+  'Rum',
+  'Tequila',
+  'Brandy',
+  'Cachaça',
+  'Pisco',
+  'Sparkling',
+  'Aperitif',
+  'Liqueur',
+  'Mixed',
+]
+
+export const SPIRITS = Array.from(
+  new Set(cocktails.map((c) => c.category).filter(Boolean)),
+).sort((a, b) => {
+  const ia = SPIRIT_ORDER.indexOf(a)
+  const ib = SPIRIT_ORDER.indexOf(b)
+  if (ia === -1 && ib === -1) return a.localeCompare(b)
+  if (ia === -1) return 1
+  if (ib === -1) return -1
+  return ia - ib
+})
