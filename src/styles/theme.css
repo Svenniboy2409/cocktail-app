@@ -105,6 +105,99 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 .app-header h1 { font-size: 30px; line-height: 1.05; }
 .app-header .sub { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
 
+/* ---- header action button (e.g. "My bar") ---- */
+.header-action {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 13px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.header-action svg { color: var(--amber); }
+.header-action:active { transform: scale(0.96); }
+
+/* ---- recommendations (Discover, above search) ---- */
+.recs {
+  margin-bottom: 22px;
+  animation: fade-in 0.4s ease;
+}
+.recs-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.recs-title { display: flex; align-items: center; gap: 8px; }
+.recs-title svg { color: var(--amber); }
+.recs-title h2 { font-size: 20px; }
+.recs-sub { font-size: 12px; color: var(--text-dim); text-align: right; }
+.recs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  animation: rec-swap 0.5s ease;
+}
+@keyframes rec-swap {
+  from { opacity: 0.35; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.recs-hint {
+  margin: 12px 2px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.recs-hint strong { color: var(--gold); font-weight: 600; }
+
+/* ---- your bar / pantry sheet ---- */
+.pantry-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.pantry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.pantry-chip .tick {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  transition: color 0.16s ease;
+}
+.pantry-chip.on {
+  background: linear-gradient(135deg, rgba(224, 164, 88, 0.16), rgba(201, 169, 106, 0.06));
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+.pantry-chip.on .tick { color: var(--amber); }
+.pantry-summary {
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
 /* ---- search + filters ---- */
 .search {
   display: flex;

@@ -74,6 +74,20 @@ export const IconGlass = (p) => (
   </svg>
 )
 
+export const IconBottle = (p) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M10 2h4v3l1.4 2.8A4 4 0 0 1 16 9.6V20a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V9.6a4 4 0 0 1 .6-1.8L10 5z" />
+    <path d="M8 13h8" />
+  </svg>
+)
+
+export const IconSparkle = (p) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M12 3l1.8 4.9L19 9.7l-5.2 1.8L12 16l-1.8-4.5L5 9.7l5.2-1.8z" />
+    <path d="M18 15l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z" />
+  </svg>
+)
+
 export const IconGarnish = (p) => (
   <svg width="20" height="20" viewBox="0 0 24 24" {...S} {...p}>
     <circle cx="12" cy="13" r="6" />

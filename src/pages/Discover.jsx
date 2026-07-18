@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { cocktails, TAGS, SPIRITS } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
+import Recommendations from '../components/Recommendations'
 import { IconSearch } from '../components/icons'
 import { useSavedIds, useUserRecipes } from '../lib/hooks'
 
@@ -53,6 +54,8 @@ export default function Discover() {
           <div className="sub">Find your next favourite pour</div>
         </div>
       </header>
+
+      <Recommendations />
 
       <div className="search">
         <IconSearch />

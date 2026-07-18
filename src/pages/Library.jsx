@@ -1,16 +1,19 @@
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { cocktails } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
-import { useSavedIds, useUserRecipes } from '../lib/hooks'
+import PantrySheet from '../components/PantrySheet'
+import { useSavedIds, useUserRecipes, usePantry } from '../lib/hooks'
 import { exportAll, importAll } from '../lib/storage'
-import { IconDownload, IconUpload } from '../components/icons'
+import { IconDownload, IconUpload, IconBottle } from '../components/icons'
 import { useToast } from '../components/Toast'
 
 export default function Library({ onCreate }) {
   const savedIds = useSavedIds()
   const { recipes } = useUserRecipes()
+  const pantry = usePantry()
   const showToast = useToast()
   const fileRef = useRef(null)
+  const [barOpen, setBarOpen] = useState(false)
 
   const savedCocktails = useMemo(() => {
     const pool = [...recipes, ...cocktails]
@@ -52,6 +55,14 @@ export default function Library({ onCreate }) {
           <h1>Library</h1>
           <div className="sub">Saved cocktails and your own recipes</div>
         </div>
+        <button
+          className="header-action"
+          onClick={() => setBarOpen(true)}
+          aria-label="Set up your bar"
+        >
+          <IconBottle />
+          <span>My bar{pantry.length ? ` · ${pantry.length}` : ''}</span>
+        </button>
       </header>
 
       {/* ---- your recipes ---- */}
@@ -111,6 +122,8 @@ export default function Library({ onCreate }) {
         </button>
         <input ref={fileRef} type="file" accept="application/json" className="hidden-file" onChange={handleImportFile} />
       </div>
+
+      {barOpen && <PantrySheet onClose={() => setBarOpen(false)} />}
     </div>
   )
 }

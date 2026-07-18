@@ -5,6 +5,34 @@ import { get, set } from 'idb-keyval'
 
 const SAVED_KEY = 'mixly.saved.v1'
 const RECIPES_KEY = 'mixly.recipes.v1'
+const PANTRY_KEY = 'mixly.pantry.v1'
+
+/* -------------------- your bar / pantry (localStorage) -------------------- */
+// The set of base spirits the user has at home, used to power personal
+// recommendations on the Discover page.
+
+export function getPantry() {
+  try {
+    return JSON.parse(localStorage.getItem(PANTRY_KEY)) || []
+  } catch {
+    return []
+  }
+}
+
+export function setPantry(spirits) {
+  const list = Array.from(new Set(spirits))
+  localStorage.setItem(PANTRY_KEY, JSON.stringify(list))
+  window.dispatchEvent(new Event('mixly:pantry-changed'))
+  return list
+}
+
+export function togglePantry(spirit) {
+  const current = getPantry()
+  const next = current.includes(spirit)
+    ? current.filter((s) => s !== spirit)
+    : [...current, spirit]
+  return setPantry(next)
+}
 
 /* -------------------- saved library (localStorage) -------------------- */
 
@@ -83,6 +111,7 @@ export async function exportAll() {
     exportedAt: new Date().toISOString(),
     saved: getSavedIds(),
     recipes: await getUserRecipes(),
+    pantry: getPantry(),
   }
   return JSON.stringify(data, null, 2)
 }
@@ -94,6 +123,7 @@ export async function importAll(json, { merge = true } = {}) {
   }
   const incomingRecipes = Array.isArray(data.recipes) ? data.recipes : []
   const incomingSaved = Array.isArray(data.saved) ? data.saved : []
+  const incomingPantry = Array.isArray(data.pantry) ? data.pantry : []
 
   if (merge) {
     const existing = await getUserRecipes()
@@ -101,9 +131,11 @@ export async function importAll(json, { merge = true } = {}) {
     for (const r of incomingRecipes) byId.set(r.id, r)
     await writeRecipes([...byId.values()].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)))
     writeSaved([...new Set([...incomingSaved, ...getSavedIds()])])
+    setPantry([...incomingPantry, ...getPantry()])
   } else {
     await writeRecipes(incomingRecipes)
     writeSaved(incomingSaved)
+    setPantry(incomingPantry)
   }
   return { recipes: incomingRecipes.length, saved: incomingSaved.length }
 }

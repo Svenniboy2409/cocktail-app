@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { getSavedIds, getUserRecipes } from './storage'
+import { getSavedIds, getUserRecipes, getPantry } from './storage'
 
 // Reactive list of saved cocktail ids, kept in sync via a custom event.
 export function useSavedIds() {
@@ -14,6 +14,21 @@ export function useSavedIds() {
     }
   }, [])
   return ids
+}
+
+// Reactive list of spirits the user has at home ("your bar").
+export function usePantry() {
+  const [pantry, setPantry] = useState(getPantry)
+  useEffect(() => {
+    const sync = () => setPantry(getPantry())
+    window.addEventListener('mixly:pantry-changed', sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener('mixly:pantry-changed', sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [])
+  return pantry
 }
 
 // Reactive list of user recipes from IndexedDB.
