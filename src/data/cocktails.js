@@ -1564,3 +1564,43 @@ export const SPIRITS = Array.from(
   if (ib === -1) return -1
   return ia - ib
 })
+
+/* -------------------- drink type -------------------- */
+// A coarse split that groups every drink into one of a few families, used for
+// the top filter row on Discover. Derived from each drink's ingredients so it
+// also classifies the user's own recipes automatically.
+
+export const DRINK_TYPES = ['Cocktail', 'Mixed drink', 'Coffee', 'Mocktail']
+
+const COFFEE_RE = /coffee|espresso|cold brew/i
+const MIXER_RE =
+  /(tonic|soda water|club soda|\bsoda\b|cola|coke|ginger beer|ginger ale|lemonade|grapefruit soda|sprite|7[- ]?up|bitter lemon)/i
+const ALCOHOL_RE =
+  /(rum|gin\b|vodka|whisk|bourbon|\brye\b|scotch|tequila|mezcal|brandy|cognac|cacha|pisco|liqueur|vermouth|campari|aperol|cointreau|triple sec|curac|amaretto|kahlua|baileys|irish cream|prosecco|champagne|sparkling wine|\bwine\b|sherry|\bport\b|absinthe|chartreuse|grand marnier|sambuca|schnapps|bitters|maraschino|chambord|st[- ]?germain|elderflower|sloe gin|drambuie|benedictine|galliano|midori|limoncello)/i
+
+// Any curated `category` that is inherently alcoholic.
+const ALCOHOLIC_CATEGORIES = new Set([
+  'Gin', 'Vodka', 'Whiskey', 'Rum', 'Tequila', 'Brandy',
+  'Cachaça', 'Pisco', 'Sparkling', 'Aperitif', 'Liqueur', 'Mixed',
+])
+
+// Manual overrides by cocktail id, for the rare case the heuristic misfires.
+const TYPE_OVERRIDES = {}
+
+export function drinkTypeOf(cocktail) {
+  if (!cocktail) return 'Cocktail'
+  if (cocktail.type) return cocktail.type
+  if (TYPE_OVERRIDES[cocktail.id]) return TYPE_OVERRIDES[cocktail.id]
+
+  const names = (cocktail.ingredients || []).map((i) => i.name)
+  const text = names.join(' | ')
+
+  if (COFFEE_RE.test(text)) return 'Coffee'
+
+  const alcoholic =
+    ALCOHOLIC_CATEGORIES.has(cocktail.category) || names.some((n) => ALCOHOL_RE.test(n))
+  if (!alcoholic) return 'Mocktail'
+
+  if (names.some((n) => MIXER_RE.test(n))) return 'Mixed drink'
+  return 'Cocktail'
+}
