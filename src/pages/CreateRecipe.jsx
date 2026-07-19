@@ -24,7 +24,7 @@ export default function CreateRecipe({ editing, onClose }) {
   const [form, setForm] = useState(emptyForm)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  const { handleProps, sheetStyle } = useDismissableSheet(() => onClose(false))
+  const { sheetRef, handleProps, sheetStyle, backdropStyle } = useDismissableSheet(() => onClose(false))
 
   useEffect(() => {
     if (editing) {
@@ -109,8 +109,8 @@ export default function CreateRecipe({ editing, onClose }) {
 
   return (
     <>
-      <div className="sheet-backdrop" onClick={() => onClose(false)} />
-      <div className="sheet" role="dialog" aria-modal="true" style={sheetStyle}>
+      <div className="sheet-backdrop" style={backdropStyle} onClick={() => onClose(false)} />
+      <div className="sheet" ref={sheetRef} role="dialog" aria-modal="true" style={sheetStyle}>
         <div className="sheet-handle" {...handleProps}>
           <div className="sheet-grip" />
           <div className="sheet-head">

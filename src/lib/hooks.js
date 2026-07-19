@@ -9,6 +9,7 @@ export function useDismissableSheet(onDismiss) {
   const [dragY, setDragY] = useState(0)
   const [dragging, setDragging] = useState(false)
   const start = useRef(null)
+  const sheetRef = useRef(null)
 
   // Scroll-lock the body while the sheet is mounted (iOS-safe).
   useEffect(() => {
@@ -36,7 +37,7 @@ export function useDismissableSheet(onDismiss) {
     setDragging(false)
     if (dragY > 110) {
       setDragY(window.innerHeight) // slide the rest of the way out
-      setTimeout(onDismiss, 200)
+      setTimeout(onDismiss, 240) // let the slide-out + backdrop fade finish
     } else {
       setDragY(0)
     }
@@ -61,12 +62,21 @@ export function useDismissableSheet(onDismiss) {
     onPointerCancel: end,
   }
 
+  // How far the sheet has travelled towards being closed, 0 → 1. Used to fade
+  // the backdrop in step with the drag so the page brightens gradually.
+  const sheetH = sheetRef.current?.offsetHeight || (typeof window !== 'undefined' ? window.innerHeight : 800)
+  const progress = Math.min(1, Math.max(0, dragY) / sheetH)
+
   const sheetStyle = {
     transform: `translate(-50%, ${dragY}px)`,
     transition: dragging ? 'none' : 'transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1)',
   }
+  const backdropStyle = {
+    opacity: 1 - progress,
+    transition: dragging ? 'none' : 'opacity 0.28s ease',
+  }
 
-  return { handleProps, sheetStyle }
+  return { sheetRef, handleProps, sheetStyle, backdropStyle }
 }
 
 // Reactive list of saved cocktail ids, kept in sync via a custom event.

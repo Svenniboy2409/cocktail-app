@@ -8,7 +8,7 @@ import { usePantry, useUserRecipes, useDismissableSheet } from '../lib/hooks'
 export default function PantrySheet({ onClose }) {
   const pantry = usePantry()
   const { recipes } = useUserRecipes()
-  const { handleProps, sheetStyle } = useDismissableSheet(onClose)
+  const { sheetRef, handleProps, sheetStyle, backdropStyle } = useDismissableSheet(onClose)
 
   // All curated spirits plus any categories introduced by the user's own
   // recipes, so a home-made "Mezcal" drink is selectable too.
@@ -21,8 +21,8 @@ export default function PantrySheet({ onClose }) {
 
   return (
     <>
-      <div className="sheet-backdrop" onClick={onClose} />
-      <div className="sheet" role="dialog" aria-modal="true" aria-label="Your bar" style={sheetStyle}>
+      <div className="sheet-backdrop" style={backdropStyle} onClick={onClose} />
+      <div className="sheet" ref={sheetRef} role="dialog" aria-modal="true" aria-label="Your bar" style={sheetStyle}>
         <div className="sheet-handle" {...handleProps}>
           <div className="sheet-grip" />
           <div className="sheet-head">
