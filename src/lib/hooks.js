@@ -1,5 +1,73 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { getSavedIds, getUserRecipes, getPantry } from './storage'
+
+// Behaviour shared by the bottom sheets (New recipe, Your bar):
+//  1. lock the page behind the sheet so only the sheet is interactive;
+//  2. let the user swipe the top bar down to dismiss.
+// Returns props to spread on the sheet element and its drag handle.
+export function useDismissableSheet(onDismiss) {
+  const [dragY, setDragY] = useState(0)
+  const [dragging, setDragging] = useState(false)
+  const start = useRef(null)
+
+  // Scroll-lock the body while the sheet is mounted (iOS-safe).
+  useEffect(() => {
+    const scrollY = window.scrollY
+    const { body } = document
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    }
+    body.style.position = 'fixed'
+    body.style.top = `-${scrollY}px`
+    body.style.width = '100%'
+    body.style.overflow = 'hidden'
+    return () => {
+      Object.assign(body.style, prev)
+      window.scrollTo(0, scrollY)
+    }
+  }, [])
+
+  const end = () => {
+    if (start.current == null) return
+    start.current = null
+    setDragging(false)
+    if (dragY > 110) {
+      setDragY(window.innerHeight) // slide the rest of the way out
+      setTimeout(onDismiss, 200)
+    } else {
+      setDragY(0)
+    }
+  }
+
+  const handleProps = {
+    onPointerDown: (e) => {
+      start.current = e.clientY
+      setDragging(true)
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId)
+      } catch {
+        /* capture not supported */
+      }
+    },
+    onPointerMove: (e) => {
+      if (start.current == null) return
+      const dy = e.clientY - start.current
+      setDragY(dy > 0 ? dy : 0)
+    },
+    onPointerUp: end,
+    onPointerCancel: end,
+  }
+
+  const sheetStyle = {
+    transform: `translate(-50%, ${dragY}px)`,
+    transition: dragging ? 'none' : 'transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1)',
+  }
+
+  return { handleProps, sheetStyle }
+}
 
 // Reactive list of saved cocktail ids, kept in sync via a custom event.
 export function useSavedIds() {

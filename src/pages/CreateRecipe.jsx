@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { TAGS } from '../data/cocktails'
 import { fileToCompressedDataURL } from '../lib/image'
 import { addRecipe, updateRecipe } from '../lib/storage'
+import { useDismissableSheet } from '../lib/hooks'
 import { IconImage } from '../components/icons'
 import { useToast } from '../components/Toast'
 
@@ -23,6 +24,7 @@ export default function CreateRecipe({ editing, onClose }) {
   const [form, setForm] = useState(emptyForm)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const { handleProps, sheetStyle } = useDismissableSheet(() => onClose(false))
 
   useEffect(() => {
     if (editing) {
@@ -108,11 +110,19 @@ export default function CreateRecipe({ editing, onClose }) {
   return (
     <>
       <div className="sheet-backdrop" onClick={() => onClose(false)} />
-      <div className="sheet" role="dialog" aria-modal="true">
-        <div className="sheet-grip" />
-        <div className="sheet-head">
-          <h2>{editing ? 'Edit recipe' : 'New recipe'}</h2>
-          <button className="sheet-close" onClick={() => onClose(false)}>Cancel</button>
+      <div className="sheet" role="dialog" aria-modal="true" style={sheetStyle}>
+        <div className="sheet-handle" {...handleProps}>
+          <div className="sheet-grip" />
+          <div className="sheet-head">
+            <h2>{editing ? 'Edit recipe' : 'New recipe'}</h2>
+            <button
+              className="sheet-close"
+              onClick={() => onClose(false)}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
 
         <div className="sheet-body">

@@ -1,13 +1,14 @@
 import { useMemo } from 'react'
 import { cocktails, SPIRITS } from '../data/cocktails'
 import { togglePantry } from '../lib/storage'
-import { usePantry, useUserRecipes } from '../lib/hooks'
+import { usePantry, useUserRecipes, useDismissableSheet } from '../lib/hooks'
 
 // Bottom sheet where the user picks which spirits they keep at home.
 // Selections persist immediately and drive the Discover recommendations.
 export default function PantrySheet({ onClose }) {
   const pantry = usePantry()
   const { recipes } = useUserRecipes()
+  const { handleProps, sheetStyle } = useDismissableSheet(onClose)
 
   // All curated spirits plus any categories introduced by the user's own
   // recipes, so a home-made "Mezcal" drink is selectable too.
@@ -21,11 +22,15 @@ export default function PantrySheet({ onClose }) {
   return (
     <>
       <div className="sheet-backdrop" onClick={onClose} />
-      <div className="sheet" role="dialog" aria-modal="true" aria-label="Your bar">
-        <div className="sheet-grip" />
-        <div className="sheet-head">
-          <h2>Your bar</h2>
-          <button className="sheet-close" onClick={onClose}>Done</button>
+      <div className="sheet" role="dialog" aria-modal="true" aria-label="Your bar" style={sheetStyle}>
+        <div className="sheet-handle" {...handleProps}>
+          <div className="sheet-grip" />
+          <div className="sheet-head">
+            <h2>Your bar</h2>
+            <button className="sheet-close" onClick={onClose} onPointerDown={(e) => e.stopPropagation()}>
+              Done
+            </button>
+          </div>
         </div>
 
         <div className="sheet-body">
