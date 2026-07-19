@@ -11,23 +11,21 @@ export function useDismissableSheet(onDismiss) {
   const start = useRef(null)
   const sheetRef = useRef(null)
 
-  // Scroll-lock the body while the sheet is mounted (iOS-safe).
+  // Stop the page behind the sheet from scrolling, without repositioning the
+  // body — that keeps everything (including the fixed bottom nav) exactly in
+  // place instead of shifting when the sheet opens. Scrolling inside the
+  // sheet's own body is still allowed.
   useEffect(() => {
-    const scrollY = window.scrollY
-    const { body } = document
-    const prev = {
-      position: body.style.position,
-      top: body.style.top,
-      width: body.style.width,
-      overflow: body.style.overflow,
+    const prevent = (e) => {
+      const t = e.target
+      if (t instanceof Element && t.closest('.sheet-body')) return
+      e.preventDefault()
     }
-    body.style.position = 'fixed'
-    body.style.top = `-${scrollY}px`
-    body.style.width = '100%'
-    body.style.overflow = 'hidden'
+    document.addEventListener('touchmove', prevent, { passive: false })
+    document.addEventListener('wheel', prevent, { passive: false })
     return () => {
-      Object.assign(body.style, prev)
-      window.scrollTo(0, scrollY)
+      document.removeEventListener('touchmove', prevent)
+      document.removeEventListener('wheel', prevent)
     }
   }, [])
 
