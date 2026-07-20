@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { cocktails, SPIRITS } from '../data/cocktails'
+import { SPIRITS } from '../data/cocktails'
 import { togglePantry } from '../lib/storage'
 import { usePantry, useUserRecipes, useDismissableSheet } from '../lib/hooks'
 
@@ -13,8 +13,8 @@ export default function PantrySheet({ onClose }) {
   // All curated spirits plus any categories introduced by the user's own
   // recipes, so a home-made "Mezcal" drink is selectable too.
   const spirits = useMemo(() => {
-    const extra = [...recipes, ...cocktails]
-      .map((c) => c.category)
+    const extra = recipes
+      .map((r) => r.category)
       .filter((c) => c && !SPIRITS.includes(c))
     return [...SPIRITS, ...Array.from(new Set(extra)).sort()]
   }, [recipes])

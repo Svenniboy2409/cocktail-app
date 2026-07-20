@@ -17,8 +17,11 @@ export function useDismissableSheet(onDismiss) {
   // sheet's own body is still allowed.
   useEffect(() => {
     const prevent = (e) => {
-      const t = e.target
-      if (t instanceof Element && t.closest('.sheet-body')) return
+      const t = e.target instanceof Element ? e.target.closest('.sheet-body') : null
+      // Allow scrolling only inside the sheet's own body, and only when it is
+      // actually scrollable — otherwise a short sheet (like "Your bar") would
+      // let the scroll bleed through to the page behind it.
+      if (t && t.scrollHeight > t.clientHeight) return
       e.preventDefault()
     }
     document.addEventListener('touchmove', prevent, { passive: false })

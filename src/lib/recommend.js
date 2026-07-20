@@ -9,6 +9,8 @@
 // The Discover strip shows two of these at a time and rotates through the top
 // candidates over time, so the suggestions stay fresh and varied.
 
+import { spiritsOf } from '../data/cocktails'
+
 const normalise = (s) => (s || '').trim().toLowerCase()
 
 // Turn the library into weighted buckets of tastes.
@@ -30,8 +32,8 @@ export function buildProfile(libraryItems) {
 function scoreCocktail(cocktail, profile, pantrySet) {
   let score = 0
 
-  // You can actually make it with what's on your shelf — the strongest signal.
-  if (pantrySet.size && cocktail.category && pantrySet.has(cocktail.category)) {
+  // You have one of its spirits on your shelf — the strongest signal.
+  if (pantrySet.size && spiritsOf(cocktail).some((s) => pantrySet.has(s))) {
     score += 6
   }
 
@@ -75,7 +77,7 @@ export function rankCandidates({ pool, library, savedIds, pantry, seed = 0 }) {
   // If the user told us what's in their bar, focus on makeable cocktails —
   // but relax the filter if that leaves us with too few to choose from.
   if (pantrySet.size) {
-    const makeable = candidates.filter((c) => c.category && pantrySet.has(c.category))
+    const makeable = candidates.filter((c) => spiritsOf(c).some((s) => pantrySet.has(s)))
     if (makeable.length >= 2) candidates = makeable
   }
 

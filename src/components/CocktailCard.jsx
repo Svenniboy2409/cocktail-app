@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { IconBookmark } from './icons'
 import { isSaved, toggleSaved } from '../lib/storage'
 
-export default function CocktailCard({ cocktail, saved, onToggleSave }) {
+export default function CocktailCard({ cocktail, saved, onToggleSave, spirits }) {
   const handleSave = (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -27,6 +27,9 @@ export default function CocktailCard({ cocktail, saved, onToggleSave }) {
         <div className="card-body">
           <h3>{cocktail.name}</h3>
           <div className="card-tag">{cocktail.tags?.[0] || cocktail.category}</div>
+          {spirits?.length > 0 && (
+            <div className="card-spirits">{spirits.join(' - ')}</div>
+          )}
         </div>
       </div>
     </Link>

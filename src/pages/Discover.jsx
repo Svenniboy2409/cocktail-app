@@ -1,17 +1,29 @@
-import { useMemo, useState } from 'react'
-import { cocktails, TAGS, SPIRITS, DRINK_TYPES, drinkTypeOf } from '../data/cocktails'
+import { useMemo, useState, useEffect } from 'react'
+import { cocktails, TAGS, SPIRITS, DRINK_TYPES, drinkTypeOf, spiritsOf } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
 import Recommendations from '../components/Recommendations'
 import { IconSearch } from '../components/icons'
 import { useSavedIds, useUserRecipes } from '../lib/hooks'
 
+// Kept at module scope so the chosen filters survive leaving Discover for a
+// cocktail's detail page and coming back.
+const savedFilters = { query: '', drinkType: 'All', spirit: 'All', tag: 'All' }
+
 export default function Discover() {
-  const [query, setQuery] = useState('')
-  const [drinkType, setDrinkType] = useState('All')
-  const [spirit, setSpirit] = useState('All')
-  const [tag, setTag] = useState('All')
+  const [query, setQuery] = useState(savedFilters.query)
+  const [drinkType, setDrinkType] = useState(savedFilters.drinkType)
+  const [spirit, setSpirit] = useState(savedFilters.spirit)
+  const [tag, setTag] = useState(savedFilters.tag)
   const savedIds = useSavedIds()
   const { recipes } = useUserRecipes()
+
+  // Remember the current selection for when we come back to this page.
+  useEffect(() => {
+    savedFilters.query = query
+    savedFilters.drinkType = drinkType
+    savedFilters.spirit = spirit
+    savedFilters.tag = tag
+  }, [query, drinkType, spirit, tag])
 
   const all = useMemo(() => [...recipes, ...cocktails], [recipes])
 
@@ -28,7 +40,8 @@ export default function Discover() {
     const q = query.trim().toLowerCase()
     return all.filter((c) => {
       const matchType = drinkType === 'All' || drinkTypeOf(c) === drinkType
-      const matchSpirit = spirit === 'All' || c.category === spirit
+      const matchSpirit =
+        spirit === 'All' || spiritsOf(c).includes(spirit) || c.category === spirit
       const matchTag = tag === 'All' || c.tags?.includes(tag)
       const matchQuery =
         !q ||

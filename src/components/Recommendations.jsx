@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { cocktails } from '../data/cocktails'
+import { cocktails, spiritsInIngredientOrder } from '../data/cocktails'
 import CocktailCard from './CocktailCard'
 import { IconSparkle } from './icons'
 import { useSavedIds, useUserRecipes, usePantry } from '../lib/hooks'
@@ -56,7 +56,14 @@ export default function Recommendations() {
 
       <div className="recs-grid" key={picks.map((c) => c.id).join('-')}>
         {picks.map((c) => (
-          <CocktailCard key={c.id} cocktail={c} saved={savedIds.includes(c.id)} />
+          <CocktailCard
+            key={c.id}
+            cocktail={c}
+            saved={savedIds.includes(c.id)}
+            // Which of the spirits you have at home this drink uses, listed in
+            // the same order as on its recipe page.
+            spirits={spiritsInIngredientOrder(c).filter((s) => pantry.includes(s))}
+          />
         ))}
       </div>
 

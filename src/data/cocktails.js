@@ -1925,33 +1925,75 @@ export const cocktails = [
 
 export const cocktailById = (id) => cocktails.find((c) => c.id === id)
 
-// Base spirits / categories used for filtering. Ordered so the most common
-// spirits appear first; anything not listed is appended alphabetically.
-const SPIRIT_ORDER = [
-  'Gin',
-  'Vodka',
-  'Whiskey',
-  'Rum',
-  'Tequila',
-  'Brandy',
-  'Cachaça',
-  'Pisco',
-  'Sparkling',
-  'Aperitif',
-  'Liqueur',
-  'Mixed',
+// Spirits & liqueurs used for the "Base spirit" filter and the "My bar" list.
+// Each entry matches a drink either through its base-spirit `category` or by
+// any ingredient it contains — so modifiers like triple sec or vermouth are
+// selectable too, not just the base spirit. Ordered base spirits first, then
+// wines/fortified, then liqueurs.
+const SPIRIT_DEFS = [
+  { name: 'Gin', re: /\bgin\b/i },
+  { name: 'Vodka', re: /vodka/i },
+  { name: 'Whiskey', re: /whisk|bourbon|\brye\b|scotch/i },
+  { name: 'Rum', re: /\brum\b/i },
+  { name: 'Tequila', re: /tequila/i },
+  { name: 'Brandy', re: /brandy|cognac|calvados/i },
+  { name: 'Cachaça', re: /cachaça|cachaca/i },
+  { name: 'Pisco', re: /pisco/i },
+  { name: 'Sparkling wine', re: /champagne|prosecco/i },
+  { name: 'Lillet', re: /lillet/i },
+  { name: 'Triple sec', re: /triple sec|cointreau|curaçao|curacao/i },
+  { name: 'Vermouth', re: /vermouth/i },
+  { name: 'Campari', re: /campari/i },
+  { name: 'Aperol', re: /aperol/i },
+  { name: 'Amaretto', re: /amaretto/i },
+  { name: 'Maraschino', re: /maraschino/i },
+  { name: 'Chartreuse', re: /chartreuse/i },
+  { name: 'Absinthe', re: /absinthe/i },
+  { name: 'Coffee liqueur', re: /coffee liqueur/i },
+  { name: 'Crème de menthe', re: /crème de menthe|creme de menthe/i },
+  { name: 'Crème de cacao', re: /crème de cacao|creme de cacao/i },
+  { name: 'Crème de cassis', re: /cassis/i },
+  { name: 'Crème de violette', re: /violette/i },
+  { name: 'Blackberry liqueur', re: /blackberry|mûre|mure/i },
+  { name: 'Banana liqueur', re: /banana liqueur/i },
+  { name: 'Cherry Heering', re: /cherry heering|cherry liqueur/i },
+  { name: 'Bénédictine', re: /bénédictine|benedictine/i },
+  { name: 'Drambuie', re: /drambuie/i },
+  { name: 'Southern Comfort', re: /southern comfort/i },
+  { name: 'Peach schnapps', re: /peach schnapps/i },
 ]
 
-export const SPIRITS = Array.from(
-  new Set(cocktails.map((c) => c.category).filter(Boolean)),
-).sort((a, b) => {
-  const ia = SPIRIT_ORDER.indexOf(a)
-  const ib = SPIRIT_ORDER.indexOf(b)
-  if (ia === -1 && ib === -1) return a.localeCompare(b)
-  if (ia === -1) return 1
-  if (ib === -1) return -1
-  return ia - ib
-})
+// The spirits/liqueurs a given drink uses (base spirit + ingredients).
+export function spiritsOf(cocktail) {
+  if (!cocktail) return []
+  const hay = [cocktail.category, ...(cocktail.ingredients || []).map((i) => i.name)]
+    .filter(Boolean)
+    .join(' | ')
+  return SPIRIT_DEFS.filter((d) => d.re.test(hay)).map((d) => d.name)
+}
+
+// The spirits/liqueurs a drink uses, in the order its ingredients are listed
+// on the detail page (first matching ingredient wins, de-duplicated).
+export function spiritsInIngredientOrder(cocktail) {
+  const out = []
+  const seen = new Set()
+  for (const ing of cocktail?.ingredients || []) {
+    for (const d of SPIRIT_DEFS) {
+      if (!seen.has(d.name) && d.re.test(ing.name)) {
+        seen.add(d.name)
+        out.push(d.name)
+      }
+    }
+  }
+  return out
+}
+
+// Only surface spirits that actually appear in the catalogue (no dead filters).
+export const SPIRITS = (() => {
+  const present = new Set()
+  for (const c of cocktails) for (const s of spiritsOf(c)) present.add(s)
+  return SPIRIT_DEFS.filter((d) => present.has(d.name)).map((d) => d.name)
+})()
 
 /* -------------------- drink type -------------------- */
 // A coarse split that groups every drink into one of a few families, used for
