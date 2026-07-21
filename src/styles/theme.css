@@ -21,6 +21,7 @@
   --text-dim: #7c7267;
 
   --danger: #e06a5c;
+  --green: #7ac67f;
 
   /* type */
   --font-display: 'Playfair Display', Georgia, serif;
@@ -348,6 +349,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   display: flex;
   flex-wrap: wrap;
 }
+.card-spirits.is-complete { color: var(--green); font-weight: 600; }
 .card-badge {
   position: absolute;
   top: 10px;
@@ -364,6 +366,16 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   padding: 4px 9px;
   border-radius: 999px;
 }
+.card-badge.recommended {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--green);
+  border-color: rgba(122, 198, 127, 0.45);
+  background: rgba(20, 30, 20, 0.72);
+  padding-left: 7px;
+}
+.card-badge.recommended svg { color: var(--green); }
 .card-save {
   position: absolute;
   top: 8px;

@@ -88,6 +88,12 @@ export const IconSparkle = (p) => (
   </svg>
 )
 
+export const IconStar = ({ filled = true, ...p }) => (
+  <svg width="14" height="14" viewBox="0 0 24 24" {...S} fill={filled ? 'currentColor' : 'none'} {...p}>
+    <path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z" />
+  </svg>
+)
+
 export const IconGarnish = (p) => (
   <svg width="20" height="20" viewBox="0 0 24 24" {...S} {...p}>
     <circle cx="12" cy="13" r="6" />

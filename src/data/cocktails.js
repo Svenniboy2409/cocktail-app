@@ -1923,6 +1923,35 @@ export const cocktails = [
   },
 ]
 
+// Rough popularity ranking — most famous cocktails first, so the Discover list
+// reads from household names down to hidden gems (mocktails last). Any id not
+// listed falls to the end while keeping its original relative order.
+const POPULARITY = [
+  'margarita', 'mojito', 'old-fashioned', 'cosmopolitan', 'dry-martini',
+  'negroni', 'daiquiri', 'manhattan', 'pina-colada', 'espresso-martini',
+  'aperol-spritz', 'moscow-mule', 'gin-tonic', 'long-island', 'whiskey-sour',
+  'mai-tai', 'bloody-mary', 'mimosa', 'tequila-sunrise', 'caipirinha',
+  'sex-on-the-beach', 'cuba-libre', 'white-russian', 'french-75', 'bellini',
+  'screwdriver', 'tom-collins', 'dark-and-stormy', 'paloma', 'gimlet',
+  'sazerac', 'amaretto-sour', 'sidecar', 'mint-julep', 'singapore-sling',
+  'irish-coffee', 'pisco-sour', 'aviation', 'boulevardier', 'bramble',
+  'clover-club', 'gin-fizz', 'vesper', 'zombie', 'last-word',
+  'corpse-reviver', 'americano', 'kir-royale', 'grasshopper', 'brandy-alexander',
+  'champagne-cocktail', 'black-russian', 'sea-breeze', 'rusty-nail', 'penicillin',
+  'salty-dog', 'greyhound', 'kamikaze', 'lemon-drop', 'rob-roy',
+  'godfather', 'gin-rickey', 'john-collins', 'jack-rose', 'rum-runner',
+  'alabama-slammer', 'pink-lady', 'hemingway-special', 'between-the-sheets',
+  'mary-pickford', 'bacardi-cocktail', 'stinger', 'new-york-sour',
+  'french-connection', 'casino', 'bijou', 'monkey-gland', 'horses-neck',
+  'planters-punch', 'turf-cocktail', 'derby', 'bora-bora', 'afterglow', 'ipanema',
+]
+
+const fameRank = (id) => {
+  const i = POPULARITY.indexOf(id)
+  return i === -1 ? POPULARITY.length : i
+}
+cocktails.sort((a, b) => fameRank(a.id) - fameRank(b.id))
+
 export const cocktailById = (id) => cocktails.find((c) => c.id === id)
 
 // Spirits & liqueurs used for the "Base spirit" filter and the "My bar" list.

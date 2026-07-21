@@ -55,16 +55,22 @@ export default function Recommendations() {
       </div>
 
       <div className="recs-grid" key={picks.map((c) => c.id).join('-')}>
-        {picks.map((c) => (
-          <CocktailCard
-            key={c.id}
-            cocktail={c}
-            saved={savedIds.includes(c.id)}
-            // Which of the spirits you have at home this drink uses, listed in
-            // the same order as on its recipe page.
-            spirits={spiritsInIngredientOrder(c).filter((s) => pantry.includes(s))}
-          />
-        ))}
+        {picks.map((c) => {
+          // Spirits this drink uses, in recipe order, and which you own.
+          const needed = spiritsInIngredientOrder(c)
+          const owned = needed.filter((s) => pantry.includes(s))
+          // You can make it right now if you have every spirit it needs.
+          const ready = needed.length > 0 && owned.length === needed.length
+          return (
+            <CocktailCard
+              key={c.id}
+              cocktail={c}
+              saved={savedIds.includes(c.id)}
+              spirits={owned}
+              ready={ready}
+            />
+          )
+        })}
       </div>
 
       {!hasBar && (

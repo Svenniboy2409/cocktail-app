@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { IconBookmark } from './icons'
+import { IconBookmark, IconStar } from './icons'
 import { isSaved, toggleSaved } from '../lib/storage'
 
-export default function CocktailCard({ cocktail, saved, onToggleSave, spirits }) {
+export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, ready }) {
   const handleSave = (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -15,7 +15,13 @@ export default function CocktailCard({ cocktail, saved, onToggleSave, spirits })
   return (
     <Link className="card" to={`/cocktail/${cocktail.id}`}>
       <div className="card-media">
-        {cocktail.isCustom && <span className="card-badge">Mine</span>}
+        {ready ? (
+          <span className="card-badge recommended">
+            <IconStar /> Recommended
+          </span>
+        ) : (
+          cocktail.isCustom && <span className="card-badge">Mine</span>
+        )}
         <button
           className={'card-save' + (isOn ? ' on' : '')}
           onClick={handleSave}
@@ -28,7 +34,9 @@ export default function CocktailCard({ cocktail, saved, onToggleSave, spirits })
           <h3>{cocktail.name}</h3>
           <div className="card-tag">{cocktail.tags?.[0] || cocktail.category}</div>
           {spirits?.length > 0 && (
-            <div className="card-spirits">{spirits.join(' - ')}</div>
+            <div className={'card-spirits' + (ready ? ' is-complete' : '')}>
+              {spirits.join(' - ')}
+            </div>
           )}
         </div>
       </div>
