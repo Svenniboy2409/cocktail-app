@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { cocktails, TAGS, SPIRITS, DRINK_TYPES, drinkTypeOf, spiritsOf } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
 import Recommendations from '../components/Recommendations'
-import { IconSearch } from '../components/icons'
+import { IconSearch, IconClose } from '../components/icons'
 import { useSavedIds, useUserRecipes } from '../lib/hooks'
 
 // Kept at module scope so the chosen filters survive leaving Discover for a
@@ -82,6 +82,15 @@ export default function Discover() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
+        {hasFilters && (
+          <button
+            className="search-clear"
+            onClick={clearFilters}
+            aria-label="Clear search and filters"
+          >
+            <IconClose />
+          </button>
+        )}
       </div>
 
       <div className="filter-group">

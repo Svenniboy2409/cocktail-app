@@ -223,6 +223,23 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .search input::placeholder { color: var(--text-dim); }
 .search svg { flex: none; color: var(--text-dim); }
+.search-clear {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: -4px -4px -4px 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.search-clear:hover { color: var(--text); background: var(--surface-hi); }
+.search-clear:active { transform: scale(0.92); }
+.search .search-clear svg { color: inherit; }
 
 .filter-group { margin-bottom: 14px; }
 .filter-label {
