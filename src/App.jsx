@@ -5,6 +5,7 @@ import Library from './pages/Library'
 import CocktailDetail from './pages/CocktailDetail'
 import CreateRecipe from './pages/CreateRecipe'
 import BottomNav from './components/BottomNav'
+import ScrollManager from './components/ScrollManager'
 import { ToastProvider } from './components/Toast'
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
   return (
     <ToastProvider>
       <div className="app">
+        <ScrollManager />
         <Routes>
           <Route path="/" element={<Discover />} />
           <Route path="/library" element={<Library onCreate={openCreate} />} />
