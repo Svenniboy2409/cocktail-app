@@ -5013,3 +5013,61 @@ export function drinkTypeOf(cocktail) {
   if (names.some((n) => MIXER_RE.test(n))) return 'Mixed drink'
   return 'Cocktail'
 }
+
+/* -------------------- serve style -------------------- */
+// The classic cocktail families and serving formats: how a drink is built and
+// how it reaches the table. Worked out from each recipe's glass, ingredients
+// and method, so a drink only has to be written once — including the user's
+// own creations.
+
+const ingText = (c) => (c.ingredients || []).map((i) => `${i.name} ${i.amount}`).join(' | ').toLowerCase()
+const stepText = (c) => (c.instructions || []).join(' ').toLowerCase()
+const glassText = (c) => (c.glass || '').toLowerCase()
+const nameText = (c) => (c.name || '').toLowerCase()
+
+const CITRUS = /lemon juice|lime juice|grapefruit juice/
+const SWEETENER = /syrup|sugar|honey|agave|grenadine|falernum|cream of coconut/
+const LONG_MIXER = /tonic|soda water|cola|ginger ale|ginger beer|lemonade|lemon-lime soda|grapefruit soda|sparkling mineral/
+
+const SERVE_STYLES = [
+  { name: 'Long', test: (c) => /highball|collins|hurricane|pint|clay cup|copper mug|sling|tiki/.test(glassText(c)) },
+  { name: 'Short', test: (c) => /rocks|old fashioned|coupe|martini|nick|julep|shot|tea glass/.test(glassText(c)) && !/hurricane/.test(glassText(c)) },
+  { name: 'Highball', test: (c) => LONG_MIXER.test(ingText(c)) && /highball|collins|copper mug|clay cup/.test(glassText(c)) },
+  { name: 'Sour', test: (c) => /shake/.test(stepText(c)) && CITRUS.test(ingText(c)) && SWEETENER.test(ingText(c)) },
+  { name: 'Fizz & Collins', test: (c) => /fizz|collins/.test(nameText(c)) || (/soda water/.test(ingText(c)) && CITRUS.test(ingText(c)) && /highball|collins/.test(glassText(c))) },
+  { name: 'Frozen', test: (c) => /blend/.test(stepText(c)) },
+  { name: 'Tiki', test: (c) => (/\brh?um\b/.test(ingText(c)) && /pineapple|orgeat|falernum|passion fruit|coconut|guava/.test(ingText(c))) || /hurricane|tiki/.test(glassText(c)) },
+  { name: 'Muddled', test: (c) => /muddle|press the|press gently|gently press/.test(stepText(c)) },
+  // Stirred down in a mixing glass — not the drinks that merely say "stir once".
+  { name: 'Stirred', test: (c) => /stir[^.]*(over ice|mixing glass|until very cold|until well chilled|until cold)/.test(stepText(c)) && /strain/.test(stepText(c)) && !/shake|blend/.test(stepText(c)) },
+  { name: 'Built in glass', test: (c) => !/shake|blend|strain/.test(stepText(c)) },
+  { name: 'Layered', test: (c) => /float|layer|back of a bar spoon/.test(stepText(c)) },
+  { name: 'Creamy', test: (c) => /cream|milk|ice cream|yoghurt|advocaat/.test(ingText(c)) },
+  { name: 'Aperitivo', test: (c) => /campari|aperol|fernet|lillet|sherry|white port|becherovka/.test(ingText(c)) },
+  { name: 'Sparkling', test: (c) => /champagne|prosecco|cava|sparkling wine/.test(ingText(c)) },
+  { name: 'Punch', test: (c) => c.id !== 'ti-punch' && (/punch|sangria|glögg|mulled/.test(nameText(c)) || /punch|pitcher/.test(glassText(c)) || /bottle/.test(ingText(c))) },
+  { name: 'Hot', test: (c) => /warm/.test(glassText(c)) || /toddy|mulled|glögg/.test(nameText(c)) || c.id === 'moroccan-mint-tea' },
+  { name: 'Savoury', test: (c) => /tomato|clamato|worcestershire|tabasco|celery|olive brine|chilli salt/.test(ingText(c)) },
+  { name: 'Smash', test: (c) => /smash/.test(nameText(c)) || (/mint/.test(ingText(c)) && /muddle|press/.test(stepText(c)) && /rocks|julep/.test(glassText(c))) },
+  { name: 'Swizzle', test: (c) => /swizzle/.test(nameText(c) + stepText(c)) },
+  { name: 'Shooter', test: (c) => /shot/.test(glassText(c)) },
+]
+
+// Every serve style a drink belongs to — a drink can sit in several.
+export function serveStylesOf(cocktail) {
+  if (!cocktail) return []
+  return SERVE_STYLES.filter((s) => {
+    try {
+      return s.test(cocktail)
+    } catch {
+      return false
+    }
+  }).map((s) => s.name)
+}
+
+// Only offer serve styles the catalogue actually contains.
+export const SERVES = (() => {
+  const present = new Set()
+  for (const c of cocktails) for (const s of serveStylesOf(c)) present.add(s)
+  return SERVE_STYLES.filter((s) => present.has(s.name)).map((s) => s.name)
+})()

@@ -241,15 +241,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 .search-clear:active { transform: scale(0.92); }
 .search .search-clear svg { color: inherit; }
 
-.filter-group { margin-bottom: 14px; }
-.filter-label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 8px;
-}
+/* Each filter row names itself through its "All …" chip, so no headings. */
+.filter-group { margin-bottom: 8px; }
 
 .chips {
   display: flex;

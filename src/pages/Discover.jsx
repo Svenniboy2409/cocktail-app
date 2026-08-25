@@ -1,5 +1,14 @@
 import { useMemo, useState, useEffect } from 'react'
-import { cocktails, TAGS, SPIRITS, DRINK_TYPES, drinkTypeOf, spiritsOf } from '../data/cocktails'
+import {
+  cocktails,
+  TAGS,
+  SPIRITS,
+  DRINK_TYPES,
+  SERVES,
+  drinkTypeOf,
+  spiritsOf,
+  serveStylesOf,
+} from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
 import Recommendations from '../components/Recommendations'
 import { IconSearch, IconClose } from '../components/icons'
@@ -7,23 +16,47 @@ import { useSavedIds, useUserRecipes } from '../lib/hooks'
 
 // Kept at module scope so the chosen filters survive leaving Discover for a
 // cocktail's detail page and coming back.
-const savedFilters = { query: '', drinkType: 'All', spirit: 'All', tag: 'All' }
+const savedFilters = { query: '', drinkType: 'All', tag: 'All', spirit: 'All', serve: 'All' }
+
+// One scrolling row of filter chips. The "All" chip carries the row's name, so
+// the rows need no headings above them.
+function FilterRow({ allLabel, options, value, onChange }) {
+  return (
+    <div className="filter-group">
+      <div className="chips">
+        <button
+          className={'chip' + (value === 'All' ? ' active' : '')}
+          onClick={() => onChange('All')}
+        >
+          {allLabel}
+        </button>
+        {options.map((o) => (
+          <button
+            key={o}
+            className={'chip' + (value === o ? ' active' : '')}
+            onClick={() => onChange(o)}
+          >
+            {o}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function Discover() {
   const [query, setQuery] = useState(savedFilters.query)
   const [drinkType, setDrinkType] = useState(savedFilters.drinkType)
-  const [spirit, setSpirit] = useState(savedFilters.spirit)
   const [tag, setTag] = useState(savedFilters.tag)
+  const [spirit, setSpirit] = useState(savedFilters.spirit)
+  const [serve, setServe] = useState(savedFilters.serve)
   const savedIds = useSavedIds()
   const { recipes } = useUserRecipes()
 
   // Remember the current selection for when we come back to this page.
   useEffect(() => {
-    savedFilters.query = query
-    savedFilters.drinkType = drinkType
-    savedFilters.spirit = spirit
-    savedFilters.tag = tag
-  }, [query, drinkType, spirit, tag])
+    Object.assign(savedFilters, { query, drinkType, tag, spirit, serve })
+  }, [query, drinkType, tag, spirit, serve])
 
   const all = useMemo(() => [...recipes, ...cocktails], [recipes])
 
@@ -40,25 +73,31 @@ export default function Discover() {
     const q = query.trim().toLowerCase()
     return all.filter((c) => {
       const matchType = drinkType === 'All' || drinkTypeOf(c) === drinkType
+      const matchTag = tag === 'All' || c.tags?.includes(tag)
       const matchSpirit =
         spirit === 'All' || spiritsOf(c).includes(spirit) || c.category === spirit
-      const matchTag = tag === 'All' || c.tags?.includes(tag)
+      const matchServe = serve === 'All' || serveStylesOf(c).includes(serve)
       const matchQuery =
         !q ||
         c.name.toLowerCase().includes(q) ||
         c.category?.toLowerCase().includes(q) ||
         c.ingredients?.some((i) => i.name.toLowerCase().includes(q))
-      return matchType && matchSpirit && matchTag && matchQuery
+      return matchType && matchTag && matchSpirit && matchServe && matchQuery
     })
-  }, [all, query, drinkType, spirit, tag])
+  }, [all, query, drinkType, tag, spirit, serve])
 
   const hasFilters =
-    drinkType !== 'All' || spirit !== 'All' || tag !== 'All' || query.trim() !== ''
+    drinkType !== 'All' ||
+    tag !== 'All' ||
+    spirit !== 'All' ||
+    serve !== 'All' ||
+    query.trim() !== ''
 
   const clearFilters = () => {
     setDrinkType('All')
-    setSpirit('All')
     setTag('All')
+    setSpirit('All')
+    setServe('All')
     setQuery('')
   }
 
@@ -93,50 +132,10 @@ export default function Discover() {
         )}
       </div>
 
-      <div className="filter-group">
-        <div className="filter-label">Type</div>
-        <div className="chips">
-          {['All', ...DRINK_TYPES].map((t) => (
-            <button
-              key={t}
-              className={'chip' + (drinkType === t ? ' active' : '')}
-              onClick={() => setDrinkType(t)}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="filter-group">
-        <div className="filter-label">Style</div>
-        <div className="chips">
-          {['All', ...TAGS].map((t) => (
-            <button
-              key={t}
-              className={'chip' + (tag === t ? ' active' : '')}
-              onClick={() => setTag(t)}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="filter-group">
-        <div className="filter-label">Base spirit</div>
-        <div className="chips">
-          {['All', ...spirits].map((s) => (
-            <button
-              key={s}
-              className={'chip' + (spirit === s ? ' active' : '')}
-              onClick={() => setSpirit(s)}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      </div>
+      <FilterRow allLabel="All types" options={DRINK_TYPES} value={drinkType} onChange={setDrinkType} />
+      <FilterRow allLabel="All styles" options={TAGS} value={tag} onChange={setTag} />
+      <FilterRow allLabel="All base spirits" options={spirits} value={spirit} onChange={setSpirit} />
+      <FilterRow allLabel="All serves" options={SERVES} value={serve} onChange={setServe} />
 
       <div className="result-bar">
         <span>
