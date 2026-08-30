@@ -4,9 +4,11 @@ import {
   TAGS,
   SPIRITS,
   DRINK_TYPES,
+  GLASSES,
   SERVES,
   drinkTypeOf,
   spiritsOf,
+  glassesOf,
   serveStylesOf,
 } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
@@ -18,13 +20,14 @@ import { useSavedIds, useUserRecipes } from '../lib/hooks'
 
 // Kept at module scope so the chosen filters survive leaving Discover for a
 // cocktail's detail page and coming back.
-const savedFilters = { query: '', drinkType: 'All', tag: 'All', spirit: 'All', serve: 'All' }
+const savedFilters = { query: '', drinkType: 'All', tag: 'All', spirit: 'All', glass: 'All', serve: 'All' }
 
 export default function Discover() {
   const [query, setQuery] = useState(savedFilters.query)
   const [drinkType, setDrinkType] = useState(savedFilters.drinkType)
   const [tag, setTag] = useState(savedFilters.tag)
   const [spirit, setSpirit] = useState(savedFilters.spirit)
+  const [glass, setGlass] = useState(savedFilters.glass)
   const [serve, setServe] = useState(savedFilters.serve)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const savedIds = useSavedIds()
@@ -32,8 +35,8 @@ export default function Discover() {
 
   // Remember the current selection for when we come back to this page.
   useEffect(() => {
-    Object.assign(savedFilters, { query, drinkType, tag, spirit, serve })
-  }, [query, drinkType, tag, spirit, serve])
+    Object.assign(savedFilters, { query, drinkType, tag, spirit, glass, serve })
+  }, [query, drinkType, tag, spirit, glass, serve])
 
   const all = useMemo(() => [...recipes, ...cocktails], [recipes])
 
@@ -53,21 +56,23 @@ export default function Discover() {
       const matchTag = tag === 'All' || c.tags?.includes(tag)
       const matchSpirit =
         spirit === 'All' || spiritsOf(c).includes(spirit) || c.category === spirit
+      const matchGlass = glass === 'All' || glassesOf(c).includes(glass)
       const matchServe = serve === 'All' || serveStylesOf(c).includes(serve)
       const matchQuery =
         !q ||
         c.name.toLowerCase().includes(q) ||
         c.category?.toLowerCase().includes(q) ||
         c.ingredients?.some((i) => i.name.toLowerCase().includes(q))
-      return matchType && matchTag && matchSpirit && matchServe && matchQuery
+      return matchType && matchTag && matchSpirit && matchGlass && matchServe && matchQuery
     })
-  }, [all, query, drinkType, tag, spirit, serve])
+  }, [all, query, drinkType, tag, spirit, glass, serve])
 
   // Everything the sheet offers, in the order it shows them.
   const groups = [
     { label: 'Type', allLabel: 'All types', options: DRINK_TYPES, value: drinkType, onChange: setDrinkType },
     { label: 'Style', allLabel: 'All styles', options: TAGS, value: tag, onChange: setTag },
     { label: 'Base spirit', allLabel: 'All base spirits', options: spirits, value: spirit, onChange: setSpirit },
+    { label: 'Glass', allLabel: 'All glasses', options: GLASSES, value: glass, onChange: setGlass },
     { label: 'Serve', allLabel: 'All serves', options: SERVES, value: serve, onChange: setServe },
   ]
 

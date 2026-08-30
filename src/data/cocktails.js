@@ -5071,3 +5071,38 @@ export const SERVES = (() => {
   for (const c of cocktails) for (const s of serveStylesOf(c)) present.add(s)
   return SERVE_STYLES.filter((s) => present.has(s.name)).map((s) => s.name)
 })()
+
+/* -------------------- glassware -------------------- */
+// Recipes name their glass freely ("Margarita / coupe", "Rocks (chilled)"), so
+// group those into the handful of glasses people actually own. A recipe that
+// offers a choice lands in both families, which is the point: the filter is
+// there to find drinks you can serve with the glassware you have.
+
+const GLASS_FAMILIES = [
+  { name: 'Highball', re: /highball|collins|copa|clay cup/ },
+  { name: 'Rocks', re: /rocks|old fashioned|julep/ },
+  { name: 'Coupe', re: /coupe/ },
+  { name: 'Martini', re: /martini|nick and nora/ },
+  { name: 'Hurricane', re: /hurricane|sling|tiki/ },
+  { name: 'Margarita', re: /margarita/ },
+  { name: 'Wine glass', re: /wine glass/ },
+  { name: 'Champagne flute', re: /flute|champagne/ },
+  { name: 'Mug', re: /warm glass mug|coffee mug|tea glass/ },
+  { name: 'Copper mug', re: /copper mug/ },
+  { name: 'Pint glass', re: /pint/ },
+  { name: 'Shot glass', re: /shot/ },
+  { name: 'Punch bowl', re: /punch bowl|pitcher/ },
+]
+
+// Every glass a drink can be served in.
+export function glassesOf(cocktail) {
+  const glass = (cocktail?.glass || '').toLowerCase()
+  return GLASS_FAMILIES.filter((g) => g.re.test(glass)).map((g) => g.name)
+}
+
+// Only offer glasses the catalogue actually uses.
+export const GLASSES = (() => {
+  const present = new Set()
+  for (const c of cocktails) for (const g of glassesOf(c)) present.add(g)
+  return GLASS_FAMILIES.filter((g) => present.has(g.name)).map((g) => g.name)
+})()
