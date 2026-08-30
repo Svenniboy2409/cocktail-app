@@ -202,7 +202,15 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 
 /* ---- search + filters ---- */
+.search-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 14px;
+}
 .search {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -210,7 +218,42 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 12px 14px;
-  margin-bottom: 14px;
+}
+
+/* Opens the sheet with every filter; the badge counts the active ones. */
+.filter-toggle {
+  position: relative;
+  flex: none;
+  width: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.filter-toggle:active { transform: scale(0.96); }
+.filter-toggle.on {
+  color: var(--amber);
+  border-color: var(--line-strong);
+  background: linear-gradient(135deg, rgba(224, 164, 88, 0.16), rgba(201, 169, 106, 0.06));
+}
+.filter-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--amber), var(--gold));
+  color: #1c130a;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 19px;
+  text-align: center;
 }
 .search input {
   flex: 1;
@@ -240,6 +283,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 .search-clear:hover { color: var(--text); background: var(--surface-hi); }
 .search-clear:active { transform: scale(0.92); }
 .search .search-clear svg { color: inherit; }
+.filter-toggle svg { color: inherit; }
 
 /* Each filter row names itself through its "All …" chip, so no headings. */
 .filter-group { margin-bottom: 8px; }
@@ -255,6 +299,12 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   scrollbar-width: none;
 }
 .filter-group .chips { margin-bottom: 0; }
+.chips-wrap {
+  flex-wrap: wrap;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+}
 
 .result-bar {
   display: flex;
@@ -706,6 +756,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   background: none; border: none; color: var(--text-muted);
   font-size: 15px; cursor: pointer; font-family: inherit; padding: 6px;
 }
+.sheet-close:disabled { opacity: 0.4; cursor: default; }
 .sheet-body { overflow-y: auto; overscroll-behavior: contain; padding: 18px; }
 
 .field { margin-bottom: 18px; }

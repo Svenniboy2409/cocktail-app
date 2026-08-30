@@ -29,6 +29,15 @@ export const IconBookmark = ({ filled, ...p }) => (
   </svg>
 )
 
+export const IconFilters = (p) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M4 7h16M4 12h16M4 17h16" />
+    <circle cx="9" cy="7" r="2" fill="var(--surface)" />
+    <circle cx="15" cy="12" r="2" fill="var(--surface)" />
+    <circle cx="8" cy="17" r="2" fill="var(--surface)" />
+  </svg>
+)
+
 export const IconClose = (p) => (
   <svg width="18" height="18" viewBox="0 0 24 24" {...S} {...p}>
     <path d="M7 7l10 10M17 7 7 17" />

@@ -11,38 +11,14 @@ import {
 } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
 import Recommendations from '../components/Recommendations'
-import { IconSearch, IconClose } from '../components/icons'
+import FilterChips from '../components/FilterChips'
+import FilterSheet from '../components/FilterSheet'
+import { IconSearch, IconClose, IconFilters } from '../components/icons'
 import { useSavedIds, useUserRecipes } from '../lib/hooks'
 
 // Kept at module scope so the chosen filters survive leaving Discover for a
 // cocktail's detail page and coming back.
 const savedFilters = { query: '', drinkType: 'All', tag: 'All', spirit: 'All', serve: 'All' }
-
-// One scrolling row of filter chips. The "All" chip carries the row's name, so
-// the rows need no headings above them.
-function FilterRow({ allLabel, options, value, onChange }) {
-  return (
-    <div className="filter-group">
-      <div className="chips">
-        <button
-          className={'chip' + (value === 'All' ? ' active' : '')}
-          onClick={() => onChange('All')}
-        >
-          {allLabel}
-        </button>
-        {options.map((o) => (
-          <button
-            key={o}
-            className={'chip' + (value === o ? ' active' : '')}
-            onClick={() => onChange(o)}
-          >
-            {o}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 export default function Discover() {
   const [query, setQuery] = useState(savedFilters.query)
@@ -50,6 +26,7 @@ export default function Discover() {
   const [tag, setTag] = useState(savedFilters.tag)
   const [spirit, setSpirit] = useState(savedFilters.spirit)
   const [serve, setServe] = useState(savedFilters.serve)
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const savedIds = useSavedIds()
   const { recipes } = useUserRecipes()
 
@@ -86,18 +63,19 @@ export default function Discover() {
     })
   }, [all, query, drinkType, tag, spirit, serve])
 
-  const hasFilters =
-    drinkType !== 'All' ||
-    tag !== 'All' ||
-    spirit !== 'All' ||
-    serve !== 'All' ||
-    query.trim() !== ''
+  // Everything the sheet offers, in the order it shows them.
+  const groups = [
+    { label: 'Type', allLabel: 'All types', options: DRINK_TYPES, value: drinkType, onChange: setDrinkType },
+    { label: 'Style', allLabel: 'All styles', options: TAGS, value: tag, onChange: setTag },
+    { label: 'Base spirit', allLabel: 'All base spirits', options: spirits, value: spirit, onChange: setSpirit },
+    { label: 'Serve', allLabel: 'All serves', options: SERVES, value: serve, onChange: setServe },
+  ]
+
+  const activeCount = groups.filter((g) => g.value !== 'All').length
+  const hasFilters = activeCount > 0 || query.trim() !== ''
 
   const clearFilters = () => {
-    setDrinkType('All')
-    setTag('All')
-    setSpirit('All')
-    setServe('All')
+    groups.forEach((g) => g.onChange('All'))
     setQuery('')
   }
 
@@ -113,29 +91,46 @@ export default function Discover() {
 
       <Recommendations />
 
-      <div className="search">
-        <IconSearch />
-        <input
-          type="text"
-          placeholder="Search cocktails or ingredients…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        {hasFilters && (
-          <button
-            className="search-clear"
-            onClick={clearFilters}
-            aria-label="Clear search and filters"
-          >
-            <IconClose />
-          </button>
-        )}
+      <div className="search-row">
+        <div className="search">
+          <IconSearch />
+          <input
+            type="text"
+            placeholder="Search cocktails or ingredients…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {hasFilters && (
+            <button
+              className="search-clear"
+              onClick={clearFilters}
+              aria-label="Clear search and filters"
+            >
+              <IconClose />
+            </button>
+          )}
+        </div>
+        <button
+          className={'filter-toggle' + (activeCount ? ' on' : '')}
+          onClick={() => setFiltersOpen(true)}
+          aria-label="Open filters"
+        >
+          <IconFilters />
+          {activeCount > 0 && <span className="filter-badge">{activeCount}</span>}
+        </button>
       </div>
 
-      <FilterRow allLabel="All types" options={DRINK_TYPES} value={drinkType} onChange={setDrinkType} />
-      <FilterRow allLabel="All styles" options={TAGS} value={tag} onChange={setTag} />
-      <FilterRow allLabel="All base spirits" options={spirits} value={spirit} onChange={setSpirit} />
-      <FilterRow allLabel="All serves" options={SERVES} value={serve} onChange={setServe} />
+      {/* The two everyday filters stay on the page; the rest live in the sheet. */}
+      {groups.slice(0, 2).map((g) => (
+        <div className="filter-group" key={g.label}>
+          <FilterChips
+            allLabel={g.allLabel}
+            options={g.options}
+            value={g.value}
+            onChange={g.onChange}
+          />
+        </div>
+      ))}
 
       <div className="result-bar">
         <span>
@@ -160,6 +155,16 @@ export default function Discover() {
             <CocktailCard key={c.id} cocktail={c} saved={savedIds.includes(c.id)} />
           ))}
         </div>
+      )}
+
+      {filtersOpen && (
+        <FilterSheet
+          groups={groups}
+          count={filtered.length}
+          hasFilters={hasFilters}
+          onClear={clearFilters}
+          onClose={() => setFiltersOpen(false)}
+        />
       )}
     </div>
   )
