@@ -109,6 +109,13 @@ export const IconStar = ({ filled = true, ...p }) => (
   </svg>
 )
 
+export const IconPlace = (p) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M12 21s6.5-5.7 6.5-11a6.5 6.5 0 1 0-13 0c0 5.3 6.5 11 6.5 11Z" />
+    <circle cx="12" cy="10" r="2.4" />
+  </svg>
+)
+
 export const IconGarnish = (p) => (
   <svg width="20" height="20" viewBox="0 0 24 24" {...S} {...p}>
     <circle cx="12" cy="13" r="6" />

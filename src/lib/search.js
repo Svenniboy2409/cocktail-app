@@ -85,7 +85,7 @@ function termScore(term, words) {
 // The words we match a drink on, worked out once per drink and remembered.
 const indexCache = new WeakMap()
 
-function indexOf(cocktail) {
+function indexOf(cocktail, keywordsOf) {
   let entry = indexCache.get(cocktail)
   if (entry) return entry
 
@@ -105,6 +105,15 @@ function indexOf(cocktail) {
           .filter(Boolean),
       ),
     ),
+    // Country, region, continent, city and the families the drink belongs to,
+    // so "Cuba", "Caribbean", "shots" and "christmas" all find something.
+    keywords: Array.from(
+      new Set(
+        (keywordsOf ? keywordsOf(cocktail) : [])
+          .flatMap((k) => normalize(k).split(' '))
+          .filter(Boolean),
+      ),
+    ),
   }
   indexCache.set(cocktail, entry)
   return entry
@@ -112,37 +121,64 @@ function indexOf(cocktail) {
 
 // Score one drink against the already-normalised query terms.
 // Returns 0 when any term fails to match anywhere — all terms must land.
-function score(cocktail, terms, query) {
-  const idx = indexOf(cocktail)
+// A term matched this well in this field. How good the match is always
+// outranks where it was found, so an exact hit on a drink's country beats a
+// misspelt one on another drink's name — "peru" is Pisco Sour, not Pegu Club.
+const FIELDS = [
+  ['nameWords', 10],
+  ['categoryWords', 4],
+  ['ingredientWords', 3],
+  ['keywords', 2],
+]
+
+// A match is "strong" when the word really is there, spelling and all.
+const STRONG = 5
+
+function score(cocktail, terms, query, keywordsOf) {
+  const idx = indexOf(cocktail, keywordsOf)
   let total = 0
+  let strong = true
   for (const term of terms) {
-    const best = Math.max(
-      termScore(term, idx.nameWords) * 10,
-      termScore(term, idx.categoryWords) * 4,
-      termScore(term, idx.ingredientWords) * 3,
-    )
-    if (!best) return 0
+    // Quality is the hundreds digit and the field only breaks ties, so no
+    // amount of field weight can lift a typo above a real match.
+    let best = 0
+    for (const [field, weight] of FIELDS) {
+      const q = termScore(term, idx[field])
+      if (q) best = Math.max(best, q * 100 + weight)
+    }
+    if (!best) return { total: 0, strong: false }
+    if (Math.floor(best / 100) < STRONG) strong = false
     total += best
   }
   // A drink whose name is what you actually typed belongs at the very top.
-  if (idx.name === query) total += 100
-  else if (idx.name.startsWith(query)) total += 50
-  return total
+  if (idx.name === query) total += 10000
+  else if (idx.name.startsWith(query)) total += 5000
+  return { total, strong }
 }
 
 // Filter a list of drinks by a free-text query, best match first. An empty
 // query returns the list untouched, so the normal fame ordering survives.
-export function searchCocktails(cocktails, query) {
+// `keywordsOf` supplies the extra words a drink can be found by — origin,
+// families, occasions — and is optional so this stays usable on its own.
+export function searchCocktails(cocktails, query, keywordsOf) {
   const q = normalize(query)
   if (!q) return cocktails
 
   const terms = q.split(' ')
   const hits = []
+  let anyStrong = false
   cocktails.forEach((cocktail, order) => {
-    const s = score(cocktail, terms, q)
-    if (s > 0) hits.push({ cocktail, s, order })
+    const { total, strong } = score(cocktail, terms, q, keywordsOf)
+    if (total > 0) {
+      hits.push({ cocktail, total, strong, order })
+      if (strong) anyStrong = true
+    }
   })
+  // Forgiving spelling is a safety net, not a free-for-all: once something
+  // actually contains what you typed, stop offering the near misses. Only when
+  // nothing matches cleanly does "margerita" fall through to Margarita.
+  const kept = anyStrong ? hits.filter((h) => h.strong) : hits
   // Equally good matches keep their original order, which is by fame.
-  hits.sort((a, b) => b.s - a.s || a.order - b.order)
-  return hits.map((h) => h.cocktail)
+  kept.sort((a, b) => b.total - a.total || a.order - b.order)
+  return kept.map((h) => h.cocktail)
 }

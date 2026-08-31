@@ -10,6 +10,7 @@ import {
   spiritsOf,
   glassesOf,
   serveStylesOf,
+  keywordsOf,
 } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
 import Recommendations from '../components/Recommendations'
@@ -18,10 +19,7 @@ import FilterSheet from '../components/FilterSheet'
 import { IconSearch, IconClose, IconFilters } from '../components/icons'
 import { useSavedIds, useUserRecipes } from '../lib/hooks'
 import { searchCocktails } from '../lib/search'
-
-// Kept at module scope so the chosen filters survive leaving Discover for a
-// cocktail's detail page and coming back.
-const savedFilters = { query: '', drinkType: 'All', tag: 'All', spirit: 'All', glass: 'All', serve: 'All' }
+import { savedFilters } from '../lib/discoverFilters'
 
 export default function Discover() {
   const [query, setQuery] = useState(savedFilters.query)
@@ -62,7 +60,7 @@ export default function Discover() {
     })
     // Typo-tolerant, word-boundary search; best match first, and the list is
     // left in its usual fame order when the search box is empty.
-    return searchCocktails(chosen, query)
+    return searchCocktails(chosen, query, keywordsOf)
   }, [all, query, drinkType, tag, spirit, glass, serve])
 
   // Everything the sheet offers, in the order it shows them.
@@ -99,7 +97,7 @@ export default function Discover() {
           <IconSearch />
           <input
             type="text"
-            placeholder="Search cocktails or ingredients…"
+            placeholder="Search a drink, ingredient or country…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />

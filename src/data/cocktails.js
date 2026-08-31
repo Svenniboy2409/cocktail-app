@@ -1,3 +1,5 @@
+import { originKeywords } from './origins'
+
 // Curated set of popular cocktails.
 // Images are stable public URLs from TheCocktailDB. Scenario, ingredient
 // amounts and recipe wording are written for this app.
@@ -8415,3 +8417,106 @@ export const GLASSES = (() => {
   for (const c of cocktails) for (const g of glassesOf(c)) present.add(g)
   return GLASS_FAMILIES.filter((g) => present.has(g.name)).map((g) => g.name)
 })()
+
+/* -------------------- search keywords -------------------- */
+// Everything a drink can be found by beyond its own name and ingredients:
+// where it comes from, which families it belongs to, and when people drink it.
+// The search box reads these, so "Cuba", "Caribbean", "shots", "alcohol free"
+// and "christmas" all return sensible lists.
+
+// Extra words for the taxonomies, so a filter name isn't the only way in.
+const TYPE_WORDS = {
+  Mocktail: ['alcohol free', 'non alcoholic', 'no alcohol', 'virgin', 'zero proof', 'soft drink', 'sober'],
+  Coffee: ['caffeine', 'espresso'],
+  'Mixed drink': ['highball', 'easy', 'simple'],
+}
+
+const SERVE_WORDS = {
+  Shooter: ['shot', 'shots'],
+  Frozen: ['blended', 'slushy', 'slushie'],
+  Hot: ['warm', 'winter', 'cold weather'],
+  Aperitivo: ['aperitif', 'before dinner', 'pre dinner'],
+  Creamy: ['dessert', 'sweet', 'nightcap'],
+  Punch: ['party', 'crowd', 'pitcher', 'batch', 'group', 'sharing'],
+  Savoury: ['savory', 'umami'],
+  Sparkling: ['bubbles', 'fizzy', 'celebration', 'toast'],
+  Sour: ['citrus', 'tart'],
+  Tiki: ['tropical', 'beach', 'holiday', 'summer', 'exotic'],
+  Long: ['tall'],
+  Muddled: ['fresh herbs'],
+}
+
+// When a drink comes into its own. Only where it genuinely belongs to an
+// occasion — guessing at the rest would just water the search down.
+const OCCASIONS = {
+  'christmas winter festive': [
+    'glogg', 'mulled-wine', 'eggnog-classic', 'snowball', 'hot-chocolate',
+    'marshmallow-hot-chocolate', 'castillian-hot-chocolate', 'orange-hot-chocolate',
+    'irish-coffee', 'gin-toddy', 'rum-toddy', 'sujeonggwa', 'apple-cider-punch',
+    'kill-the-cold-smoothie', 'spanish-coffee', 'italian-coffee',
+  ],
+  halloween: ['halloween-punch'],
+  'new year celebration wedding': [
+    'champagne-cocktail', 'french-75', 'mimosa', 'bellini', 'virgin-bellini',
+    'kir-royale', 'aperol-spritz', 'hugo-spritz',
+  ],
+  'brunch morning': ['mimosa', 'bloody-mary', 'virgin-mary', 'caesar', 'bellini', 'espresso-tonic'],
+  'summer beach pool holiday': [
+    'pina-colada', 'virgin-pina-colada', 'mojito', 'virgin-mojito', 'aperol-spritz',
+    'watermelon-agua-fresca', 'pink-lemonade', 'arnold-palmer', 'sea-breeze',
+    'paloma', 'ranch-water', 'blue-lagoon', 'bora-bora',
+  ],
+}
+
+const OCCASION_WORDS = (() => {
+  const map = {}
+  for (const [words, ids] of Object.entries(OCCASIONS)) {
+    for (const id of ids) (map[id] ||= []).push(...words.split(' '))
+  }
+  return map
+})()
+
+// The other name people use for an ingredient. Recipes have to pick one
+// spelling; the search box shouldn't make you guess which.
+const INGREDIENT_WORDS = [
+  [/\bcola\b/i, ['coke', 'coca cola']],
+  [/soda water/i, ['seltzer', 'club soda', 'sparkling water', 'fizzy water']],
+  [/lemon-lime soda/i, ['sprite', '7up', 'lemonade']],
+  [/cream of coconut|coconut cream|coconut milk/i, ['coconut']],
+  [/sugar syrup/i, ['simple syrup']],
+  [/single cream|double cream|heavy cream/i, ['cream']],
+  [/prosecco|champagne|cava/i, ['bubbly', 'fizz', 'sparkling wine']],
+  [/coffee liqueur/i, ['kahlua', 'tia maria']],
+  [/irish cream/i, ['baileys']],
+  [/triple sec/i, ['cointreau', 'orange liqueur']],
+  [/melon liqueur/i, ['midori']],
+  [/aged rum|dark rum/i, ['brown rum']],
+  [/light rum/i, ['white rum']],
+  [/whisky|whiskey/i, ['whisky', 'whiskey']],
+  [/yoghurt/i, ['yogurt']],
+]
+
+// Every extra word this drink should be findable by.
+export function keywordsOf(cocktail) {
+  if (!cocktail) return []
+  const words = new Set(originKeywords(cocktail))
+
+  const ingText = (cocktail.ingredients || []).map((i) => i.name).join(' | ')
+  for (const [re, extra] of INGREDIENT_WORDS) {
+    if (re.test(ingText)) for (const w of extra) words.add(w)
+  }
+
+  const type = drinkTypeOf(cocktail)
+  words.add(type)
+  for (const w of TYPE_WORDS[type] || []) words.add(w)
+
+  for (const serve of serveStylesOf(cocktail)) {
+    words.add(serve)
+    for (const w of SERVE_WORDS[serve] || []) words.add(w)
+  }
+  for (const glass of glassesOf(cocktail)) words.add(glass)
+  for (const tag of cocktail.tags || []) words.add(tag)
+  for (const w of OCCASION_WORDS[cocktail.id] || []) words.add(w)
+
+  return Array.from(words)
+}

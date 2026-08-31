@@ -630,6 +630,16 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   backdrop-filter: blur(4px);
 }
 
+/* The origin pill is a button — it runs a search for that place. */
+.pill-link {
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.pill-link:hover,
+.pill-link:focus-visible { background: rgba(74, 60, 46, 0.9); border-color: var(--gold); }
+
 .detail-body { padding: 22px 20px calc(var(--nav-h) + var(--safe-b) + 30px); }
 
 .scenario {

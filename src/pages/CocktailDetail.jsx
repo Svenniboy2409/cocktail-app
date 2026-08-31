@@ -1,9 +1,12 @@
 import { useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { cocktailById } from '../data/cocktails'
+import { placesOf, cityOf, originLabel } from '../data/origins'
 import { useUserRecipes, useSavedIds } from '../lib/hooks'
 import { toggleSaved, deleteRecipe } from '../lib/storage'
-import { IconBack, IconBookmark, IconGlass, IconGarnish, IconTrash, IconEdit } from '../components/icons'
+import { IconBack, IconBookmark, IconGlass, IconGarnish, IconPlace, IconTrash, IconEdit } from '../components/icons'
+import { searchFor } from '../lib/discoverFilters'
+import { forgetScrollPosition } from '../components/ScrollManager'
 import { useToast } from '../components/Toast'
 
 export default function CocktailDetail({ onEdit }) {
@@ -35,6 +38,15 @@ export default function CocktailDetail({ onEdit }) {
   }
 
   const saved = savedIds.includes(cocktail.id)
+  const origin = originLabel(cocktail)
+
+  // Search for the most specific place we know — the city if there is one.
+  const place = cityOf(cocktail) || placesOf(cocktail)[0]
+  const showPlace = () => {
+    searchFor(place)
+    forgetScrollPosition('/')
+    navigate('/')
+  }
 
   const handleSave = () => {
     const now = toggleSaved(cocktail.id)
@@ -74,13 +86,24 @@ export default function CocktailDetail({ onEdit }) {
           </div>
         )}
 
-        {(cocktail.glass || cocktail.garnish) && (
+        {(cocktail.glass || cocktail.garnish || origin) && (
           <div className="detail-meta-row" style={{ marginBottom: 26 }}>
             {cocktail.glass && (
               <span className="pill"><IconGlass style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.glass}</span>
             )}
             {cocktail.garnish && cocktail.garnish !== 'None' && (
               <span className="pill"><IconGarnish style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.garnish}</span>
+            )}
+            {/* Tapping the origin searches Discover for that place, which is
+                how you find out the search box knows about countries at all. */}
+            {origin && (
+              <button
+                className="pill pill-link"
+                onClick={showPlace}
+                title={`Show drinks from ${place}`}
+              >
+                <IconPlace style={{ verticalAlign: '-4px', marginRight: 6 }} />{origin}
+              </button>
             )}
           </div>
         )}

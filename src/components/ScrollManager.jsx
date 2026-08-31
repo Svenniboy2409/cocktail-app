@@ -8,6 +8,13 @@ const REMEMBERED = ['/', '/library']
 // Kept outside the component so positions survive the pages unmounting.
 const positions = new Map()
 
+// Forget where a page was left, so it opens at the top next time. Used when
+// something else sends you to a page with different content than you left it
+// with — a country search from a cocktail, say.
+export function forgetScrollPosition(path) {
+  positions.delete(path)
+}
+
 // A single-page app keeps one scrolling window, so without this you land on a
 // new page at whatever height the previous one was scrolled to.
 export default function ScrollManager() {
