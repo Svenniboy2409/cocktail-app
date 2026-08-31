@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { cocktailById } from '../data/cocktails'
+import { cocktailById, glassesOf } from '../data/cocktails'
 import { placesOf, cityOf, originLabel } from '../data/origins'
 import { useUserRecipes, useSavedIds } from '../lib/hooks'
 import { toggleSaved, deleteRecipe } from '../lib/storage'
@@ -40,13 +40,24 @@ export default function CocktailDetail({ onEdit }) {
   const saved = savedIds.includes(cocktail.id)
   const origin = originLabel(cocktail)
 
-  // Search for the most specific place we know — the city if there is one.
-  const place = cityOf(cocktail) || placesOf(cocktail)[0]
-  const showPlace = () => {
-    searchFor(place)
+  // Every pill in the meta row runs a search on Discover, so you can pull the
+  // thread from any drink: its country, its glass, or what's on top of it.
+  const runSearch = (term) => {
+    searchFor(term)
     forgetScrollPosition('/')
     navigate('/')
   }
+
+  // The most specific place we know — the city if there is one.
+  const place = cityOf(cocktail) || placesOf(cocktail)[0]
+  // Recipes name their glass freely ("Rocks (chilled)"), so search the family
+  // it belongs to rather than the label, which would find nothing.
+  const glassTerm = glassesOf(cocktail)[0] || cocktail.glass
+  // Garnishes often list two things; search the first, which is the main one.
+  const garnishTerm = (cocktail.garnish || '')
+    .replace(/\([^)]*\)/g, '')
+    .split(',')[0]
+    .trim()
 
   const handleSave = () => {
     const now = toggleSaved(cocktail.id)
@@ -89,17 +100,29 @@ export default function CocktailDetail({ onEdit }) {
         {(cocktail.glass || cocktail.garnish || origin) && (
           <div className="detail-meta-row" style={{ marginBottom: 26 }}>
             {cocktail.glass && (
-              <span className="pill"><IconGlass style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.glass}</span>
+              <button
+                className="pill pill-link"
+                onClick={() => runSearch(glassTerm)}
+                title={`Show drinks served in a ${glassTerm.toLowerCase()} glass`}
+              >
+                <IconGlass style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.glass}
+              </button>
             )}
-            {cocktail.garnish && cocktail.garnish !== 'None' && (
-              <span className="pill"><IconGarnish style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.garnish}</span>
+            {garnishTerm && garnishTerm !== 'None' && (
+              <button
+                className="pill pill-link"
+                onClick={() => runSearch(garnishTerm)}
+                title={`Show drinks garnished with ${garnishTerm.toLowerCase()}`}
+              >
+                <IconGarnish style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.garnish}
+              </button>
             )}
             {/* Tapping the origin searches Discover for that place, which is
                 how you find out the search box knows about countries at all. */}
             {origin && (
               <button
                 className="pill pill-link"
-                onClick={showPlace}
+                onClick={() => runSearch(place)}
                 title={`Show drinks from ${place}`}
               >
                 <IconPlace style={{ verticalAlign: '-4px', marginRight: 6 }} />{origin}

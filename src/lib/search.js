@@ -82,6 +82,9 @@ function termScore(term, words) {
   return best
 }
 
+// The distinct words of one field, normalised.
+const words = (text) => Array.from(new Set(normalize(text).split(' '))).filter(Boolean)
+
 // The words we match a drink on, worked out once per drink and remembered.
 const indexCache = new WeakMap()
 
@@ -105,6 +108,12 @@ function indexOf(cocktail, keywordsOf) {
           .filter(Boolean),
       ),
     ),
+    // The glass as the recipe writes it, so "coupe" and "warm glass mug" work
+    // as typed and not only through the glass families in the keywords.
+    glassWords: words(cocktail.glass),
+    // What goes on top. Nothing else indexes this, so without it a search for
+    // "lemon twist" or "nutmeg" misses every drink that only wears one.
+    garnishWords: cocktail.garnish === 'None' ? [] : words(cocktail.garnish),
     // Country, region, continent, city and the families the drink belongs to,
     // so "Cuba", "Caribbean", "shots" and "christmas" all find something.
     keywords: Array.from(
@@ -119,21 +128,24 @@ function indexOf(cocktail, keywordsOf) {
   return entry
 }
 
-// Score one drink against the already-normalised query terms.
-// Returns 0 when any term fails to match anywhere — all terms must land.
-// A term matched this well in this field. How good the match is always
-// outranks where it was found, so an exact hit on a drink's country beats a
-// misspelt one on another drink's name — "peru" is Pisco Sour, not Pegu Club.
+// The fields a term can match in, and how much each is worth. How good the
+// match is always outranks where it was found, so an exact hit on a drink's
+// country beats a misspelt one on another drink's name — "peru" is the Pisco
+// Sour, not the Pegu Club.
 const FIELDS = [
   ['nameWords', 10],
   ['categoryWords', 4],
   ['ingredientWords', 3],
+  ['glassWords', 3],
+  ['garnishWords', 2],
   ['keywords', 2],
 ]
 
 // A match is "strong" when the word really is there, spelling and all.
 const STRONG = 5
 
+// Score one drink against the already-normalised query terms. A total of 0
+// means it is out — every term has to land somewhere.
 function score(cocktail, terms, query, keywordsOf) {
   const idx = indexOf(cocktail, keywordsOf)
   let total = 0
