@@ -6,10 +6,14 @@ import {
   DRINK_TYPES,
   GLASSES,
   SERVES,
+  SEASONS_PRESENT,
+  OCCASIONS_PRESENT,
   drinkTypeOf,
   spiritsOf,
   glassesOf,
   serveStylesOf,
+  seasonsOf,
+  occasionsOf,
   keywordsOf,
 } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
@@ -28,14 +32,16 @@ export default function Discover() {
   const [spirit, setSpirit] = useState(savedFilters.spirit)
   const [glass, setGlass] = useState(savedFilters.glass)
   const [serve, setServe] = useState(savedFilters.serve)
+  const [season, setSeason] = useState(savedFilters.season)
+  const [occasion, setOccasion] = useState(savedFilters.occasion)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const savedIds = useSavedIds()
   const { recipes } = useUserRecipes()
 
   // Remember the current selection for when we come back to this page.
   useEffect(() => {
-    Object.assign(savedFilters, { query, drinkType, tag, spirit, glass, serve })
-  }, [query, drinkType, tag, spirit, glass, serve])
+    Object.assign(savedFilters, { query, drinkType, tag, spirit, glass, serve, season, occasion })
+  }, [query, drinkType, tag, spirit, glass, serve, season, occasion])
 
   const all = useMemo(() => [...recipes, ...cocktails], [recipes])
 
@@ -56,17 +62,24 @@ export default function Discover() {
         spirit === 'All' || spiritsOf(c).includes(spirit) || c.category === spirit
       const matchGlass = glass === 'All' || glassesOf(c).includes(glass)
       const matchServe = serve === 'All' || serveStylesOf(c).includes(serve)
-      return matchType && matchTag && matchSpirit && matchGlass && matchServe
+      const matchSeason = season === 'All' || seasonsOf(c).includes(season)
+      const matchOccasion = occasion === 'All' || occasionsOf(c).includes(occasion)
+      return (
+        matchType && matchTag && matchSpirit && matchGlass && matchServe &&
+        matchSeason && matchOccasion
+      )
     })
     // Typo-tolerant, word-boundary search; best match first, and the list is
     // left in its usual fame order when the search box is empty.
     return searchCocktails(chosen, query, keywordsOf)
-  }, [all, query, drinkType, tag, spirit, glass, serve])
+  }, [all, query, drinkType, tag, spirit, glass, serve, season, occasion])
 
   // Everything the sheet offers, in the order it shows them.
   const groups = [
     { label: 'Type', allLabel: 'All types', options: DRINK_TYPES, value: drinkType, onChange: setDrinkType },
     { label: 'Style', allLabel: 'All styles', options: TAGS, value: tag, onChange: setTag },
+    { label: 'Season', allLabel: 'All year round', options: SEASONS_PRESENT, value: season, onChange: setSeason },
+    { label: 'Occasion', allLabel: 'Any occasion', options: OCCASIONS_PRESENT, value: occasion, onChange: setOccasion },
     { label: 'Base spirit', allLabel: 'All base spirits', options: spirits, value: spirit, onChange: setSpirit },
     { label: 'Glass', allLabel: 'All glasses', options: GLASSES, value: glass, onChange: setGlass },
     { label: 'Serve', allLabel: 'All serves', options: SERVES, value: serve, onChange: setServe },

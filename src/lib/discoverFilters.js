@@ -8,6 +8,8 @@ export const savedFilters = {
   spirit: 'All',
   glass: 'All',
   serve: 'All',
+  season: 'All',
+  occasion: 'All',
 }
 
 // Queue up a fresh search, clearing the filters so nothing narrows it away.
@@ -20,5 +22,7 @@ export function searchFor(term) {
     spirit: 'All',
     glass: 'All',
     serve: 'All',
+    season: 'All',
+    occasion: 'All',
   })
 }

@@ -8087,6 +8087,1449 @@ export const cocktails = [
       'Serve cold with plenty of grated nutmeg.',
     ],
   },
+  {
+    id: 'bees-knees',
+    name: 'Bee\'s Knees',
+    category: 'Gin',
+    tags: ['Classic', 'Sour'],
+    image: IMG + '7onfhz1493067921.jpg',
+    scenario:
+      'Prohibition\'s neatest trick: honey to round off rough gin and lemon to keep it lively. Warm the honey into a syrup first or it will sit in a lump at the bottom of the shaker.',
+    glass: 'Coupe',
+    garnish: 'Lemon twist',
+    ingredients: [
+      { name: 'Gin', amount: '60 ml' },
+      { name: 'Honey syrup', amount: '20 ml' },
+      { name: 'Lemon juice', amount: '22 ml' },
+    ],
+    instructions: [
+      'Stir equal parts honey and warm water into a syrup and let it cool.',
+      'Shake everything hard with ice.',
+      'Double-strain into a chilled coupe.',
+      'Twist a lemon peel over the top.',
+    ],
+  },
+  {
+    id: 'southside',
+    name: 'Southside',
+    category: 'Gin',
+    tags: ['Classic', 'Refreshing'],
+    image: IMG + '55muhh1493068062.jpg',
+    scenario:
+      'A mojito that went to finishing school — gin instead of rum, shaken rather than built, and served up. The first properly warm evening of the year in a glass.',
+    glass: 'Coupe',
+    garnish: 'Mint leaf',
+    ingredients: [
+      { name: 'Gin', amount: '60 ml' },
+      { name: 'Lime juice', amount: '25 ml' },
+      { name: 'Sugar syrup', amount: '20 ml' },
+      { name: 'Mint leaves', amount: '10' },
+    ],
+    instructions: [
+      'Press the mint gently into the lime and syrup — bruise it, do not shred it.',
+      'Add the gin and ice and shake hard.',
+      'Double-strain into a chilled coupe.',
+      'Float a single clean mint leaf on top.',
+    ],
+  },
+  {
+    id: 'eastside',
+    name: 'Eastside',
+    category: 'Gin',
+    tags: ['Refreshing', 'Sour'],
+    image: IMG + 'wqstwv1478963735.jpg',
+    scenario:
+      'The Southside with cucumber pressed in alongside the mint. Cool, green and about as spring as a drink gets.',
+    glass: 'Coupe',
+    garnish: 'Cucumber slice',
+    ingredients: [
+      { name: 'Gin', amount: '55 ml' },
+      { name: 'Lime juice', amount: '22 ml' },
+      { name: 'Sugar syrup', amount: '18 ml' },
+      { name: 'Cucumber', amount: '3 slices' },
+      { name: 'Mint leaves', amount: '8' },
+    ],
+    instructions: [
+      'Press the cucumber and mint into the lime and syrup.',
+      'Add the gin, fill with ice and shake.',
+      'Double-strain into a chilled coupe and lay a cucumber slice on the surface.',
+    ],
+  },
+  {
+    id: 'jasmine-cocktail',
+    name: 'Jasmine',
+    category: 'Gin',
+    tags: ['Sour', 'Classic'],
+    image: IMG + '2x8thr1504816928.jpg',
+    scenario:
+      'A Margarita built out of gin and Campari, which turns it an improbable pink and makes it taste faintly of grapefruit. One of the best drinks invented in the nineties.',
+    glass: 'Coupe',
+    garnish: 'Lemon twist',
+    ingredients: [
+      { name: 'Gin', amount: '45 ml' },
+      { name: 'Campari', amount: '10 ml' },
+      { name: 'Triple sec', amount: '10 ml' },
+      { name: 'Lemon juice', amount: '20 ml' },
+    ],
+    instructions: [
+      'Shake everything with ice until very cold.',
+      'Double-strain into a chilled coupe.',
+      'Twist lemon peel over the top.',
+    ],
+  },
+  {
+    id: 'french-blonde',
+    name: 'French Blonde',
+    category: 'Gin',
+    tags: ['Refreshing', 'Classic'],
+    image: IMG + 'x8lhp41513703167.jpg',
+    scenario:
+      'Lillet, elderflower and grapefruit around a light hand of gin. Pale, floral and low enough in strength to open an evening with.',
+    glass: 'Coupe',
+    garnish: 'Grapefruit twist',
+    ingredients: [
+      { name: 'Gin', amount: '30 ml' },
+      { name: 'Lillet Blanc', amount: '30 ml' },
+      { name: 'Elderflower liqueur', amount: '15 ml' },
+      { name: 'Grapefruit juice', amount: '30 ml' },
+    ],
+    instructions: [
+      'Shake everything with ice.',
+      'Strain into a chilled coupe.',
+      'Twist grapefruit peel over the surface.',
+    ],
+  },
+  {
+    id: 'rhubarb-collins',
+    name: 'Rhubarb Collins',
+    category: 'Gin',
+    tags: ['Refreshing', 'Fruity'],
+    image: IMG + 'xuyqrw1472811825.jpg',
+    scenario:
+      'Forced rhubarb arrives in February looking like something from another planet, and this is the best thing to do with it. Sharp, pink and very tall.',
+    glass: 'Highball',
+    garnish: 'Rhubarb ribbon',
+    ingredients: [
+      { name: 'Gin', amount: '50 ml' },
+      { name: 'Rhubarb syrup', amount: '25 ml' },
+      { name: 'Lemon juice', amount: '25 ml' },
+      { name: 'Soda water', amount: '90 ml' },
+    ],
+    instructions: [
+      'Simmer chopped rhubarb with equal sugar and a splash of water, then strain for the syrup.',
+      'Shake the gin, syrup and lemon with ice.',
+      'Strain into a tall glass of ice and top with soda.',
+      'Curl a ribbon of raw rhubarb down the inside.',
+    ],
+  },
+  {
+    id: 'strawberry-basil-smash',
+    name: 'Strawberry Basil Smash',
+    category: 'Gin',
+    tags: ['Fruity', 'Refreshing'],
+    image: IMG + '1sqm7n1485620312.jpg',
+    scenario:
+      'Strawberries and basil turn out to be old friends. Muddle them together properly, and skip this one until the strawberries are actually worth eating.',
+    glass: 'Rocks',
+    garnish: 'Basil sprig, strawberry',
+    ingredients: [
+      { name: 'Gin', amount: '50 ml' },
+      { name: 'Strawberries', amount: '4' },
+      { name: 'Basil leaves', amount: '8' },
+      { name: 'Lemon juice', amount: '20 ml' },
+      { name: 'Sugar syrup', amount: '15 ml' },
+    ],
+    instructions: [
+      'Muddle the strawberries and basil with the lemon and syrup.',
+      'Add the gin and ice and shake hard.',
+      'Pour unstrained into a rocks glass and top with crushed ice.',
+      'Slap a basil sprig and lay it on top.',
+    ],
+  },
+  {
+    id: 'green-beast',
+    name: 'Green Beast',
+    category: 'Liqueur',
+    tags: ['Refreshing', 'Party'],
+    image: IMG + 'wrxrxp1472812609.jpg',
+    scenario:
+      'Absinthe lengthened four ways with water, lime and cucumber until it becomes something you can drink by the jug. Far gentler than its reputation suggests.',
+    glass: 'Highball',
+    garnish: 'Cucumber wheels',
+    ingredients: [
+      { name: 'Absinthe', amount: '25 ml' },
+      { name: 'Lime juice', amount: '25 ml' },
+      { name: 'Sugar syrup', amount: '25 ml' },
+      { name: 'Cold water', amount: '100 ml' },
+      { name: 'Cucumber', amount: '4 wheels' },
+    ],
+    instructions: [
+      'Build everything over ice in a tall glass, or scale it up in a pitcher.',
+      'Stir until the glass frosts.',
+      'Drop the cucumber wheels in.',
+    ],
+  },
+  {
+    id: 'chartreuse-swizzle',
+    name: 'Chartreuse Swizzle',
+    category: 'Liqueur',
+    tags: ['Refreshing', 'Strong'],
+    image: IMG + 'qxprxr1454511520.jpg',
+    scenario:
+      'Green Chartreuse swizzled with pineapple and lime until the glass frosts over. Herbal, bright green and quite unlike anything else you will drink this year.',
+    glass: 'Highball',
+    garnish: 'Mint bouquet, nutmeg',
+    ingredients: [
+      { name: 'Green Chartreuse', amount: '45 ml' },
+      { name: 'Pineapple juice', amount: '30 ml' },
+      { name: 'Lime juice', amount: '20 ml' },
+      { name: 'Falernum', amount: '15 ml' },
+    ],
+    instructions: [
+      'Fill a tall glass with crushed ice and add everything.',
+      'Swizzle with a bar spoon until the outside of the glass is completely frosted.',
+      'Top with more crushed ice, add a bouquet of mint and grate nutmeg over it.',
+    ],
+  },
+  {
+    id: 'rosemary-blue',
+    name: 'Rosemary Blue',
+    category: 'Gin',
+    tags: ['Refreshing'],
+    image: IMG + 'qwc5f91512406543.jpg',
+    scenario:
+      'Gin and tonic with a sprig of rosemary slapped and dropped in, and just enough blue curaçao to turn the glass the colour of a swimming pool.',
+    glass: 'Highball',
+    garnish: 'Rosemary sprig, lime',
+    ingredients: [
+      { name: 'Gin', amount: '50 ml' },
+      { name: 'Blue curaçao', amount: '15 ml' },
+      { name: 'Tonic water', amount: '150 ml' },
+      { name: 'Rosemary sprig', amount: '1' },
+    ],
+    instructions: [
+      'Fill a large glass with ice and pour in the gin and curaçao.',
+      'Top with cold tonic and stir once.',
+      'Slap the rosemary between your palms to wake it up, then drop it in.',
+    ],
+  },
+  {
+    id: 'duchamps-punch',
+    name: 'Duchamp\'s Punch',
+    category: 'Pisco',
+    tags: ['Fruity', 'Party'],
+    image: IMG + 'g51naw1485084685.jpg',
+    scenario:
+      'Pisco with pineapple syrup, elderflower and a crack of black pepper over the top. Odd on paper, excellent in the glass.',
+    glass: 'Rocks',
+    garnish: 'Lime wheel, black pepper',
+    ingredients: [
+      { name: 'Pisco', amount: '50 ml' },
+      { name: 'Lime juice', amount: '25 ml' },
+      { name: 'Pineapple syrup', amount: '20 ml' },
+      { name: 'Elderflower liqueur', amount: '10 ml' },
+      { name: 'Angostura bitters', amount: '2 dashes' },
+    ],
+    instructions: [
+      'Shake everything but the pepper with ice.',
+      'Strain over a big cube in a rocks glass.',
+      'Grind black pepper over the surface and add a lime wheel.',
+    ],
+  },
+  {
+    id: 'lavender-lemonade',
+    name: 'Lavender Lemonade',
+    category: 'Non-alcoholic',
+    tags: ['Refreshing'],
+    image: IMG + 'uv96zr1504793256.jpg',
+    scenario:
+      'Lemonade infused with a little dried lavender, which sounds like a candle and tastes like a garden. Use less than you think — it goes soapy fast.',
+    glass: 'Highball',
+    garnish: 'Lavender sprig, lemon wheel',
+    ingredients: [
+      { name: 'Lemon juice', amount: '45 ml' },
+      { name: 'Lavender syrup', amount: '30 ml' },
+      { name: 'Cold water', amount: '150 ml' },
+      { name: 'Ice', amount: 'to fill' },
+    ],
+    instructions: [
+      'Steep a teaspoon of dried lavender in warm sugar syrup for ten minutes, then strain.',
+      'Stir the syrup into the lemon juice and water.',
+      'Pour over ice and add a lavender sprig.',
+    ],
+  },
+  {
+    id: 'elderflower-cooler',
+    name: 'Elderflower Cooler',
+    category: 'Non-alcoholic',
+    tags: ['Refreshing'],
+    image: IMG + 'tpupvr1478251697.jpg',
+    scenario:
+      'Elderflower cordial, cucumber and soda over a lot of ice — the drink to hand people in the garden when half of them are not drinking.',
+    glass: 'Highball',
+    garnish: 'Cucumber ribbon, mint',
+    ingredients: [
+      { name: 'Elderflower cordial', amount: '40 ml' },
+      { name: 'Lime juice', amount: '15 ml' },
+      { name: 'Cucumber', amount: '4 slices' },
+      { name: 'Soda water', amount: '150 ml' },
+    ],
+    instructions: [
+      'Press the cucumber gently in the bottom of a tall glass.',
+      'Add the cordial and lime, then fill with ice.',
+      'Top with soda water and stir once.',
+    ],
+  },
+  {
+    id: 'pornstar-martini',
+    name: 'Pornstar Martini',
+    category: 'Vodka',
+    tags: ['Fruity', 'Party'],
+    image: IMG + 'lyloe91487602877.jpg',
+    scenario:
+      'The most ordered cocktail in Britain, and not by accident: passion fruit and vanilla, with a shot of cold prosecco alongside to sip between mouthfuls.',
+    glass: 'Coupe',
+    garnish: 'Half a passion fruit',
+    ingredients: [
+      { name: 'Vanilla vodka', amount: '50 ml' },
+      { name: 'Passion fruit liqueur', amount: '20 ml' },
+      { name: 'Passion fruit purée', amount: '30 ml' },
+      { name: 'Lime juice', amount: '15 ml' },
+      { name: 'Sugar syrup', amount: '10 ml' },
+      { name: 'Prosecco', amount: '60 ml, on the side' },
+    ],
+    instructions: [
+      'Shake everything but the prosecco hard with ice.',
+      'Double-strain into a chilled coupe.',
+      'Float half a passion fruit on top.',
+      'Serve the prosecco beside it in a shot glass — the point is to alternate.',
+    ],
+  },
+  {
+    id: 'frose',
+    name: 'Frosé',
+    category: 'Sparkling',
+    tags: ['Refreshing', 'Fruity', 'Party'],
+    image: IMG + '1wifuv1485619797.jpg',
+    scenario:
+      'Rosé frozen into a slush with strawberries. Freeze the wine the night before — it will not set solid because of the alcohol, which is exactly what you want.',
+    glass: 'Hurricane',
+    garnish: 'Strawberry',
+    ingredients: [
+      { name: 'Rosé wine', amount: '350 ml, frozen' },
+      { name: 'Strawberries', amount: '150 g' },
+      { name: 'Lemon juice', amount: '25 ml' },
+      { name: 'Sugar syrup', amount: '30 ml' },
+    ],
+    instructions: [
+      'Pour the wine into a tray and freeze it overnight — it will go slushy, not solid.',
+      'Blend the frozen wine with the strawberries, lemon and syrup.',
+      'Pour into chilled glasses and serve at once with a straw.',
+    ],
+  },
+  {
+    id: 'limoncello-spritz',
+    name: 'Limoncello Spritz',
+    category: 'Liqueur',
+    tags: ['Refreshing', 'Party'],
+    image: IMG + 'iixv4l1485620014.jpg',
+    scenario:
+      'The Amalfi answer to the Aperol Spritz — lemon rather than bitter orange, and a good deal easier to like on a hot afternoon.',
+    glass: 'Wine glass',
+    garnish: 'Lemon wheel, mint',
+    ingredients: [
+      { name: 'Limoncello', amount: '50 ml' },
+      { name: 'Prosecco', amount: '75 ml' },
+      { name: 'Soda water', amount: '25 ml' },
+    ],
+    instructions: [
+      'Fill a big wine glass with ice.',
+      'Pour the limoncello in first, then the prosecco, then the soda.',
+      'Stir once and add a lemon wheel and a sprig of mint.',
+    ],
+  },
+  {
+    id: 'aperol-sour',
+    name: 'Aperol Sour',
+    category: 'Aperitif',
+    tags: ['Sour', 'Refreshing'],
+    image: IMG + 'bcsj2e1487603625.jpg',
+    scenario:
+      'Everything people like about a spritz, concentrated. Aperol shaken with lemon and egg white until it comes out orange with a thick white collar.',
+    glass: 'Coupe',
+    garnish: 'Orange twist',
+    ingredients: [
+      { name: 'Aperol', amount: '50 ml' },
+      { name: 'Lemon juice', amount: '25 ml' },
+      { name: 'Sugar syrup', amount: '10 ml' },
+      { name: 'Egg white', amount: '1' },
+    ],
+    instructions: [
+      'Shake everything without ice first to build the foam.',
+      'Add ice and shake again until cold.',
+      'Double-strain into a chilled coupe and let the head settle.',
+      'Twist orange peel over the foam.',
+    ],
+  },
+  {
+    id: 'sgroppino',
+    name: 'Sgroppino',
+    category: 'Sparkling',
+    tags: ['Refreshing', 'After dinner'],
+    image: IMG + 'm5nhtr1504820829.jpg',
+    scenario:
+      'Venetian palate cleanser, whipped rather than shaken: lemon sorbet beaten into prosecco and vodka until it is somewhere between a drink and a dessert.',
+    glass: 'Champagne flute',
+    garnish: 'Lemon zest',
+    ingredients: [
+      { name: 'Lemon sorbet', amount: '2 scoops' },
+      { name: 'Prosecco', amount: '90 ml' },
+      { name: 'Vodka', amount: '20 ml' },
+    ],
+    instructions: [
+      'Put the sorbet in a cold bowl and beat in the vodka with a whisk.',
+      'Add the prosecco slowly, still whisking, until it is smooth and foamy.',
+      'Pour into chilled flutes and grate lemon zest over the top.',
+    ],
+  },
+  {
+    id: 'coconut-mojito',
+    name: 'Coconut Mojito',
+    category: 'Rum',
+    tags: ['Refreshing', 'Fruity'],
+    image: IMG + '2rzfer1487602699.jpg',
+    scenario:
+      'A mojito with coconut milk stirred through it, which sounds heavy and drinks like a beach. Cloudy, cold and gone very quickly.',
+    glass: 'Highball',
+    garnish: 'Mint, lime wheel',
+    ingredients: [
+      { name: 'White rum', amount: '50 ml' },
+      { name: 'Coconut milk', amount: '45 ml' },
+      { name: 'Lime juice', amount: '25 ml' },
+      { name: 'Sugar syrup', amount: '15 ml' },
+      { name: 'Mint leaves', amount: '10' },
+      { name: 'Soda water', amount: '50 ml' },
+    ],
+    instructions: [
+      'Press the mint with the lime and syrup in a tall glass.',
+      'Add the rum and coconut milk and fill with crushed ice.',
+      'Churn with a spoon, top with soda and more ice.',
+      'Crown with a bouquet of mint.',
+    ],
+  },
+  {
+    id: 'mango-margarita',
+    name: 'Mango Margarita',
+    category: 'Tequila',
+    tags: ['Fruity', 'Refreshing'],
+    image: IMG + 'wutxqr1472720012.jpg',
+    scenario:
+      'Ripe mango takes the edge off a margarita without making it sweet, as long as you keep the lime honest. A chilli salt rim is not optional.',
+    glass: 'Margarita',
+    garnish: 'Chilli salt rim, lime',
+    ingredients: [
+      { name: 'Tequila', amount: '50 ml' },
+      { name: 'Mango purée', amount: '50 ml' },
+      { name: 'Triple sec', amount: '20 ml' },
+      { name: 'Lime juice', amount: '25 ml' },
+    ],
+    instructions: [
+      'Rim a chilled glass with chilli salt.',
+      'Shake everything hard with ice.',
+      'Strain over fresh ice and add a lime wheel.',
+    ],
+  },
+  {
+    id: 'bay-breeze',
+    name: 'Bay Breeze',
+    category: 'Vodka',
+    tags: ['Refreshing', 'Fruity'],
+    image: IMG + '4vo5651493068493.jpg',
+    scenario:
+      'The Sea Breeze\'s softer sister: pineapple instead of grapefruit, so it loses the bitterness and gains a two-tone sunset in the glass.',
+    glass: 'Highball',
+    garnish: 'Lime wedge',
+    ingredients: [
+      { name: 'Vodka', amount: '45 ml' },
+      { name: 'Pineapple juice', amount: '90 ml' },
+      { name: 'Cranberry juice', amount: '60 ml' },
+    ],
+    instructions: [
+      'Build the vodka and pineapple over ice in a tall glass.',
+      'Pour the cranberry slowly down the side so it sinks through.',
+      'Serve without stirring, with a lime wedge.',
+    ],
+  },
+  {
+    id: 'madras',
+    name: 'Madras',
+    category: 'Vodka',
+    tags: ['Refreshing', 'Fruity'],
+    image: IMG + 'xrl66i1493068702.jpg',
+    scenario:
+      'Vodka, cranberry and orange in one tall glass. Three ingredients, no technique, and it has been keeping people company on holiday for fifty years.',
+    glass: 'Highball',
+    garnish: 'Orange slice',
+    ingredients: [
+      { name: 'Vodka', amount: '45 ml' },
+      { name: 'Cranberry juice', amount: '90 ml' },
+      { name: 'Orange juice', amount: '45 ml' },
+    ],
+    instructions: [
+      'Fill a tall glass with ice.',
+      'Add the vodka and cranberry and stir.',
+      'Float the orange juice on top and hang an orange slice on the rim.',
+    ],
+  },
+  {
+    id: 'spicy-margarita',
+    name: 'Spicy Margarita',
+    category: 'Tequila',
+    tags: ['Sour', 'Party'],
+    image: IMG + 'utpxxq1483388370.jpg',
+    scenario:
+      'Jalapeño muddled into the shaker, so the heat builds a beat after the lime does. Take the seeds out unless you know what you are doing.',
+    glass: 'Rocks',
+    garnish: 'Chilli salt rim, jalapeño slice',
+    ingredients: [
+      { name: 'Tequila', amount: '50 ml' },
+      { name: 'Lime juice', amount: '25 ml' },
+      { name: 'Agave syrup', amount: '15 ml' },
+      { name: 'Triple sec', amount: '15 ml' },
+      { name: 'Jalapeño', amount: '3 slices' },
+    ],
+    instructions: [
+      'Muddle the jalapeño in the base of the shaker.',
+      'Add everything else with ice and shake hard.',
+      'Double-strain over a big cube in a chilli-salted rocks glass.',
+      'Float a slice of jalapeño on top.',
+    ],
+  },
+  {
+    id: 'rose-sangria',
+    name: 'Rosé Sangria',
+    category: 'Sparkling',
+    tags: ['Fruity', 'Party', 'Refreshing'],
+    image: IMG + 'uqqvsp1468924228.jpg',
+    scenario:
+      'Sangria for warm weather: rosé instead of red, peaches and berries instead of citrus, and a couple of hours in the fridge to let it all get to know each other.',
+    glass: 'Punch bowl',
+    garnish: 'Peach slices, berries',
+    ingredients: [
+      { name: 'Rosé wine', amount: '750 ml' },
+      { name: 'Peach nectar', amount: '150 ml' },
+      { name: 'Triple sec', amount: '60 ml' },
+      { name: 'Peaches', amount: '2, sliced' },
+      { name: 'Strawberries', amount: '150 g' },
+      { name: 'Soda water', amount: '250 ml' },
+    ],
+    instructions: [
+      'Combine the wine, nectar, triple sec and fruit in a pitcher.',
+      'Chill for at least two hours — this is the part people skip.',
+      'Add the soda water and plenty of ice just before serving.',
+    ],
+  },
+  {
+    id: 'radler',
+    name: 'Radler',
+    category: 'Mixed',
+    tags: ['Refreshing', 'Party'],
+    image: IMG + 'xz8igv1504888995.jpg',
+    scenario:
+      'Half lager, half lemon soda, invented for cyclists who still had to get home. The Munich beer garden\'s most sensible order.',
+    glass: 'Pint glass',
+    garnish: 'Lemon wedge',
+    ingredients: [
+      { name: 'Lager', amount: '250 ml' },
+      { name: 'Lemon soda', amount: '250 ml' },
+    ],
+    instructions: [
+      'Chill both properly — this only works ice cold.',
+      'Pour the lager into a tilted glass first.',
+      'Top with the lemon soda and drink straight away.',
+    ],
+  },
+  {
+    id: 'cucumber-lemonade',
+    name: 'Cucumber Lemonade',
+    category: 'Non-alcoholic',
+    tags: ['Refreshing'],
+    image: IMG + 's4x0qj1487603933.jpg',
+    scenario:
+      'Cucumber blended straight into lemonade and strained. Pale green, faintly savoury and more thirst-quenching than plain lemonade has any right to be.',
+    glass: 'Highball',
+    garnish: 'Cucumber ribbon',
+    ingredients: [
+      { name: 'Cucumber', amount: '1/2, chopped' },
+      { name: 'Lemon juice', amount: '40 ml' },
+      { name: 'Sugar syrup', amount: '25 ml' },
+      { name: 'Cold water', amount: '150 ml' },
+    ],
+    instructions: [
+      'Blend the cucumber with the water and strain it.',
+      'Stir in the lemon juice and syrup.',
+      'Serve over plenty of ice with a cucumber ribbon.',
+    ],
+  },
+  {
+    id: 'maple-old-fashioned',
+    name: 'Maple Old Fashioned',
+    category: 'Whiskey',
+    tags: ['Classic', 'Strong'],
+    image: IMG + 'w8cxqv1582485254.jpg',
+    scenario:
+      'Maple syrup in place of the sugar cube, which suits bourbon far better than it has any business doing. The drink for the first cold evening of the year.',
+    glass: 'Rocks',
+    garnish: 'Orange twist',
+    ingredients: [
+      { name: 'Bourbon', amount: '60 ml' },
+      { name: 'Maple syrup', amount: '10 ml' },
+      { name: 'Angostura bitters', amount: '3 dashes' },
+    ],
+    instructions: [
+      'Stir the bourbon, maple syrup and bitters over ice until properly cold.',
+      'Strain over one large cube.',
+      'Express an orange peel over the top and drop it in.',
+    ],
+  },
+  {
+    id: 'apple-cider-mule',
+    name: 'Apple Cider Mule',
+    category: 'Vodka',
+    tags: ['Refreshing', 'Fruity'],
+    image: IMG + 'ssxvww1472669166.jpg',
+    scenario:
+      'A Moscow Mule with cloudy apple juice through it and a cinnamon stick in the mug. Ginger and apple were always going to work.',
+    glass: 'Copper mug',
+    garnish: 'Apple slice, cinnamon stick',
+    ingredients: [
+      { name: 'Vodka', amount: '45 ml' },
+      { name: 'Cloudy apple juice', amount: '60 ml' },
+      { name: 'Lime juice', amount: '15 ml' },
+      { name: 'Ginger beer', amount: '100 ml' },
+    ],
+    instructions: [
+      'Fill a copper mug with ice.',
+      'Add the vodka, apple juice and lime and stir.',
+      'Top with ginger beer.',
+      'Add an apple slice and a cinnamon stick.',
+    ],
+  },
+  {
+    id: 'spiced-pear-martini',
+    name: 'Spiced Pear Martini',
+    category: 'Vodka',
+    tags: ['Fruity', 'After dinner'],
+    image: IMG + 'yzva7x1504820300.jpg',
+    scenario:
+      'Pear and cinnamon shaken cold and served straight up. Ripe pears are a short season — this is what to do with them before it closes.',
+    glass: 'Martini',
+    garnish: 'Pear slice',
+    ingredients: [
+      { name: 'Vodka', amount: '50 ml' },
+      { name: 'Pear purée', amount: '40 ml' },
+      { name: 'Cinnamon syrup', amount: '15 ml' },
+      { name: 'Lemon juice', amount: '15 ml' },
+    ],
+    instructions: [
+      'Simmer a cinnamon stick in sugar syrup for the spiced syrup, then cool it.',
+      'Shake everything with ice until very cold.',
+      'Double-strain into a chilled martini glass.',
+      'Fan a thin slice of pear on the rim.',
+    ],
+  },
+  {
+    id: 'calvados-sour',
+    name: 'Norman Sour',
+    category: 'Brandy',
+    tags: ['Sour', 'Fruity'],
+    image: IMG + 'l74qo91582480316.jpg',
+    scenario:
+      'Calvados, the apple brandy of Normandy, shaken into a sour. Orchard fruit and oak, with the egg white smoothing the edges off both.',
+    glass: 'Coupe',
+    garnish: 'Apple fan, nutmeg',
+    ingredients: [
+      { name: 'Calvados', amount: '55 ml' },
+      { name: 'Lemon juice', amount: '25 ml' },
+      { name: 'Sugar syrup', amount: '18 ml' },
+      { name: 'Egg white', amount: '1' },
+      { name: 'Angostura bitters', amount: '2 dashes' },
+    ],
+    instructions: [
+      'Shake without ice first, then again with ice.',
+      'Double-strain into a chilled coupe.',
+      'Dot bitters on the foam and grate a little nutmeg over it.',
+    ],
+  },
+  {
+    id: 'apple-grande',
+    name: 'Apple Grande',
+    category: 'Tequila',
+    tags: ['Party', 'Fruity'],
+    image: IMG + 'wqrptx1472668622.jpg',
+    scenario:
+      'Reposado tequila and cloudy cider in a bowl, which is a stranger idea than it tastes. Bonfire-night drinking for a crowd.',
+    glass: 'Punch bowl',
+    garnish: 'Apple slices, cinnamon',
+    ingredients: [
+      { name: 'Reposado tequila', amount: '350 ml' },
+      { name: 'Cloudy apple cider', amount: '1.5 L' },
+      { name: 'Lime juice', amount: '100 ml' },
+      { name: 'Agave syrup', amount: '80 ml' },
+      { name: 'Apples', amount: '2, sliced' },
+    ],
+    instructions: [
+      'Stir everything together in a big bowl or pitcher.',
+      'Chill for an hour, then add a block of ice.',
+      'Ladle over ice with a couple of apple slices in each glass.',
+    ],
+  },
+  {
+    id: 'blackthorn',
+    name: 'Blackthorn',
+    category: 'Gin',
+    tags: ['Classic', 'After dinner'],
+    image: IMG + 'dgj92f1616098672.jpg',
+    scenario:
+      'Sloe gin and sweet vermouth, stirred down. Named for the hedge the sloes come off, and it tastes exactly like the end of a walk in October.',
+    glass: 'Coupe',
+    garnish: 'Lemon twist',
+    ingredients: [
+      { name: 'Sloe gin', amount: '40 ml' },
+      { name: 'Sweet vermouth', amount: '40 ml' },
+      { name: 'Orange bitters', amount: '2 dashes' },
+    ],
+    instructions: [
+      'Stir both over ice until well chilled.',
+      'Strain into a chilled coupe.',
+      'Twist lemon peel over the top.',
+    ],
+  },
+  {
+    id: 'sloe-gin-fizz',
+    name: 'Sloe Gin Fizz',
+    category: 'Gin',
+    tags: ['Classic', 'Refreshing'],
+    image: IMG + 'd7mo481504889531.jpg',
+    scenario:
+      'Sloe gin, lemon and soda — dusty pink, faintly almondy from the stones, and the most drinkable use anyone has found for a hedgerow.',
+    glass: 'Highball',
+    garnish: 'Lemon wheel',
+    ingredients: [
+      { name: 'Sloe gin', amount: '50 ml' },
+      { name: 'Lemon juice', amount: '25 ml' },
+      { name: 'Sugar syrup', amount: '15 ml' },
+      { name: 'Soda water', amount: '90 ml' },
+    ],
+    instructions: [
+      'Shake the sloe gin, lemon and syrup with ice.',
+      'Strain into a tall glass with a couple of cubes.',
+      'Top with soda and stir once.',
+    ],
+  },
+  {
+    id: 'autumn-sangria',
+    name: 'Autumn Sangria',
+    category: 'Mixed',
+    tags: ['Party', 'Fruity'],
+    image: IMG + 'vysywu1468924264.jpg',
+    scenario:
+      'Sangria with the summer citrus swapped for apples, pears and cinnamon, and brandy in place of the soda. Made in the morning, drunk in the evening.',
+    glass: 'Punch bowl',
+    garnish: 'Apple and pear slices, cinnamon sticks',
+    ingredients: [
+      { name: 'Red wine', amount: '750 ml' },
+      { name: 'Brandy', amount: '80 ml' },
+      { name: 'Cloudy apple juice', amount: '250 ml' },
+      { name: 'Apples', amount: '2, sliced' },
+      { name: 'Pears', amount: '2, sliced' },
+      { name: 'Cinnamon sticks', amount: '2' },
+      { name: 'Brown sugar', amount: '30 g' },
+    ],
+    instructions: [
+      'Stir everything together in a pitcher and press the sugar in until it dissolves.',
+      'Chill for at least four hours, ideally all day.',
+      'Serve over ice with plenty of the fruit.',
+    ],
+  },
+  {
+    id: 'cranberry-bourbon-smash',
+    name: 'Cranberry Bourbon Smash',
+    category: 'Whiskey',
+    tags: ['Fruity', 'Sour'],
+    image: IMG + 'wbcvyo1535794478.jpg',
+    scenario:
+      'Bourbon smashed with cranberries, orange and a little sage. Deep red, properly tart, and the drink to hand round while the oven does its work.',
+    glass: 'Rocks',
+    garnish: 'Sage leaf, cranberries',
+    ingredients: [
+      { name: 'Bourbon', amount: '55 ml' },
+      { name: 'Cranberry juice', amount: '40 ml' },
+      { name: 'Lemon juice', amount: '20 ml' },
+      { name: 'Maple syrup', amount: '15 ml' },
+      { name: 'Fresh cranberries', amount: '8' },
+      { name: 'Sage leaves', amount: '3' },
+    ],
+    instructions: [
+      'Muddle the cranberries and sage with the lemon and maple.',
+      'Add the bourbon and cranberry juice and shake with ice.',
+      'Strain over crushed ice in a rocks glass.',
+      'Slap a sage leaf and set it on top with a few whole berries.',
+    ],
+  },
+  {
+    id: 'chai-old-fashioned',
+    name: 'Chai Old Fashioned',
+    category: 'Whiskey',
+    tags: ['Strong', 'After dinner'],
+    image: IMG + 'kjnt7z1504793319.jpg',
+    scenario:
+      'Sugar syrup infused with chai spices, then an old fashioned built on it. Cardamom, clove and ginger sitting under the whiskey rather than on top of it.',
+    glass: 'Rocks',
+    garnish: 'Orange twist, star anise',
+    ingredients: [
+      { name: 'Bourbon', amount: '60 ml' },
+      { name: 'Chai syrup', amount: '12 ml' },
+      { name: 'Angostura bitters', amount: '2 dashes' },
+      { name: 'Orange bitters', amount: '1 dash' },
+    ],
+    instructions: [
+      'Steep cardamom, clove, cinnamon and ginger in warm sugar syrup, then strain and cool.',
+      'Stir the bourbon, syrup and bitters over ice.',
+      'Strain over one big cube and twist orange peel over it.',
+    ],
+  },
+  {
+    id: 'scotch-cobbler',
+    name: 'Scotch Cobbler',
+    category: 'Whiskey',
+    tags: ['Classic', 'Fruity'],
+    image: IMG + '1q7coh1504736227.jpg',
+    scenario:
+      'Scotch and brandy over a mound of crushed ice with orange and mint piled on top. A cobbler is really a fruit salad you drink, and it suits smoky whisky better than you would guess.',
+    glass: 'Rocks',
+    garnish: 'Orange slice, mint',
+    ingredients: [
+      { name: 'Scotch', amount: '45 ml' },
+      { name: 'Brandy', amount: '15 ml' },
+      { name: 'Triple sec', amount: '10 ml' },
+      { name: 'Orange slices', amount: '2' },
+      { name: 'Sugar syrup', amount: '10 ml' },
+    ],
+    instructions: [
+      'Muddle one orange slice with the syrup in the glass.',
+      'Add the spirits and fill with crushed ice.',
+      'Churn with a spoon, then top with more ice.',
+      'Crown with an orange slice and a bouquet of mint.',
+    ],
+  },
+  {
+    id: 'salted-toffee-martini',
+    name: 'Salted Toffee Martini',
+    category: 'Vodka',
+    tags: ['After dinner'],
+    image: IMG + '3s6mlr1509551211.jpg',
+    scenario:
+      'Chocolate, toffee and a pinch of salt, shaken until it wears a fine brown foam. Pudding, essentially, and nobody has ever objected.',
+    glass: 'Martini',
+    garnish: 'Salted chocolate shard',
+    ingredients: [
+      { name: 'Vodka', amount: '45 ml' },
+      { name: 'Chocolate liqueur', amount: '25 ml' },
+      { name: 'Toffee syrup', amount: '15 ml' },
+      { name: 'Single cream', amount: '20 ml' },
+      { name: 'Sea salt', amount: 'a pinch' },
+    ],
+    instructions: [
+      'Shake everything hard with ice.',
+      'Double-strain into a chilled martini glass.',
+      'Balance a shard of salted chocolate on the rim.',
+    ],
+  },
+  {
+    id: 'toffee-apple-punch',
+    name: 'Toffee Apple Punch',
+    category: 'Non-alcoholic',
+    tags: ['Party', 'Fruity'],
+    image: IMG + 'uqwuyp1454514591.jpg',
+    scenario:
+      'Warm apple juice with toffee stirred through it and a squeeze of lemon to stop it cloying. Bonfire night in a mug, and everyone can have some.',
+    glass: 'Punch bowl',
+    garnish: 'Apple slices, cinnamon',
+    ingredients: [
+      { name: 'Cloudy apple juice', amount: '1 L' },
+      { name: 'Toffee sauce', amount: '80 g' },
+      { name: 'Lemon juice', amount: '30 ml' },
+      { name: 'Cinnamon sticks', amount: '2' },
+      { name: 'Cloves', amount: '4' },
+    ],
+    instructions: [
+      'Warm the apple juice with the spices without letting it boil.',
+      'Whisk in the toffee sauce until it has completely dissolved.',
+      'Add the lemon juice, strain out the spices and serve warm.',
+    ],
+  },
+  {
+    id: 'whisky-mac',
+    name: 'Whisky Mac',
+    category: 'Whiskey',
+    tags: ['Classic', 'Strong'],
+    image: IMG + 'yvvwys1461867858.jpg',
+    scenario:
+      'Scotch and green ginger wine, half and half, no ice. An old British cure-all for cold weather, and one of the few two-ingredient drinks nobody has managed to improve.',
+    glass: 'Rocks',
+    garnish: 'None',
+    ingredients: [
+      { name: 'Scotch', amount: '45 ml' },
+      { name: 'Green ginger wine', amount: '45 ml' },
+    ],
+    instructions: [
+      'Pour both into a glass at room temperature.',
+      'Stir once.',
+      'Do not add ice — the point is the warmth.',
+    ],
+  },
+  {
+    id: 'hot-buttered-rum',
+    name: 'Hot Buttered Rum',
+    category: 'Rum',
+    tags: ['After dinner', 'Classic'],
+    image: IMG + '8y4x5f1487603151.jpg',
+    scenario:
+      'Spiced butter whisked into hot rum until it goes glossy. Colonial America\'s answer to the cold, and it still works — make the butter in advance and keep it in the fridge.',
+    glass: 'Warm glass mug',
+    garnish: 'Cinnamon stick, nutmeg',
+    ingredients: [
+      { name: 'Dark rum', amount: '50 ml' },
+      { name: 'Salted butter', amount: '15 g' },
+      { name: 'Brown sugar', amount: '2 tsp' },
+      { name: 'Cinnamon', amount: 'a pinch' },
+      { name: 'Nutmeg', amount: 'a pinch' },
+      { name: 'Boiling water', amount: '120 ml' },
+    ],
+    instructions: [
+      'Beat the butter with the sugar and spices into a paste — a batch keeps for weeks.',
+      'Put a heaped spoon of it in a warmed mug with the rum.',
+      'Top with boiling water and stir until the butter has melted in completely.',
+      'Grate more nutmeg over the top.',
+    ],
+  },
+  {
+    id: 'coquito',
+    name: 'Coquito',
+    category: 'Rum',
+    tags: ['Party', 'After dinner'],
+    image: IMG + 'qxuppv1468875308.jpg',
+    scenario:
+      'Puerto Rico\'s Christmas drink: coconut, condensed milk, rum and cinnamon, blended and left in the fridge until it thickens. Every family swears their recipe is the real one.',
+    glass: 'Rocks',
+    garnish: 'Cinnamon, nutmeg',
+    ingredients: [
+      { name: 'White rum', amount: '250 ml' },
+      { name: 'Coconut milk', amount: '400 ml' },
+      { name: 'Cream of coconut', amount: '400 g' },
+      { name: 'Sweetened condensed milk', amount: '400 g' },
+      { name: 'Evaporated milk', amount: '350 ml' },
+      { name: 'Cinnamon', amount: '1 tsp' },
+      { name: 'Vanilla extract', amount: '1 tsp' },
+    ],
+    instructions: [
+      'Blend everything until completely smooth.',
+      'Bottle it and chill overnight — it thickens as it sits.',
+      'Shake the bottle before pouring, and serve in small glasses.',
+      'Grate cinnamon and nutmeg over each one.',
+    ],
+  },
+  {
+    id: 'bombardino',
+    name: 'Bombardino',
+    category: 'Liqueur',
+    tags: ['After dinner'],
+    image: IMG + '6ty09d1504366461.jpg',
+    scenario:
+      'What every Italian ski lift bar pours at three in the afternoon: hot advocaat and brandy under a mountain of whipped cream. Order it "con alcool" if you want the extra shot.',
+    glass: 'Warm glass mug',
+    garnish: 'Whipped cream, cocoa',
+    ingredients: [
+      { name: 'Advocaat', amount: '60 ml' },
+      { name: 'Brandy', amount: '30 ml' },
+      { name: 'Whipped cream', amount: 'a generous spoon' },
+    ],
+    instructions: [
+      'Warm the advocaat gently — do not let it get near boiling or it will split.',
+      'Stir in the brandy and pour into a small warmed glass.',
+      'Pile whipped cream on top and dust with cocoa.',
+    ],
+  },
+  {
+    id: 'tom-and-jerry',
+    name: 'Tom and Jerry',
+    category: 'Rum',
+    tags: ['Party', 'Classic'],
+    image: IMG + 'wpspsy1468875747.jpg',
+    scenario:
+      'A hot eggnog built from a whipped batter, and a proper American Christmas institution. Fiddly to make and completely worth it for a house full of people.',
+    glass: 'Warm glass mug',
+    garnish: 'Grated nutmeg',
+    ingredients: [
+      { name: 'Eggs', amount: '6, separated' },
+      { name: 'Caster sugar', amount: '150 g' },
+      { name: 'Dark rum', amount: '150 ml' },
+      { name: 'Brandy', amount: '150 ml' },
+      { name: 'Hot milk', amount: '1 L' },
+      { name: 'Vanilla extract', amount: '1 tsp' },
+    ],
+    instructions: [
+      'Beat the whites to stiff peaks and the yolks with the sugar until pale, then fold together with the vanilla.',
+      'Put two heaped spoons of the batter in each warmed mug.',
+      'Add the rum and brandy, then top with hot milk, whisking as you pour.',
+      'Grate plenty of nutmeg over the top.',
+    ],
+  },
+  {
+    id: 'sherry-eggnog',
+    name: 'Sherry Eggnog',
+    category: 'Liqueur',
+    tags: ['After dinner', 'Classic'],
+    image: IMG + 'xwrpsv1478820541.jpg',
+    scenario:
+      'The lighter eggnog: cream sherry instead of spirits, so it comes out nutty rather than heavy. The Victorian version, and the one you can drink two of.',
+    glass: 'Highball',
+    garnish: 'Grated nutmeg',
+    ingredients: [
+      { name: 'Cream sherry', amount: '60 ml' },
+      { name: 'Egg', amount: '1' },
+      { name: 'Caster sugar', amount: '2 tsp' },
+      { name: 'Whole milk', amount: '120 ml' },
+    ],
+    instructions: [
+      'Shake the egg, sugar and sherry without ice until completely smooth.',
+      'Add the milk and ice and shake again, hard.',
+      'Strain into a tall glass and grate nutmeg over it.',
+    ],
+  },
+  {
+    id: 'poinsettia',
+    name: 'Poinsettia',
+    category: 'Sparkling',
+    tags: ['Party', 'Fruity'],
+    image: IMG + 'yt9i7n1504370388.jpg',
+    scenario:
+      'Cranberry and orange liqueur under cold champagne — Christmas red, ready in ten seconds, and the easiest thing to put in people\'s hands at the door.',
+    glass: 'Champagne flute',
+    garnish: 'Cranberries, orange twist',
+    ingredients: [
+      { name: 'Cranberry juice', amount: '45 ml' },
+      { name: 'Triple sec', amount: '15 ml' },
+      { name: 'Champagne', amount: '90 ml' },
+    ],
+    instructions: [
+      'Pour the cranberry juice and triple sec into a chilled flute.',
+      'Top slowly with cold champagne.',
+      'Drop in a few cranberries and twist orange peel over the top.',
+    ],
+  },
+  {
+    id: 'peppermint-hot-chocolate',
+    name: 'Peppermint Hot Chocolate',
+    category: 'Non-alcoholic',
+    tags: ['After dinner'],
+    image: IMG + 'ruxuvp1472669600.jpg',
+    scenario:
+      'Hot chocolate with peppermint stirred through and a candy cane hooked over the rim to melt slowly into it. Entirely a December drink.',
+    glass: 'Warm glass mug',
+    garnish: 'Candy cane, whipped cream',
+    ingredients: [
+      { name: 'Dark chocolate', amount: '50 g, chopped' },
+      { name: 'Whole milk', amount: '250 ml' },
+      { name: 'Peppermint syrup', amount: '15 ml' },
+      { name: 'Whipped cream', amount: 'to top' },
+    ],
+    instructions: [
+      'Warm the milk until steaming, then whisk in the chocolate off the heat.',
+      'Stir in the peppermint syrup.',
+      'Top with whipped cream and hook a candy cane over the rim.',
+    ],
+  },
+  {
+    id: 'midnight-mint',
+    name: 'Midnight Mint',
+    category: 'Liqueur',
+    tags: ['After dinner'],
+    image: IMG + 'svuvrq1441208310.jpg',
+    scenario:
+      'Irish cream and white crème de menthe shaken with cream until it comes out pale and cold. An after-dinner mint that arrives in a glass.',
+    glass: 'Coupe',
+    garnish: 'Chocolate shavings',
+    ingredients: [
+      { name: 'Irish cream', amount: '30 ml' },
+      { name: 'White crème de menthe', amount: '20 ml' },
+      { name: 'Single cream', amount: '30 ml' },
+    ],
+    instructions: [
+      'Shake all three hard with ice.',
+      'Double-strain into a chilled coupe.',
+      'Grate dark chocolate over the surface.',
+    ],
+  },
+  {
+    id: 'gingerbread-martini',
+    name: 'Gingerbread Martini',
+    category: 'Vodka',
+    tags: ['After dinner'],
+    image: IMG + 'vsxxwy1441208133.jpg',
+    scenario:
+      'Ginger, molasses and cinnamon shaken with cream. It tastes like the biscuit and looks like something you should be given by a fire.',
+    glass: 'Martini',
+    garnish: 'Cinnamon, gingerbread crumb',
+    ingredients: [
+      { name: 'Vodka', amount: '45 ml' },
+      { name: 'Gingerbread syrup', amount: '25 ml' },
+      { name: 'Irish cream', amount: '25 ml' },
+      { name: 'Single cream', amount: '25 ml' },
+    ],
+    instructions: [
+      'Simmer sugar syrup with ginger, cinnamon, clove and a spoon of molasses, then cool.',
+      'Shake everything hard with ice.',
+      'Double-strain into a chilled martini glass.',
+      'Dust with cinnamon and scatter gingerbread crumbs.',
+    ],
+  },
+  {
+    id: 'jagertee',
+    name: 'Jagertee',
+    category: 'Rum',
+    tags: ['Strong', 'After dinner'],
+    image: IMG + 'rrstxv1441246184.jpg',
+    scenario:
+      'Austrian ski-hut fuel: strong black tea and overproof rum with lemon and spice. Sold by the mug at the top of the mountain and best treated with respect.',
+    glass: 'Warm glass mug',
+    garnish: 'Lemon slice, cinnamon stick',
+    ingredients: [
+      { name: 'Overproof rum', amount: '50 ml' },
+      { name: 'Hot black tea', amount: '150 ml' },
+      { name: 'Lemon juice', amount: '15 ml' },
+      { name: 'Brown sugar', amount: '2 tsp' },
+      { name: 'Cinnamon stick', amount: '1' },
+      { name: 'Cloves', amount: '2' },
+    ],
+    instructions: [
+      'Brew the tea strong with the cinnamon and cloves.',
+      'Stir the sugar and lemon into a warmed mug.',
+      'Add the rum, then the hot tea.',
+      'Leave the cinnamon stick in and drink it hot.',
+    ],
+  },
+  {
+    id: 'wassail',
+    name: 'Wassail',
+    category: 'Non-alcoholic',
+    tags: ['Party'],
+    image: IMG + 'hepk6h1504885554.jpg',
+    scenario:
+      'The oldest drink in this app: spiced apples warmed with cider and orange, carried door to door in midwinter long before anyone called it Christmas.',
+    glass: 'Punch bowl',
+    garnish: 'Baked apple slices, orange',
+    ingredients: [
+      { name: 'Cloudy apple juice', amount: '1.5 L' },
+      { name: 'Orange juice', amount: '250 ml' },
+      { name: 'Brown sugar', amount: '60 g' },
+      { name: 'Cinnamon sticks', amount: '2' },
+      { name: 'Cloves', amount: '8' },
+      { name: 'Allspice berries', amount: '4' },
+      { name: 'Apples', amount: '2, baked and sliced' },
+    ],
+    instructions: [
+      'Warm the apple and orange juice with the sugar and whole spices for half an hour.',
+      'Do not let it boil — you want it steaming, not simmering.',
+      'Strain out the spices and float the baked apple slices on top.',
+      'Ladle into mugs while it is still hot.',
+    ],
+  },
+  {
+    id: 'kentucky-b-and-b',
+    name: 'Kentucky B&B',
+    category: 'Whiskey',
+    tags: ['Strong', 'After dinner'],
+    image: IMG + 'sqxsxp1478820236.jpg',
+    scenario:
+      'Bourbon and Bénédictine, side by side in a warm snifter. Two ingredients, no ice, no fuss — the last drink of a long winter evening.',
+    glass: 'Rocks',
+    garnish: 'None',
+    ingredients: [
+      { name: 'Bourbon', amount: '45 ml' },
+      { name: 'Bénédictine', amount: '25 ml' },
+    ],
+    instructions: [
+      'Warm the glass in your hands.',
+      'Pour both in and swirl once.',
+      'Drink slowly, at room temperature.',
+    ],
+  },
+  {
+    id: 'sol-y-sombra',
+    name: 'Sol y Sombra',
+    category: 'Brandy',
+    tags: ['Strong', 'After dinner'],
+    image: IMG + '3gz2vw1503425983.jpg',
+    scenario:
+      '"Sun and shade" — Spanish brandy and anisette in equal measure, drunk at the end of a long lunch in the coldest part of the year.',
+    glass: 'Coupe',
+    garnish: 'None',
+    ingredients: [
+      { name: 'Spanish brandy', amount: '35 ml' },
+      { name: 'Anisette', amount: '35 ml' },
+    ],
+    instructions: [
+      'Shake both briefly with ice.',
+      'Strain into a small chilled glass.',
+      'Serve with something sweet.',
+    ],
+  },
+  {
+    id: 'brigadier',
+    name: 'Brigadier',
+    category: 'Liqueur',
+    tags: ['After dinner', 'Strong'],
+    image: IMG + 'nl89tf1518947401.jpg',
+    scenario:
+      'Hot chocolate with green Chartreuse and cherry liqueur stirred in. Herbal, warming and quite a lot stronger than it looks — which is presumably how it got the name.',
+    glass: 'Warm glass mug',
+    garnish: 'Grated chocolate',
+    ingredients: [
+      { name: 'Hot chocolate', amount: '150 ml' },
+      { name: 'Green Chartreuse', amount: '20 ml' },
+      { name: 'Cherry Heering', amount: '15 ml' },
+    ],
+    instructions: [
+      'Make the hot chocolate as rich as you can stand.',
+      'Stir in the Chartreuse and cherry liqueur off the heat.',
+      'Pour into a warmed glass and grate chocolate over it.',
+    ],
+  },
+  {
+    id: 'chocolate-martini',
+    name: 'Chocolate Martini',
+    category: 'Vodka',
+    tags: ['After dinner', 'Party'],
+    image: IMG + 'yyvywx1472720879.jpg',
+    scenario:
+      'Crème de cacao and vodka shaken until it is properly cold, in a glass painted inside with chocolate. Unashamed, and exactly right at Easter or on Valentine\'s night.',
+    glass: 'Martini',
+    garnish: 'Chocolate-lined glass, cocoa dust',
+    ingredients: [
+      { name: 'Vodka', amount: '50 ml' },
+      { name: 'Dark crème de cacao', amount: '25 ml' },
+      { name: 'Single cream', amount: '20 ml' },
+    ],
+    instructions: [
+      'Drizzle melted chocolate around the inside of a chilled martini glass.',
+      'Shake the vodka, crème de cacao and cream hard with ice.',
+      'Double-strain into the glass and dust with cocoa.',
+    ],
+  },
+  {
+    id: 'black-and-tan',
+    name: 'Black and Tan',
+    category: 'Mixed',
+    tags: ['Classic', 'Party'],
+    image: IMG + 'rwpswp1454511017.jpg',
+    scenario:
+      'Pale ale with stout floated on top so the two sit in bands. Pour the stout over an upturned spoon and go slowly — rush it and you just get brown beer.',
+    glass: 'Pint glass',
+    garnish: 'None',
+    ingredients: [
+      { name: 'Pale ale', amount: '280 ml' },
+      { name: 'Stout', amount: '280 ml' },
+    ],
+    instructions: [
+      'Fill the glass halfway with the ale and let it settle completely.',
+      'Rest a spoon upside down just above the surface.',
+      'Pour the stout very slowly over the back of it.',
+      'Serve straight away, before the line blurs.',
+    ],
+  },
+  {
+    id: 'shamrock',
+    name: 'Shamrock',
+    category: 'Whiskey',
+    tags: ['Classic', 'Strong'],
+    image: IMG + 'wyrrwv1441207432.jpg',
+    scenario:
+      'Irish whiskey, dry vermouth and a little green Chartreuse and crème de menthe — a genuine pre-Prohibition cocktail that happens to come out shamrock green.',
+    glass: 'Coupe',
+    garnish: 'Mint leaf',
+    ingredients: [
+      { name: 'Irish whiskey', amount: '40 ml' },
+      { name: 'Dry vermouth', amount: '40 ml' },
+      { name: 'Green Chartreuse', amount: '8 ml' },
+      { name: 'Green crème de menthe', amount: '8 ml' },
+    ],
+    instructions: [
+      'Stir everything over ice until very cold.',
+      'Strain into a chilled coupe.',
+      'Float a single mint leaf.',
+    ],
+  },
+  {
+    id: 'blood-orange-negroni',
+    name: 'Blood Orange Negroni',
+    category: 'Gin',
+    tags: ['Strong', 'Classic'],
+    image: IMG + 'pfz3hz1582483111.jpg',
+    scenario:
+      'A Negroni made with blood orange, which turns it almost black in the glass and takes some of the bitterness off. Sinister-looking and completely civilised.',
+    glass: 'Rocks',
+    garnish: 'Blood orange wheel',
+    ingredients: [
+      { name: 'Gin', amount: '30 ml' },
+      { name: 'Campari', amount: '30 ml' },
+      { name: 'Sweet vermouth', amount: '30 ml' },
+      { name: 'Blood orange juice', amount: '20 ml' },
+    ],
+    instructions: [
+      'Stir everything over ice until cold.',
+      'Strain over one big cube in a rocks glass.',
+      'Lay a wheel of blood orange on top.',
+    ],
+  },
+  {
+    id: 'black-magic',
+    name: 'Black Magic',
+    category: 'Vodka',
+    tags: ['Party', 'Fruity'],
+    image: IMG + 'bglc6y1504388797.jpg',
+    scenario:
+      'Blackberry and blackcurrant over vodka, dark enough to look like ink. Halloween\'s drink, and it tastes far better than its colour suggests.',
+    glass: 'Coupe',
+    garnish: 'Blackberry',
+    ingredients: [
+      { name: 'Vodka', amount: '45 ml' },
+      { name: 'Blackberry liqueur', amount: '25 ml' },
+      { name: 'Crème de cassis', amount: '15 ml' },
+      { name: 'Lemon juice', amount: '20 ml' },
+      { name: 'Blackberries', amount: '4' },
+    ],
+    instructions: [
+      'Muddle the blackberries with the lemon.',
+      'Add everything else and shake hard with ice.',
+      'Double-strain into a chilled coupe.',
+      'Drop one whole blackberry in.',
+    ],
+  },
+  {
+    id: 'witches-brew',
+    name: 'Witches\' Brew',
+    category: 'Non-alcoholic',
+    tags: ['Party', 'Fruity'],
+    image: IMG + 'rz5aun1504389701.jpg',
+    scenario:
+      'Green apple and lime punch with a dry-ice fog rolling off it — or, without dry ice, a frozen hand made from a water-filled glove bobbing in the bowl. The children will talk about it for a year.',
+    glass: 'Punch bowl',
+    garnish: 'Frozen hand, gummy worms',
+    ingredients: [
+      { name: 'Green apple juice', amount: '1 L' },
+      { name: 'Limeade', amount: '500 ml' },
+      { name: 'Lemon-lime soda', amount: '500 ml' },
+      { name: 'Green food colouring', amount: '2 drops' },
+    ],
+    instructions: [
+      'Freeze a clean rubber glove full of water the day before.',
+      'Mix the apple juice and limeade in a big bowl and tint it green.',
+      'Add the soda just before serving so it still fizzes.',
+      'Peel the glove off the ice hand and float it in.',
+    ],
+  },
+  {
+    id: 'pumpkin-spice-white-russian',
+    name: 'Pumpkin Spice White Russian',
+    category: 'Vodka',
+    tags: ['After dinner'],
+    image: IMG + 'qyyvtu1468878544.jpg',
+    scenario:
+      'A White Russian with pumpkin and autumn spice stirred through the cream. Ridiculous in September, exactly right on the last night of October.',
+    glass: 'Rocks',
+    garnish: 'Cinnamon, nutmeg',
+    ingredients: [
+      { name: 'Vodka', amount: '45 ml' },
+      { name: 'Coffee liqueur', amount: '25 ml' },
+      { name: 'Pumpkin purée', amount: '20 g' },
+      { name: 'Single cream', amount: '40 ml' },
+      { name: 'Pumpkin spice', amount: 'a pinch' },
+    ],
+    instructions: [
+      'Whisk the purée and spice into the cream until smooth.',
+      'Build the vodka and coffee liqueur over ice.',
+      'Float the spiced cream over the back of a spoon.',
+      'Dust with cinnamon and nutmeg.',
+    ],
+  },
+  {
+    id: 'rose-cocktail',
+    name: 'Rose',
+    category: 'Gin',
+    tags: ['Classic', 'Fruity'],
+    image: IMG + '8kxbvq1504371462.jpg',
+    scenario:
+      'A 1920s Paris cocktail, pale pink from a bare teaspoon of grenadine, with apricot brandy giving it a stone-fruit softness. Valentine\'s without the cliché.',
+    glass: 'Coupe',
+    garnish: 'Cherry',
+    ingredients: [
+      { name: 'Gin', amount: '40 ml' },
+      { name: 'Dry vermouth', amount: '30 ml' },
+      { name: 'Apricot brandy', amount: '15 ml' },
+      { name: 'Lemon juice', amount: '10 ml' },
+      { name: 'Grenadine', amount: '5 ml' },
+    ],
+    instructions: [
+      'Stir everything over ice until very cold.',
+      'Strain into a chilled coupe.',
+      'Drop in a good cherry.',
+    ],
+  },
+  {
+    id: 'pink-gin',
+    name: 'Pink Gin',
+    category: 'Gin',
+    tags: ['Classic', 'Strong'],
+    image: IMG + 'mwko4q1582482903.jpg',
+    scenario:
+      'Gin with nothing in it but bitters — the Royal Navy\'s medicine, and the shortest recipe in the book. Coat the glass, tip out what will not stick, and pour.',
+    glass: 'Coupe',
+    garnish: 'Lemon twist',
+    ingredients: [
+      { name: 'Gin', amount: '60 ml' },
+      { name: 'Angostura bitters', amount: '4 dashes' },
+    ],
+    instructions: [
+      'Dash the bitters into a chilled coupe and swirl to coat the inside.',
+      'Tip out whatever does not cling to the glass.',
+      'Pour in gin that has been stirred down with ice.',
+      'Twist lemon peel over the top.',
+    ],
+  },
+  {
+    id: 'carrot-ginger-fizz',
+    name: 'Carrot Ginger Fizz',
+    category: 'Non-alcoholic',
+    tags: ['Brunch', 'Refreshing'],
+    image: IMG + 'smb2oe1582479072.jpg',
+    scenario:
+      'Carrot juice sharpened with ginger and lemon and lengthened with soda. Bright orange, faintly sweet and the obvious thing to hand round at Easter.',
+    glass: 'Highball',
+    garnish: 'Carrot ribbon, lemon',
+    ingredients: [
+      { name: 'Carrot juice', amount: '120 ml' },
+      { name: 'Lemon juice', amount: '20 ml' },
+      { name: 'Ginger syrup', amount: '20 ml' },
+      { name: 'Soda water', amount: '80 ml' },
+    ],
+    instructions: [
+      'Shake the carrot juice, lemon and ginger syrup with ice.',
+      'Strain into a tall glass over fresh ice.',
+      'Top with soda and curl a ribbon of carrot inside the glass.',
+    ],
+  },
 ]
 
 // Rough popularity ranking — most famous cocktails first, so the Discover list
@@ -8104,12 +9547,18 @@ const POPULARITY = [
   'blue-lagoon', 'vodka-tonic', 'gin-tonic', 'japanese-highball', 'porto-tonico',
   'beton', 'long-island', 'whiskey-sour', 'bourbon-sour', 'scotch-sour',
   'gin-sour', 'mai-tai', 'hurricane', 'painkiller', 'blue-hurricane',
+  'pornstar-martini', 'bees-knees', 'southside', 'eastside', 'chocolate-martini',
+  'maple-old-fashioned', 'spicy-margarita', 'mango-margarita', 'aperol-sour', 'limoncello-spritz',
   'barracuda', 'bloody-mary', 'bloody-maria', 'caesar', 'michelada',
   'mimosa', 'tequila-sunrise', 'caipirinha', 'caipirissima', 'dark-caipirinha',
   'ti-punch', 'canchanchara', 'batida-de-coco', 'sex-on-the-beach', 'fuzzy-navel',
   'appletini', 'cuba-libre', 'white-russian', 'french-75', 'bellini',
+  'frose', 'rose-sangria', 'autumn-sangria', 'bay-breeze', 'madras',
+  'sgroppino', 'radler', 'black-and-tan', 'pink-gin', 'sloe-gin-fizz',
   'sangria', 'wine-punch', 'sunny-holiday-punch', 'kalimotxo', 'agua-de-valencia',
   'glogg', 'kir', 'bicicletta', 'rebujito', 'mulled-wine',
+  'hot-buttered-rum', 'coquito', 'tom-and-jerry', 'poinsettia', 'bombardino',
+  'jagertee', 'whisky-mac', 'sherry-eggnog', 'wassail', 'apple-cider-mule',
   'snowball', 'szarlotka', 'umeshu-soda', 'soju-yakult', 'screwdriver',
   'harvey-wallbanger', 'tom-collins', 'gin-cooler', 'california-lemonade', 'new-york-lemonade',
   'dark-and-stormy', 'corn-n-oil', 'paloma', 'cantarito', 'ranch-water',
@@ -8118,6 +9567,8 @@ const POPULARITY = [
   'amaretto-sour', 'amaretto-stone-sour', 'stone-sour', 'apricot-lady', 'sidecar',
   'applecar', 'white-lady', 'angel-face', 'tuxedo-cocktail', 'boomerang',
   'japanese-slipper', 'sakura-martini', 'mint-julep', 'brandy-cobbler', 'rum-cobbler',
+  'jasmine-cocktail', 'french-blonde', 'rose-cocktail', 'blackthorn', 'shamrock',
+  'chartreuse-swizzle', 'green-beast', 'scotch-cobbler', 'kentucky-b-and-b', 'sol-y-sombra',
   'gin-daisy', 'gin-smash', 'gin-sling', 'singapore-sling', 'darkwood-sling',
   'orange-oasis', 'irish-coffee', 'italian-coffee', 'mexican-coffee', 'spanish-coffee',
   'carajillo', 'caffe-corretto', 'revolver', 'mudslide', 'mind-eraser',
@@ -8127,8 +9578,12 @@ const POPULARITY = [
   'brandy-sour', 'aviation', 'boulevardier', 'old-pal', 'bramble',
   'pimms-cup', 'clover-club', 'gin-fizz', 'royal-gin-fizz', 'vesper',
   'zombie', 'jungle-bird', 'rum-punch', 'rum-swizzle', 'queens-park-swizzle',
+  'blood-orange-negroni', 'rhubarb-collins', 'strawberry-basil-smash', 'coconut-mojito', 'calvados-sour',
+  'cranberry-bourbon-smash', 'chai-old-fashioned', 'spiced-pear-martini', 'gingerbread-martini', 'salted-toffee-martini',
   'goombay-smash', 'russian-spring-punch', 'last-word', 'corpse-reviver', 'americano',
   'kir-royale', 'grasshopper', 'irish-cream', 'b-52', 'baby-guinness',
+  'midnight-mint', 'brigadier', 'black-magic', 'pumpkin-spice-white-russian', 'apple-grande',
+  'duchamps-punch', 'rosemary-blue',
   'slippery-nipple', 'b-53', 'after-five', '747', 'oreo-mudslide',
   'coffee-cocktail', 'kioki-coffee', 'cafe-savoy', 'hot-creamy-bush', 'almond-chocolate-coffee',
   'quentin', 'lord-and-lady', 'jamaica-kiss', 'blue-mountain', 'avalanche',
@@ -8162,6 +9617,8 @@ const POPULARITY = [
   'apple-karate', 'kill-the-cold-smoothie',
   'bora-bora', 'afterglow', 'ipanema', 'strawberry-lemonade',
   'limeade', 'orangeade', 'fruit-cooler', 'cranberry-punch', 'aloha-fruit-punch',
+  'peppermint-hot-chocolate', 'witches-brew', 'toffee-apple-punch', 'lavender-lemonade',
+  'elderflower-cooler', 'cucumber-lemonade', 'carrot-ginger-fizz',
   'thai-iced-tea', 'thai-iced-coffee', 'melya', 'greek-frappe', 'masala-chai', 'mango-lassi', 'moroccan-mint-tea',
   'karkade', 'rooibos-iced-tea', 'banana-milkshake', 'banana-strawberry-shake', 'sweet-bananas',
   'fruit-shake', 'grape-lemon-pineapple', 'spiced-peach-punch', 'halloween-punch',
@@ -8186,7 +9643,7 @@ const SPIRIT_DEFS = [
   { name: 'Whiskey', re: /whisk|bourbon|\brye\b|scotch/i },
   { name: 'Rum', re: /\brh?um\b|aguardente/i },
   { name: 'Tequila', re: /tequila/i },
-  { name: 'Brandy', re: /brandy|cognac|calvados/i },
+  { name: 'Brandy', re: /brandy|cognac|calvados|applejack/i },
   { name: 'Cachaça', re: /cachaça|cachaca/i },
   { name: 'Aquavit', re: /aquavit|akvavit/i },
   { name: 'Grappa', re: /grappa/i },
@@ -8199,8 +9656,11 @@ const SPIRIT_DEFS = [
   { name: 'Soju', re: /soju/i },
   { name: 'Plum wine', re: /umeshu|plum wine/i },
   { name: 'Arak', re: /\barak\b|ouzo|anisette/i },
-  { name: 'Beer', re: /\blager\b/i },
+  { name: 'Beer', re: /\blager\b|\bstout\b|\bale\b|guinness/i },
 
+  { name: 'Sloe gin', re: /sloe gin/i },
+  { name: 'Ginger wine', re: /ginger wine/i },
+  { name: 'Cider', re: /\bcider\b/i },
   { name: 'Lillet', re: /lillet/i },
   // Blue curaçao is listed separately from plain triple sec — people stock it
   // as its own bottle — so triple sec explicitly ignores the blue version.
@@ -8213,6 +9673,8 @@ const SPIRIT_DEFS = [
   { name: 'Amaretto', re: /amaretto/i },
   { name: 'Maraschino', re: /maraschino/i },
   { name: 'Chartreuse', re: /chartreuse/i },
+  { name: 'Limoncello', re: /limoncello/i },
+  { name: 'Chocolate liqueur', re: /chocolate liqueur|godiva/i },
   { name: 'Absinthe', re: /absinthe/i },
   { name: 'Coffee liqueur', re: /coffee liqueur/i },
   { name: 'Sambuca', re: /sambuca/i },
@@ -8295,7 +9757,7 @@ const COFFEE_RE = /coffee|espresso|cold brew/i
 const MIXER_RE =
   /(tonic|soda water|club soda|\bsoda\b|cola|coke|ginger beer|ginger ale|lemonade|grapefruit soda|sprite|7[- ]?up|bitter lemon)/i
 const ALCOHOL_RE =
-  /(rum|gin\b|vodka|whisk|bourbon|\brye\b|scotch|tequila|mezcal|brandy|cognac|cacha|pisco|liqueur|vermouth|campari|aperol|cointreau|triple sec|curac|amaretto|kahlua|baileys|irish cream|prosecco|champagne|sparkling wine|\bwine\b|sherry|\bport\b|absinthe|chartreuse|grand marnier|sambuca|schnapps|bitters|maraschino|chambord|st[- ]?germain|elderflower liqueur|sloe gin|drambuie|benedictine|galliano|midori|limoncello|advocaat|becherovka|fernet|pimm|\barak\b|ouzo|\bsake\b|soju|umeshu|plum wine|\blager\b|aguardente|amarula|falernum|apfelkorn|grappa|aquavit|frangelico|licor 43|grain spirit|pisang|kirsch|goldschl|applejack|yukon jack)/i
+  /(rum|gin\b|vodka|whisk|bourbon|\brye\b|scotch|tequila|mezcal|brandy|cognac|cacha|pisco|liqueur|vermouth|campari|aperol|cointreau|triple sec|curac|amaretto|kahlua|baileys|irish cream|prosecco|champagne|sparkling wine|\bwine\b|sherry|\bport\b|absinthe|chartreuse|grand marnier|sambuca|schnapps|bitters|maraschino|chambord|st[- ]?germain|elderflower liqueur|sloe gin|drambuie|benedictine|galliano|midori|limoncello|advocaat|becherovka|fernet|pimm|\barak\b|ouzo|\bsake\b|soju|umeshu|plum wine|\blager\b|aguardente|amarula|falernum|apfelkorn|anisette|\bcider\b|\bstout\b|\bale\b|guinness|grappa|aquavit|frangelico|licor 43|grain spirit|pisang|kirsch|goldschl|applejack|yukon jack)/i
 
 // Any curated `category` that is inherently alcoholic.
 const ALCOHOLIC_CATEGORIES = new Set([
@@ -8446,42 +9908,180 @@ const SERVE_WORDS = {
   Muddled: ['fresh herbs'],
 }
 
-// When a drink comes into its own. Only where it genuinely belongs to an
-// occasion — guessing at the rest would just water the search down.
-const OCCASIONS = {
-  'christmas winter festive': [
-    'glogg', 'mulled-wine', 'eggnog-classic', 'snowball', 'hot-chocolate',
-    'marshmallow-hot-chocolate', 'castillian-hot-chocolate', 'orange-hot-chocolate',
-    'irish-coffee', 'gin-toddy', 'rum-toddy', 'sujeonggwa', 'apple-cider-punch',
-    'kill-the-cold-smoothie', 'spanish-coffee', 'italian-coffee',
+/* -------------------- season & occasion -------------------- */
+// Which time of year a drink belongs to, and which day of the calendar it is
+// poured on. Both are filters on Discover as well as search terms.
+
+export const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter']
+
+export const OCCASIONS = [
+  'Christmas', 'New Year', "Valentine's", 'Easter', "St Patrick's",
+  'Halloween', 'Thanksgiving', 'Oktoberfest', 'Carnival',
+]
+
+// A drink lands in a season when its ingredients say so — the fruit and spice
+// people actually cook with at that time of year.
+const SEASON_INGREDIENTS = {
+  Spring: /elderflower|cucumber|rhubarb|lavender|rose syrup|sirup of roses|basil|jasmine|sakura|violette|honey|pea |mint leaves|green chartreuse|matcha/i,
+  Summer: /watermelon|coconut|passion fruit|pineapple|mango|melon|papaya|guava|ros[eé] wine|limoncello|aperol|prosecco|agave|grapefruit|peach nectar|sorbet/i,
+  Autumn: /\bapples?\b|\bpears?\b|cider|cinnamon|maple|nutmeg|clove|allspice|pumpkin|sloe|blackberry|\bfigs?\b|chestnut|toffee|caramel|ginger wine/i,
+  Winter: /egg ?nog|advocaat|peppermint|cr[eè]me de menthe|cocoa|chocolate|mulled|butter|condensed milk|star anise|molasses|gingerbread|irish cream/i,
+}
+
+// Seasons a drink also earns from how it is served.
+const SEASON_SERVES = { Summer: ['Frozen', 'Tiki'], Winter: ['Hot'] }
+
+// Where the ingredients don't tell the story, say so outright.
+const SEASON_IDS = {
+  Spring: [
+    'bees-knees', 'southside', 'eastside', 'jasmine-cocktail', 'french-blonde',
+    'rhubarb-collins', 'strawberry-basil-smash', 'green-beast', 'chartreuse-swizzle',
+    'rosemary-blue', 'duchamps-punch', 'lavender-lemonade', 'elderflower-cooler',
+    'hugo-spritz', 'sakura-martini', 'clover-club', 'bramble', 'aviation',
+    'mimosa', 'bellini', 'virgin-bellini', 'carrot-ginger-fizz', 'ipanema',
   ],
-  halloween: ['halloween-punch'],
-  'new year celebration wedding': [
-    'champagne-cocktail', 'french-75', 'mimosa', 'bellini', 'virgin-bellini',
-    'kir-royale', 'aperol-spritz', 'hugo-spritz',
+  Summer: [
+    'pornstar-martini', 'frose', 'limoncello-spritz', 'aperol-sour', 'sgroppino',
+    'coconut-mojito', 'mango-margarita', 'bay-breeze', 'madras', 'spicy-margarita',
+    'rose-sangria', 'radler', 'cucumber-lemonade', 'mojito', 'virgin-mojito',
+    'aperol-spritz', 'paloma', 'ranch-water', 'sea-breeze', 'greyhound', 'salty-dog',
+    'arnold-palmer', 'pink-lemonade', 'watermelon-agua-fresca', 'michelada',
+    'kalimotxo', 'rebujito', 'espresso-tonic', 'gin-tonic', 'vodka-tonic',
+    'blue-lagoon', 'sangria', 'caipirinha', 'ti-punch',
   ],
-  'brunch morning': ['mimosa', 'bloody-mary', 'virgin-mary', 'caesar', 'bellini', 'espresso-tonic'],
-  'summer beach pool holiday': [
-    'pina-colada', 'virgin-pina-colada', 'mojito', 'virgin-mojito', 'aperol-spritz',
-    'watermelon-agua-fresca', 'pink-lemonade', 'arnold-palmer', 'sea-breeze',
-    'paloma', 'ranch-water', 'blue-lagoon', 'bora-bora',
+  Autumn: [
+    'maple-old-fashioned', 'apple-cider-mule', 'spiced-pear-martini', 'calvados-sour',
+    'apple-grande', 'blackthorn', 'sloe-gin-fizz', 'autumn-sangria',
+    'cranberry-bourbon-smash', 'chai-old-fashioned', 'scotch-cobbler',
+    'salted-toffee-martini', 'toffee-apple-punch', 'whisky-mac', 'appletini',
+    'applecar', 'szarlotka', 'boulevardier', 'vieux-carre', 'sazerac', 'penicillin',
+    'rusty-nail', 'godfather', 'apple-cider-punch', 'pumpkin-spice-white-russian',
+    'poncha', 'spiced-peach-punch',
+  ],
+  Winter: [
+    'hot-buttered-rum', 'coquito', 'bombardino', 'tom-and-jerry', 'sherry-eggnog',
+    'poinsettia', 'peppermint-hot-chocolate', 'midnight-mint', 'gingerbread-martini',
+    'jagertee', 'wassail', 'kentucky-b-and-b', 'sol-y-sombra', 'brigadier',
+    'glogg', 'mulled-wine', 'eggnog-classic', 'snowball', 'irish-coffee',
+    'italian-coffee', 'spanish-coffee', 'mexican-coffee', 'gin-toddy', 'rum-toddy',
+    'hot-chocolate', 'marshmallow-hot-chocolate', 'castillian-hot-chocolate',
+    'orange-hot-chocolate', 'sujeonggwa', 'grasshopper', 'brandy-alexander',
+    'white-russian', 'black-russian', 'rum-milk-punch', 'kill-the-cold-smoothie',
   ],
 }
 
-const OCCASION_WORDS = (() => {
+// Holidays are specific, so these are named one by one rather than guessed at.
+const OCCASION_IDS = {
+  Christmas: [
+    'glogg', 'mulled-wine', 'eggnog-classic', 'sherry-eggnog', 'tom-and-jerry',
+    'coquito', 'snowball', 'poinsettia', 'gingerbread-martini', 'midnight-mint',
+    'peppermint-hot-chocolate', 'hot-buttered-rum', 'wassail', 'bombardino',
+    'jagertee', 'brigadier', 'irish-coffee', 'marshmallow-hot-chocolate',
+    'castillian-hot-chocolate', 'orange-hot-chocolate', 'hot-chocolate',
+    'cranberry-bourbon-smash', 'sujeonggwa', 'kentucky-b-and-b',
+  ],
+  'New Year': [
+    'champagne-cocktail', 'french-75', 'kir-royale', 'poinsettia', 'bellini',
+    'virgin-bellini', 'mimosa', 'sgroppino', 'aperol-spritz', 'hugo-spritz',
+    'negroni-sbagliato', 'espresso-martini', 'barracuda',
+  ],
+  "Valentine's": [
+    'rose-cocktail', 'pink-gin', 'chocolate-martini', 'kir-royale', 'french-martini',
+    'clover-club', 'pink-lady', 'black-forest-shake', 'brandy-alexander',
+    'salted-toffee-martini', 'raspberry-cooler', 'midnight-mint',
+  ],
+  Easter: [
+    'chocolate-martini', 'carrot-ginger-fizz', 'mimosa', 'bellini', 'virgin-bellini',
+    'bees-knees', 'lavender-lemonade', 'elderflower-cooler', 'snowball',
+    'hot-chocolate', 'sweet-bananas', 'french-blonde',
+  ],
+  "St Patrick's": [
+    'irish-coffee', 'irish-cream', 'hot-creamy-bush', 'nutty-irishman',
+    'baby-guinness', 'irish-spring', 'tipperary', 'shamrock', 'black-and-tan',
+    'grasshopper',
+  ],
+  Halloween: [
+    'halloween-punch', 'witches-brew', 'black-magic', 'blood-orange-negroni',
+    'pumpkin-spice-white-russian', 'zombie', 'corpse-reviver', 'vampiro',
+    'bloody-mary', 'toffee-apple-punch',
+  ],
+  Thanksgiving: [
+    'cranberry-bourbon-smash', 'maple-old-fashioned', 'apple-cider-punch',
+    'autumn-sangria', 'chai-old-fashioned', 'spiced-pear-martini', 'eggnog-classic',
+    'wassail', 'apple-cider-mule',
+  ],
+  Oktoberfest: ['radler', 'michelada', 'black-and-tan', 'beton'],
+  Carnival: [
+    'caipirinha', 'caipirissima', 'dark-caipirinha', 'batida-de-coco', 'hurricane',
+    'sazerac', 'vieux-carre', 'ramos-gin-fizz', 'grasshopper', 'ipanema',
+  ],
+}
+
+const invert = (groups) => {
   const map = {}
-  for (const [words, ids] of Object.entries(OCCASIONS)) {
-    for (const id of ids) (map[id] ||= []).push(...words.split(' '))
+  for (const [name, ids] of Object.entries(groups)) {
+    for (const id of ids) (map[id] ||= []).push(name)
   }
   return map
-})()
+}
+const SEASON_BY_ID = invert(SEASON_IDS)
+const OCCASION_BY_ID = invert(OCCASION_IDS)
+
+// Which seasons a drink suits. A drink can suit more than one.
+export function seasonsOf(cocktail) {
+  if (!cocktail) return []
+  const found = new Set(SEASON_BY_ID[cocktail.id] || [])
+  const text = (cocktail.ingredients || []).map((i) => i.name).join(' | ')
+  for (const season of SEASONS) {
+    if (SEASON_INGREDIENTS[season].test(text)) found.add(season)
+  }
+  const serves = serveStylesOf(cocktail)
+  for (const [season, wanted] of Object.entries(SEASON_SERVES)) {
+    if (wanted.some((w) => serves.includes(w))) found.add(season)
+  }
+  return SEASONS.filter((s) => found.has(s))
+}
+
+// Which holidays a drink belongs to.
+export function occasionsOf(cocktail) {
+  return cocktail ? OCCASION_BY_ID[cocktail.id] || [] : []
+}
+
+// Only offer seasons and occasions the catalogue actually contains.
+const present = (all, of_) => {
+  const seen = new Set()
+  for (const c of cocktails) for (const v of of_(c)) seen.add(v)
+  return all.filter((v) => seen.has(v))
+}
+export const SEASONS_PRESENT = present(SEASONS, seasonsOf)
+export const OCCASIONS_PRESENT = present(OCCASIONS, occasionsOf)
+
+// The other words people search these by.
+const OCCASION_WORDS = {
+  Christmas: ['xmas', 'festive', 'yule', 'noel'],
+  'New Year': ['nye', 'midnight', 'celebration', 'toast'],
+  "Valentine's": ['valentine', 'romantic', 'date night'],
+  Easter: ['spring holiday'],
+  "St Patrick's": ['st patricks day', 'paddys', 'ireland'],
+  Halloween: ['spooky', 'trick or treat', 'pumpkin'],
+  Thanksgiving: ['harvest'],
+  Oktoberfest: ['beer festival', 'bavaria'],
+  Carnival: ['mardi gras', 'carnaval'],
+}
+
+const SEASON_WORDS = {
+  Spring: ['springtime'],
+  Summer: ['summertime', 'beach', 'holiday', 'hot weather', 'pool', 'bbq'],
+  Autumn: ['fall', 'harvest'],
+  Winter: ['cold weather', 'fireside'],
+}
 
 // The other name people use for an ingredient. Recipes have to pick one
 // spelling; the search box shouldn't make you guess which.
 const INGREDIENT_WORDS = [
   [/\bcola\b/i, ['coke', 'coca cola']],
   [/soda water/i, ['seltzer', 'club soda', 'sparkling water', 'fizzy water']],
-  [/lemon-lime soda/i, ['sprite', '7up', 'lemonade']],
+  [/lemon-lime soda|lemon soda/i, ['sprite', '7up', 'lemonade']],
   [/cream of coconut|coconut cream|coconut milk/i, ['coconut']],
   [/sugar syrup/i, ['simple syrup']],
   [/single cream|double cream|heavy cream/i, ['cream']],
@@ -8491,8 +10091,9 @@ const INGREDIENT_WORDS = [
   [/triple sec/i, ['cointreau', 'orange liqueur']],
   [/melon liqueur/i, ['midori']],
   [/aged rum|dark rum/i, ['brown rum']],
-  [/light rum/i, ['white rum']],
+  [/light rum|white rum/i, ['white rum']],
   [/whisky|whiskey/i, ['whisky', 'whiskey']],
+  [/calvados|applejack/i, ['apple brandy']],
   [/yoghurt/i, ['yogurt']],
 ]
 
@@ -8516,7 +10117,15 @@ export function keywordsOf(cocktail) {
   }
   for (const glass of glassesOf(cocktail)) words.add(glass)
   for (const tag of cocktail.tags || []) words.add(tag)
-  for (const w of OCCASION_WORDS[cocktail.id] || []) words.add(w)
+
+  for (const season of seasonsOf(cocktail)) {
+    words.add(season)
+    for (const w of SEASON_WORDS[season] || []) words.add(w)
+  }
+  for (const occasion of occasionsOf(cocktail)) {
+    words.add(occasion)
+    for (const w of OCCASION_WORDS[occasion] || []) words.add(w)
+  }
 
   return Array.from(words)
 }
