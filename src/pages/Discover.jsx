@@ -23,6 +23,7 @@ import FilterSheet from '../components/FilterSheet'
 import { IconSearch, IconClose, IconFilters } from '../components/icons'
 import { useSavedIds, useUserRecipes } from '../lib/hooks'
 import { searchCocktails } from '../lib/search'
+import { useI18n } from '../lib/i18n'
 import { savedFilters } from '../lib/discoverFilters'
 
 export default function Discover() {
@@ -37,6 +38,7 @@ export default function Discover() {
   const [filtersOpen, setFiltersOpen] = useState(false)
   const savedIds = useSavedIds()
   const { recipes } = useUserRecipes()
+  const { t, tt } = useI18n()
 
   // Remember the current selection for when we come back to this page.
   useEffect(() => {
@@ -98,8 +100,8 @@ export default function Discover() {
       <header className="app-header">
         <div>
           <div className="eyebrow">Mixly</div>
-          <h1>Discover</h1>
-          <div className="sub">Find your next favourite pour</div>
+          <h1>{t('Discover')}</h1>
+          <div className="sub">{t('Find your next favourite pour')}</div>
         </div>
       </header>
 
@@ -110,7 +112,7 @@ export default function Discover() {
           <IconSearch />
           <input
             type="text"
-            placeholder="Search a drink, ingredient or country…"
+            placeholder={t('Search a drink, ingredient or country…')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -118,7 +120,7 @@ export default function Discover() {
             <button
               className="search-clear"
               onClick={clearFilters}
-              aria-label="Clear search and filters"
+              aria-label={t('Clear search and filters')}
             >
               <IconClose />
             </button>
@@ -127,7 +129,7 @@ export default function Discover() {
         <button
           className={'filter-toggle' + (activeCount ? ' on' : '')}
           onClick={() => setFiltersOpen(true)}
-          aria-label="Open filters"
+          aria-label={t('Open filters')}
         >
           <IconFilters />
           {activeCount > 0 && <span className="filter-badge">{activeCount}</span>}
@@ -138,8 +140,9 @@ export default function Discover() {
       {groups.slice(0, 2).map((g) => (
         <div className="filter-group" key={g.label}>
           <FilterChips
-            allLabel={g.allLabel}
+            allLabel={t(g.allLabel)}
             options={g.options}
+            label={tt}
             value={g.value}
             onChange={g.onChange}
           />
@@ -148,11 +151,11 @@ export default function Discover() {
 
       <div className="result-bar">
         <span>
-          {filtered.length} {filtered.length === 1 ? 'cocktail' : 'cocktails'}
+          {filtered.length} {t(filtered.length === 1 ? 'cocktail' : 'cocktails')}
         </span>
         {hasFilters && (
           <button className="clear-filters" onClick={clearFilters}>
-            Clear filters
+            {t('Clear filters')}
           </button>
         )}
       </div>
@@ -160,8 +163,8 @@ export default function Discover() {
       {filtered.length === 0 ? (
         <div className="empty">
           <div className="icon">🍸</div>
-          <h3>No cocktails found</h3>
-          <p>Try a different search or filter.</p>
+          <h3>{t('No cocktails found')}</h3>
+          <p>{t('Try a different search or filter.')}</p>
         </div>
       ) : (
         <div className="grid">

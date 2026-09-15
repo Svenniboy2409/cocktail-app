@@ -127,6 +127,35 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 .header-action svg { color: var(--amber); }
 .header-action:active { transform: scale(0.96); }
 
+/* Two buttons side by side in a page header (My bar + the settings cog). */
+.header-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+.header-action.icon-only { padding: 9px; }
+
+/* ---- settings: language picker ---- */
+.lang-options { display: flex; flex-direction: column; gap: 8px; }
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 13px 15px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.lang-option:active { transform: scale(0.99); }
+.lang-option.on { border-color: var(--amber); background: rgba(212, 160, 90, 0.12); }
+.lang-flag { font-size: 20px; line-height: 1; }
+.lang-name { flex: 1; }
+.lang-tick { color: var(--amber); font-weight: 700; }
+
 /* ---- recommendations (Discover, above search) ---- */
 .recs {
   margin-bottom: 22px;

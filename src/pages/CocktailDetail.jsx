@@ -8,11 +8,13 @@ import { IconBack, IconBookmark, IconGlass, IconGarnish, IconPlace, IconTrash, I
 import { searchFor } from '../lib/discoverFilters'
 import { forgetScrollPosition } from '../components/ScrollManager'
 import { useToast } from '../components/Toast'
+import { useI18n } from '../lib/i18n'
 
 export default function CocktailDetail({ onEdit }) {
   const { id } = useParams()
   const navigate = useNavigate()
   const showToast = useToast()
+  const { t, tt } = useI18n()
   const savedIds = useSavedIds()
   const { recipes, loading } = useUserRecipes()
 
@@ -30,8 +32,8 @@ export default function CocktailDetail({ onEdit }) {
       <div className="page">
         <div className="empty">
           <div className="icon">🤔</div>
-          <h3>Cocktail not found</h3>
-          <Link className="btn btn-primary" to="/">Back to Discover</Link>
+          <h3>{t('Cocktail not found')}</h3>
+          <Link className="btn btn-primary" to="/">{t('Back to Discover')}</Link>
         </div>
       </div>
     )
@@ -61,29 +63,29 @@ export default function CocktailDetail({ onEdit }) {
 
   const handleSave = () => {
     const now = toggleSaved(cocktail.id)
-    showToast(now ? 'Saved to your library' : 'Removed from library')
+    showToast(t(now ? 'Saved to library' : 'Removed from library'))
   }
 
   const handleDelete = async () => {
-    if (!window.confirm(`Delete "${cocktail.name}"? This can’t be undone.`)) return
+    if (!window.confirm(t('Delete “{name}”? This can’t be undone.', { name: cocktail.name }))) return
     await deleteRecipe(cocktail.id)
-    showToast('Recipe deleted')
+    showToast(t('Recipe deleted'))
     navigate('/library')
   }
 
   return (
     <div className="detail">
       <div className="detail-hero">
-        <button className="detail-back" onClick={() => navigate(-1)} aria-label="Go back">
+        <button className="detail-back" onClick={() => navigate(-1)} aria-label={t('Go back')}>
           <IconBack />
         </button>
         <img src={cocktail.image} alt={cocktail.name} />
         <div className="detail-hero-text">
-          <div className="eyebrow">{cocktail.category || 'Cocktail'}</div>
+          <div className="eyebrow">{tt(cocktail.category || 'Cocktail')}</div>
           <h1>{cocktail.name}</h1>
           <div className="detail-meta-row">
-            {cocktail.tags?.map((t) => (
-              <span className="pill" key={t}>{t}</span>
+            {cocktail.tags?.map((tag) => (
+              <span className="pill" key={tag}>{tt(tag)}</span>
             ))}
           </div>
         </div>
@@ -103,7 +105,7 @@ export default function CocktailDetail({ onEdit }) {
               <button
                 className="pill pill-link"
                 onClick={() => runSearch(glassTerm)}
-                title={`Show drinks served in a ${glassTerm.toLowerCase()} glass`}
+                title={t('Show drinks served in a {glass} glass', { glass: tt(glassTerm).toLowerCase() })}
               >
                 <IconGlass style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.glass}
               </button>
@@ -112,7 +114,7 @@ export default function CocktailDetail({ onEdit }) {
               <button
                 className="pill pill-link"
                 onClick={() => runSearch(garnishTerm)}
-                title={`Show drinks garnished with ${garnishTerm.toLowerCase()}`}
+                title={t('Show drinks garnished with {garnish}', { garnish: garnishTerm.toLowerCase() })}
               >
                 <IconGarnish style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.garnish}
               </button>
@@ -123,7 +125,7 @@ export default function CocktailDetail({ onEdit }) {
               <button
                 className="pill pill-link"
                 onClick={() => runSearch(place)}
-                title={`Show drinks from ${place}`}
+                title={t('Show drinks from {place}', { place })}
               >
                 <IconPlace style={{ verticalAlign: '-4px', marginRight: 6 }} />{origin}
               </button>
@@ -133,7 +135,7 @@ export default function CocktailDetail({ onEdit }) {
 
         {cocktail.ingredients?.length > 0 && (
           <div className="detail-section">
-            <h2>Ingredients</h2>
+            <h2>{t('Ingredients')}</h2>
             <ul className="ingredients">
               {cocktail.ingredients.map((ing, i) => (
                 <li key={i}>
@@ -147,7 +149,7 @@ export default function CocktailDetail({ onEdit }) {
 
         {cocktail.instructions?.length > 0 && (
           <div className="detail-section">
-            <h2>Recipe</h2>
+            <h2>{t('Recipe')}</h2>
             <ol className="steps">
               {cocktail.instructions.map((step, i) => (
                 <li key={i}><p>{step}</p></li>
@@ -159,17 +161,17 @@ export default function CocktailDetail({ onEdit }) {
         <div className="detail-actions">
           <button className={'btn btn-block ' + (saved ? 'btn-ghost' : 'btn-primary')} onClick={handleSave}>
             <IconBookmark filled={saved} />
-            {saved ? 'Saved to library' : 'Save to library'}
+            {t(saved ? 'Saved to library' : 'Save to library')}
           </button>
         </div>
 
         {cocktail.isCustom && (
           <div className="detail-actions">
             <button className="btn" style={{ flex: 1 }} onClick={() => onEdit?.(cocktail)}>
-              <IconEdit /> Edit
+              <IconEdit /> {t('Edit')}
             </button>
             <button className="btn btn-danger" style={{ flex: 1 }} onClick={handleDelete}>
-              <IconTrash /> Delete
+              <IconTrash /> {t('Delete')}
             </button>
           </div>
         )}

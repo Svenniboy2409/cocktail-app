@@ -5,6 +5,7 @@ import { addRecipe, updateRecipe } from '../lib/storage'
 import { useDismissableSheet } from '../lib/hooks'
 import { IconImage } from '../components/icons'
 import { useToast } from '../components/Toast'
+import { useI18n } from '../lib/i18n'
 
 const emptyForm = {
   name: '',
@@ -20,6 +21,7 @@ const emptyForm = {
 
 export default function CreateRecipe({ editing, onClose }) {
   const showToast = useToast()
+  const { t, tt } = useI18n()
   const fileRef = useRef(null)
   const [form, setForm] = useState(emptyForm)
   const [error, setError] = useState('')
@@ -73,7 +75,7 @@ export default function CreateRecipe({ editing, onClose }) {
 
   const handleSave = async () => {
     setError('')
-    if (!form.name.trim()) return setError('Give your cocktail a name.')
+    if (!form.name.trim()) return setError(t('Give your cocktail a name.'))
     if (!form.image) return setError('Add a photo of your cocktail.')
 
     const cleaned = {
@@ -95,14 +97,14 @@ export default function CreateRecipe({ editing, onClose }) {
     try {
       if (editing) {
         await updateRecipe(editing.id, cleaned)
-        showToast('Recipe updated')
+        showToast(t('Recipe updated'))
       } else {
         await addRecipe(cleaned)
-        showToast('Recipe added to your library')
+        showToast(t('Recipe added to your library'))
       }
       onClose(true)
     } catch {
-      setError('Something went wrong while saving.')
+      setError(t('Something went wrong while saving.'))
       setBusy(false)
     }
   }
@@ -114,13 +116,13 @@ export default function CreateRecipe({ editing, onClose }) {
         <div className="sheet-handle" {...handleProps}>
           <div className="sheet-grip" />
           <div className="sheet-head">
-            <h2>{editing ? 'Edit recipe' : 'New recipe'}</h2>
+            <h2>{t(editing ? 'Edit recipe' : 'New recipe')}</h2>
             <button
               className="sheet-close"
               onClick={() => onClose(false)}
               onPointerDown={(e) => e.stopPropagation()}
             >
-              Cancel
+              {t('Cancel')}
             </button>
           </div>
         </div>
@@ -128,12 +130,12 @@ export default function CreateRecipe({ editing, onClose }) {
         <div className="sheet-body">
           {/* image */}
           <div className="field">
-            <label>Photo</label>
+            <label>{t('Photo')}</label>
             <div className="image-upload" onClick={() => fileRef.current?.click()}>
               {form.image ? (
                 <>
-                  <img src={form.image} alt="Preview" />
-                  <span className="replace">Replace</span>
+                  <img src={form.image} alt={t('Preview')} />
+                  <span className="replace">{t('Replace')}</span>
                 </>
               ) : (
                 <div className="up-inner">
@@ -147,10 +149,10 @@ export default function CreateRecipe({ editing, onClose }) {
 
           {/* name */}
           <div className="field">
-            <label>Name</label>
+            <label>{t('Name')}</label>
             <input
               className="input"
-              placeholder="e.g. Midnight Espresso"
+              placeholder={t('e.g. Midnight Espresso')}
               value={form.name}
               onChange={(e) => set({ name: e.target.value })}
             />
@@ -158,10 +160,10 @@ export default function CreateRecipe({ editing, onClose }) {
 
           {/* category */}
           <div className="field">
-            <label>Base spirit / category <span className="hint">(optional)</span></label>
+            <label>{t('Base spirit / category')} <span className="hint">{t('(optional)')}</span></label>
             <input
               className="input"
-              placeholder="e.g. Rum, Gin, Mocktail…"
+              placeholder={t('e.g. Rum, Gin, Mocktail…')}
               value={form.category}
               onChange={(e) => set({ category: e.target.value })}
             />
@@ -169,16 +171,16 @@ export default function CreateRecipe({ editing, onClose }) {
 
           {/* tags */}
           <div className="field">
-            <label>Tags</label>
+            <label>{t('Tags')}</label>
             <div className="chips" style={{ margin: 0, padding: 0, flexWrap: 'wrap', overflow: 'visible' }}>
-              {TAGS.map((t) => (
+              {TAGS.map((tag) => (
                 <button
                   type="button"
-                  key={t}
-                  className={'chip' + (form.tags.includes(t) ? ' active' : '')}
-                  onClick={() => toggleTag(t)}
+                  key={tag}
+                  className={'chip' + (form.tags.includes(tag) ? ' active' : '')}
+                  onClick={() => toggleTag(tag)}
                 >
-                  {t}
+                  {tt(tag)}
                 </button>
               ))}
             </div>
@@ -186,10 +188,10 @@ export default function CreateRecipe({ editing, onClose }) {
 
           {/* scenario */}
           <div className="field">
-            <label>When to serve it <span className="hint">(the perfect scenario)</span></label>
+            <label>{t('When to serve it')} <span className="hint">{t('(the perfect scenario)')}</span></label>
             <textarea
               className="textarea"
-              placeholder="Describe the moment this cocktail is made for…"
+              placeholder={t('Describe the moment this cocktail is made for…')}
               value={form.scenario}
               onChange={(e) => set({ scenario: e.target.value })}
             />
@@ -197,23 +199,23 @@ export default function CreateRecipe({ editing, onClose }) {
 
           {/* glass + garnish */}
           <div className="field">
-            <label>Glass <span className="hint">(optional)</span></label>
-            <input className="input" placeholder="e.g. Coupe" value={form.glass} onChange={(e) => set({ glass: e.target.value })} />
+            <label>{t('Glass')} <span className="hint">{t('(optional)')}</span></label>
+            <input className="input" placeholder={t('e.g. Coupe')} value={form.glass} onChange={(e) => set({ glass: e.target.value })} />
           </div>
           <div className="field">
-            <label>Garnish <span className="hint">(optional)</span></label>
-            <input className="input" placeholder="e.g. Orange peel" value={form.garnish} onChange={(e) => set({ garnish: e.target.value })} />
+            <label>{t('Garnish')} <span className="hint">{t('(optional)')}</span></label>
+            <input className="input" placeholder={t('e.g. Orange peel')} value={form.garnish} onChange={(e) => set({ garnish: e.target.value })} />
           </div>
 
           {/* ingredients */}
           <div className="field">
-            <label>Ingredients</label>
+            <label>{t('Ingredients')}</label>
             <div className="row-list">
               {form.ingredients.map((ing, i) => (
                 <div className="dyn-row" key={i}>
                   <input
                     className="input"
-                    placeholder="Ingredient"
+                    placeholder={t('Ingredient')}
                     value={ing.name}
                     onChange={(e) => setIng(i, 'name', e.target.value)}
                   />
@@ -223,31 +225,31 @@ export default function CreateRecipe({ editing, onClose }) {
                     value={ing.amount}
                     onChange={(e) => setIng(i, 'amount', e.target.value)}
                   />
-                  <button type="button" className="row-del" onClick={() => delIng(i)} aria-label="Remove">×</button>
+                  <button type="button" className="row-del" onClick={() => delIng(i)} aria-label={t('Remove')}>×</button>
                 </div>
               ))}
             </div>
-            <button type="button" className="add-row" onClick={addIng}>+ Add ingredient</button>
+            <button type="button" className="add-row" onClick={addIng}>{t('+ Add ingredient')}</button>
           </div>
 
           {/* steps */}
           <div className="field">
-            <label>Recipe steps</label>
+            <label>{t('Recipe steps')}</label>
             <div className="row-list">
               {form.instructions.map((step, i) => (
                 <div className="dyn-row" key={i}>
                   <span className="dyn-num">{i + 1}</span>
                   <input
                     className="input"
-                    placeholder="Describe this step…"
+                    placeholder={t('Describe this step…')}
                     value={step}
                     onChange={(e) => setStep(i, e.target.value)}
                   />
-                  <button type="button" className="row-del" onClick={() => delStep(i)} aria-label="Remove">×</button>
+                  <button type="button" className="row-del" onClick={() => delStep(i)} aria-label={t('Remove')}>×</button>
                 </div>
               ))}
             </div>
-            <button type="button" className="add-row" onClick={addStep}>+ Add step</button>
+            <button type="button" className="add-row" onClick={addStep}>{t('+ Add step')}</button>
           </div>
 
           {error && <div className="field-error">{error}</div>}
@@ -255,7 +257,7 @@ export default function CreateRecipe({ editing, onClose }) {
 
         <div className="sheet-footer">
           <button className="btn btn-primary btn-block" onClick={handleSave} disabled={busy}>
-            {busy ? 'Saving…' : editing ? 'Save changes' : 'Add to library'}
+            {t(busy ? 'Saving…' : editing ? 'Save changes' : 'Add to library')}
           </button>
         </div>
       </div>

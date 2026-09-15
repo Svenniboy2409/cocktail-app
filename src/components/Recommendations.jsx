@@ -4,6 +4,7 @@ import CocktailCard from './CocktailCard'
 import { IconSparkle } from './icons'
 import { useSavedIds, useUserRecipes, usePantry } from '../lib/hooks'
 import { rankCandidates, pickRotating } from '../lib/recommend'
+import { useI18n } from '../lib/i18n'
 
 // How often the recommended pair rotates to the next candidates.
 const ROTATE_MS = 12000
@@ -12,6 +13,7 @@ export default function Recommendations() {
   const savedIds = useSavedIds()
   const { recipes } = useUserRecipes()
   const pantry = usePantry()
+  const { t } = useI18n()
 
   // Rotation tick — seeded from the clock so the first pair isn't always the
   // same, then advanced on an interval while the page is open.
@@ -43,14 +45,16 @@ export default function Recommendations() {
       <div className="recs-head">
         <div className="recs-title">
           <IconSparkle />
-          <h2>For your bar</h2>
+          <h2>{t('For your bar')}</h2>
         </div>
         <span className="recs-sub">
-          {hasBar
-            ? 'Made with what you have'
-            : hasTaste
-              ? 'Based on your library'
-              : 'A little inspiration'}
+          {t(
+            hasBar
+              ? 'Made with what you have'
+              : hasTaste
+                ? 'Based on your library'
+                : 'A little inspiration',
+          )}
         </span>
       </div>
 
@@ -75,8 +79,9 @@ export default function Recommendations() {
 
       {!hasBar && (
         <p className="recs-hint">
-          Tip: tell us what's in your bar from the <strong>Library</strong> tab for
-          recommendations you can actually mix.
+          {t('Tip: tell us what’s in your bar from the')}{' '}
+          <strong>{t('Library')}</strong>{' '}
+          {t('tab for recommendations you can actually mix.')}
         </p>
       )}
     </section>

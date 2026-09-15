@@ -1,4 +1,5 @@
 import { originKeywords } from './origins'
+import { NL_TERMS, NL_EXTRA } from '../lib/terms'
 
 // Curated set of popular cocktails.
 // Images are stable public URLs from TheCocktailDB. Scenario, ingredient
@@ -10125,6 +10126,17 @@ export function keywordsOf(cocktail) {
   for (const occasion of occasionsOf(cocktail)) {
     words.add(occasion)
     for (const w of OCCASION_WORDS[occasion] || []) words.add(w)
+  }
+
+  // The base spirit or category the recipe files itself under.
+  if (cocktail.category) words.add(cocktail.category)
+
+  // The Dutch for anything we just added, so "kerst", "zomer", "koffie",
+  // "wodka" and "alcoholvrij" find their drinks whichever language the app is
+  // set to — the catalogue itself stays in English.
+  for (const w of Array.from(words)) {
+    if (NL_TERMS[w]) words.add(NL_TERMS[w])
+    for (const extra of NL_EXTRA[w] || []) words.add(extra)
   }
 
   return Array.from(words)
