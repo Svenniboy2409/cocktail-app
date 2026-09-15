@@ -14,7 +14,7 @@ export default function CocktailDetail({ onEdit }) {
   const { id } = useParams()
   const navigate = useNavigate()
   const showToast = useToast()
-  const { t, tt } = useI18n()
+  const { t, tt, tr } = useI18n()
   const savedIds = useSavedIds()
   const { recipes, loading } = useUserRecipes()
 
@@ -95,7 +95,7 @@ export default function CocktailDetail({ onEdit }) {
         {cocktail.scenario && (
           <div className="scenario">
             <span className="q">“</span>
-            <p>{cocktail.scenario}</p>
+            <p>{tr(cocktail.scenario)}</p>
           </div>
         )}
 
@@ -107,7 +107,7 @@ export default function CocktailDetail({ onEdit }) {
                 onClick={() => runSearch(glassTerm)}
                 title={t('Show drinks served in a {glass} glass', { glass: tt(glassTerm).toLowerCase() })}
               >
-                <IconGlass style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.glass}
+                <IconGlass style={{ verticalAlign: '-4px', marginRight: 6 }} />{tr(cocktail.glass)}
               </button>
             )}
             {garnishTerm && garnishTerm !== 'None' && (
@@ -116,7 +116,7 @@ export default function CocktailDetail({ onEdit }) {
                 onClick={() => runSearch(garnishTerm)}
                 title={t('Show drinks garnished with {garnish}', { garnish: garnishTerm.toLowerCase() })}
               >
-                <IconGarnish style={{ verticalAlign: '-4px', marginRight: 6 }} />{cocktail.garnish}
+                <IconGarnish style={{ verticalAlign: '-4px', marginRight: 6 }} />{tr(cocktail.garnish)}
               </button>
             )}
             {/* Tapping the origin searches Discover for that place, which is
@@ -139,8 +139,8 @@ export default function CocktailDetail({ onEdit }) {
             <ul className="ingredients">
               {cocktail.ingredients.map((ing, i) => (
                 <li key={i}>
-                  <span className="ing-name">{ing.name}</span>
-                  {ing.amount && <span className="ing-amt">{ing.amount}</span>}
+                  <span className="ing-name">{tr(ing.name)}</span>
+                  {ing.amount && <span className="ing-amt">{tr(ing.amount)}</span>}
                 </li>
               ))}
             </ul>
@@ -152,7 +152,7 @@ export default function CocktailDetail({ onEdit }) {
             <h2>{t('Recipe')}</h2>
             <ol className="steps">
               {cocktail.instructions.map((step, i) => (
-                <li key={i}><p>{step}</p></li>
+                <li key={i}><p>{tr(step)}</p></li>
               ))}
             </ol>
           </div>

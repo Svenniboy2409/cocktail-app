@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { term } from './terms'
 
-// Interface language. English is the default; Dutch is the alternative. The
-// recipes themselves stay in English — this translates the app around them.
+// Interface language. English is the default; Dutch is the alternative.
 
 export const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇬🇧' },
@@ -194,6 +193,36 @@ const STRINGS = {
   },
 }
 
+/* -------------------- recipe text -------------------- */
+// The recipes are written in English and translated through a lookup table of
+// every ingredient, measure, glass, garnish and step in the catalogue. That
+// table is large, so it is fetched only when somebody actually reads the app
+// in Dutch — English readers never download it.
+
+let recipeDict = null
+let recipeLoading = null
+
+function loadRecipeDict() {
+  if (recipeDict || recipeLoading) return
+  recipeLoading = import('../data/nl-recipes')
+    .then((m) => {
+      recipeDict = m.default
+      // Nudge every component to render again now that the words are here.
+      window.dispatchEvent(new CustomEvent(EVENT))
+    })
+    .catch(() => {
+      // Leaving recipeDict null simply keeps the recipe in English.
+      recipeLoading = null
+    })
+}
+
+// Translate one piece of recipe text. Anything the table does not know — a
+// recipe the user wrote themselves — comes back unchanged.
+export function recipeText(text, lang) {
+  if (lang !== 'nl' || !recipeDict || !text) return text
+  return recipeDict[text] || text
+}
+
 // Fill {placeholders} from a plain object.
 function fill(text, vars) {
   if (!vars) return text
@@ -207,12 +236,17 @@ export function translate(key, lang, vars) {
   return fill((table && table[key]) || key, vars)
 }
 
-// The hook components use: `const { t, tt, lang } = useI18n()`.
+// The hook components use: `const { t, tt, tr, lang } = useI18n()`.
 //  t  — an interface string
 //  tt — a value out of the catalogue (a tag, a glass, a spirit)
+//  tr — recipe text (an ingredient, a measure, a preparation step)
 export function useI18n() {
   const lang = useLang()
+  useEffect(() => {
+    if (lang === 'nl') loadRecipeDict()
+  }, [lang])
   const t = useCallback((key, vars) => translate(key, lang, vars), [lang])
   const tt = useCallback((value) => term(value, lang), [lang])
-  return { lang, t, tt }
+  const tr = useCallback((text) => recipeText(text, lang), [lang])
+  return { lang, t, tt, tr }
 }
