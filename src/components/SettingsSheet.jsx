@@ -78,7 +78,7 @@ export default function SettingsSheet({ onClose }) {
               ))}
             </div>
             <p className="muted" style={{ margin: '10px 2px 0', fontSize: 13 }}>
-              {t('The app’s interface. Recipes stay in English.')}
+              {t('Interface and recipes. Drink names stay as they are.')}
             </p>
           </div>
 

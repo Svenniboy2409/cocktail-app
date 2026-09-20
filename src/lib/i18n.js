@@ -116,8 +116,8 @@ const STRINGS = {
 
     // settings
     Language: 'Taal',
-    'The app’s interface. Recipes stay in English.':
-      'De taal van de app. De recepten blijven Engels.',
+    'Interface and recipes. Drink names stay as they are.':
+      'De app en de recepten. De namen van de drankjes blijven zoals ze zijn.',
     Backup: 'Back-up',
     'Your data lives in this browser only. Export a file to back it up or move it to another device.':
       'Je gegevens staan alleen in deze browser. Exporteer een bestand om ze veilig te stellen of naar een ander apparaat te verhuizen.',
@@ -195,7 +195,7 @@ const STRINGS = {
 
 /* -------------------- recipe text -------------------- */
 // The recipes are written in English and translated through a lookup table of
-// every ingredient, measure, glass, garnish and step in the catalogue. That
+// every scenario, ingredient, measure, glass, garnish and step in the catalogue. That
 // table is large, so it is fetched only when somebody actually reads the app
 // in Dutch — English readers never download it.
 
