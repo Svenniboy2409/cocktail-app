@@ -99,7 +99,8 @@ const STRINGS = {
 
     // Library
     'Your collection': 'Jouw verzameling',
-    'Saved cocktails and your own recipes': 'Bewaarde cocktails en je eigen recepten',
+    'Folders, saved cocktails and your own recipes':
+      'Mappen, bewaarde cocktails en je eigen recepten',
     'My bar': 'Mijn bar',
     'Set up your bar': 'Stel je bar in',
     Settings: 'Instellingen',
@@ -114,10 +115,47 @@ const STRINGS = {
       'Blader door Ontdek en tik op het bladwijzertje om cocktails hier te bewaren.',
     Mine: 'Eigen',
 
+    // folders
+    Folders: 'Mappen',
+    'New folder': 'Nieuwe map',
+    'Edit folder': 'Map bewerken',
+    'Create folder': 'Map maken',
+    'Delete folder': 'Map verwijderen',
+    'Save to folder': 'Opslaan in map',
+    'In {n} folder': 'In {n} map',
+    'In {n} folders': 'In {n} mappen',
+    'No folders yet': 'Nog geen mappen',
+    'Group your saved drinks however you like — a party, a season, a shelf of your bar.':
+      'Groepeer je bewaarde drankjes zoals jij wilt — een feestje, een seizoen, een plank van je bar.',
+    'Folders let you group the drinks you save. Make your first one and this cocktail goes straight in.':
+      'Met mappen groepeer je de drankjes die je bewaart. Maak je eerste map en deze cocktail gaat er meteen in.',
+    'Give your folder a name.': 'Geef je map een naam.',
+    'Folder created': 'Map aangemaakt',
+    'Folder updated': 'Map bijgewerkt',
+    'Folder deleted': 'Map verwijderd',
+    'Added to {folder}': 'Toegevoegd aan {folder}',
+    'Removed from {folder}': 'Verwijderd uit {folder}',
+    'Delete “{name}”? The cocktails in it stay in your library.':
+      '“{name}” verwijderen? De cocktails erin blijven in je bibliotheek.',
+    Cover: 'Omslag',
+    'e.g. Summer evenings': 'bijv. Zomeravonden',
+    'Without a cover we’ll build one from the drinks inside.':
+      'Zonder omslag maken we er een van de drankjes die erin zitten.',
+    'Use a collage instead': 'Toch een collage gebruiken',
+    'Folder not found': 'Map niet gevonden',
+    'Back to Library': 'Terug naar bibliotheek',
+    'This folder is empty': 'Deze map is leeg',
+    'Open a cocktail and tap “Save to folder” to put it in here.':
+      'Open een cocktail en tik op “Opslaan in map” om hem hierin te zetten.',
+    Back: 'Terug',
+
     // settings
     Language: 'Taal',
     'Interface and recipes. Drink names stay as they are.':
       'De app en de recepten. De namen van de drankjes blijven zoals ze zijn.',
+    Tiles: 'Tegels',
+    List: 'Lijst',
+    'How your folders look in the Library.': 'Hoe je mappen eruitzien in de bibliotheek.',
     Backup: 'Back-up',
     'Your data lives in this browser only. Export a file to back it up or move it to another device.':
       'Je gegevens staan alleen in deze browser. Exporteer een bestand om ze veilig te stellen of naar een ander apparaat te verhuizen.',

@@ -465,11 +465,15 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   padding-left: 7px;
 }
 .card-badge.recommended svg { color: var(--green); }
-.card-save {
+.card-actions {
   position: absolute;
   top: 8px;
   right: 8px;
   z-index: 2;
+  display: flex;
+  gap: 6px;
+}
+.card-action {
   width: 34px;
   height: 34px;
   display: grid;
@@ -481,6 +485,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   color: var(--text);
   cursor: pointer;
 }
+.card-action:active { transform: scale(0.92); }
 .card-save.on { color: var(--amber); }
 
 /* ---- section headers ---- */
@@ -492,6 +497,22 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .section-head h2 { font-size: 21px; }
 .section-head .count { color: var(--text-dim); font-size: 13px; }
+.section-title { display: flex; align-items: baseline; gap: 10px; }
+.section-action {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 4px 2px;
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.section-action:active { transform: scale(0.96); }
 
 /* ---- buttons ---- */
 .btn {
@@ -517,6 +538,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   border-color: transparent;
 }
 .btn-ghost { background: transparent; }
+/* a plain button that is "already on" — in a folder, for instance */
+.btn-on { color: var(--amber); border-color: var(--line-strong); background: rgba(212, 160, 90, 0.12); }
 .btn-danger { color: var(--danger); border-color: rgba(224, 106, 92, 0.3); background: rgba(224, 106, 92, 0.08); }
 .btn-block { width: 100%; }
 .btn:disabled { opacity: 0.5; cursor: default; }
@@ -903,6 +926,185 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 
 .hidden-file { display: none; }
+
+/* ============================================================
+   Folders — a named shelf of saved drinks
+   ============================================================ */
+
+/* The cover: an uploaded picture, or a collage built from the first few
+   drinks inside, so a folder starts to look like its contents. */
+.folder-cover {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  gap: 2px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.folder-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.folder-cover[data-tiles='1'] { grid-template-columns: 1fr; }
+.folder-cover[data-tiles='2'] { grid-template-columns: 1fr 1fr; }
+/* one tall shot beside two stacked ones, which reads better than three strips */
+.folder-cover[data-tiles='3'] {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.folder-cover[data-tiles='3'] img:first-child { grid-row: span 2; }
+.folder-cover[data-tiles='4'] {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.folder-cover.is-empty {
+  place-items: center;
+  color: var(--text-dim);
+  background: var(--surface-2);
+}
+.folder-cover.is-empty svg { width: 30px; height: 30px; }
+
+/* the small square used in rows, the picker and the folder page header */
+.folder-cover.sm {
+  position: relative;
+  inset: auto;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+.folder-cover.sm.is-empty svg { width: 20px; height: 20px; }
+
+/* ---- folders as tiles ---- */
+.folder-card .card-media { aspect-ratio: 4 / 3; }
+.folder-card .card-body h3 { font-size: 16px; }
+
+/* ---- folders as rows ---- */
+.folder-rows { display: flex; flex-direction: column; gap: 10px; }
+.folder-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 10px 14px 10px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.folder-row:active { transform: scale(0.99); }
+.folder-row:hover { border-color: var(--line-strong); }
+.folder-row svg { flex: none; color: var(--text-dim); }
+.folder-row-text { flex: 1; min-width: 0; }
+.folder-row-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.folder-row-count { display: block; font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
+
+/* ---- the folder page's own header ---- */
+.folder-header { align-items: center; gap: 10px; }
+.folder-header .folder-header-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.folder-header h1 {
+  font-size: 24px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.folder-header .sub { margin-top: 3px; }
+
+/* ---- picking folders for a drink ---- */
+.folder-picks { display: flex; flex-direction: column; gap: 10px; }
+.folder-pick {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  padding: 10px 14px 10px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+.folder-pick:active { transform: scale(0.99); }
+.folder-pick.on { border-color: var(--amber); background: rgba(212, 160, 90, 0.12); }
+.folder-pick-text { flex: 1; min-width: 0; }
+.folder-pick-name {
+  display: block;
+  font-size: 15.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.folder-pick-count { display: block; font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
+.folder-pick .tick {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 700;
+}
+.folder-pick.on .tick { color: var(--amber); border-color: var(--amber); }
+
+/* ---- segmented control (Settings) ---- */
+.seg {
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.seg-option {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+.seg-option.on { background: var(--surface-hi); color: var(--amber); }
+
+/* a quiet text button, for the "use a collage instead" escape hatch */
+.link-btn {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  padding: 2px;
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.link-btn:hover { text-decoration: underline; }
 
 /* ============================================================
    Responsive scaling — desktop, tablet & landscape

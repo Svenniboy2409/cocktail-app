@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import Discover from './pages/Discover'
 import Library from './pages/Library'
 import CocktailDetail from './pages/CocktailDetail'
+import FolderDetail from './pages/FolderDetail'
 import CreateRecipe from './pages/CreateRecipe'
 import BottomNav from './components/BottomNav'
 import ScrollManager from './components/ScrollManager'
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/" element={<Discover />} />
           <Route path="/library" element={<Library onCreate={openCreate} />} />
           <Route path="/cocktail/:id" element={<CocktailDetail onEdit={openEdit} />} />
+          <Route path="/folder/:id" element={<FolderDetail />} />
           <Route path="*" element={<Discover />} />
         </Routes>
 

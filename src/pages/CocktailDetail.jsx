@@ -1,14 +1,15 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { cocktailById, glassesOf } from '../data/cocktails'
 import { placesOf, cityOf, originLabel } from '../data/origins'
-import { useUserRecipes, useSavedIds } from '../lib/hooks'
+import { useUserRecipes, useSavedIds, useFolders } from '../lib/hooks'
 import { toggleSaved, deleteRecipe } from '../lib/storage'
-import { IconBack, IconBookmark, IconGlass, IconGarnish, IconPlace, IconTrash, IconEdit } from '../components/icons'
+import { IconBack, IconBookmark, IconGlass, IconGarnish, IconPlace, IconTrash, IconEdit, IconFolder } from '../components/icons'
 import { searchFor } from '../lib/discoverFilters'
 import { forgetScrollPosition } from '../components/ScrollManager'
 import { useToast } from '../components/Toast'
 import { useI18n } from '../lib/i18n'
+import FolderSheet from '../components/FolderSheet'
 
 export default function CocktailDetail({ onEdit }) {
   const { id } = useParams()
@@ -17,6 +18,8 @@ export default function CocktailDetail({ onEdit }) {
   const { t, tt, tr } = useI18n()
   const savedIds = useSavedIds()
   const { recipes, loading } = useUserRecipes()
+  const [folderOpen, setFolderOpen] = useState(false)
+  const { folders } = useFolders()
 
   const cocktail = useMemo(
     () => cocktailById(id) || recipes.find((r) => r.id === id),
@@ -41,6 +44,7 @@ export default function CocktailDetail({ onEdit }) {
 
   const saved = savedIds.includes(cocktail.id)
   const origin = originLabel(cocktail)
+  const inFolders = folders.filter((f) => f.ids?.includes(cocktail.id)).length
 
   // Every pill in the meta row runs a search on Discover, so you can pull the
   // thread from any drink: its country, its glass, or what's on top of it.
@@ -159,9 +163,25 @@ export default function CocktailDetail({ onEdit }) {
         )}
 
         <div className="detail-actions">
-          <button className={'btn btn-block ' + (saved ? 'btn-ghost' : 'btn-primary')} onClick={handleSave}>
+          <button
+            className={'btn ' + (saved ? 'btn-ghost' : 'btn-primary')}
+            style={{ flex: 1 }}
+            onClick={handleSave}
+          >
             <IconBookmark filled={saved} />
             {t(saved ? 'Saved to library' : 'Save to library')}
+          </button>
+          {/* Folders are separate from the library: a drink can sit in a
+              folder whether or not the bookmark is on. */}
+          <button
+            className={'btn' + (inFolders ? ' btn-on' : '')}
+            style={{ flex: 1 }}
+            onClick={() => setFolderOpen(true)}
+          >
+            <IconFolder />
+            {inFolders
+              ? t(inFolders === 1 ? 'In {n} folder' : 'In {n} folders', { n: inFolders })
+              : t('Save to folder')}
           </button>
         </div>
 
@@ -176,6 +196,10 @@ export default function CocktailDetail({ onEdit }) {
           </div>
         )}
       </div>
+
+      {folderOpen && (
+        <FolderSheet mode="pick" cocktailId={cocktail.id} onClose={() => setFolderOpen(false)} />
+      )}
     </div>
   )
 }

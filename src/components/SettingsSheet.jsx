@@ -1,14 +1,15 @@
 import { useRef } from 'react'
-import { useDismissableSheet } from '../lib/hooks'
-import { exportAll, importAll } from '../lib/storage'
+import { useDismissableSheet, useFolderView } from '../lib/hooks'
+import { exportAll, importAll, setFolderView } from '../lib/storage'
 import { LANGUAGES, setLang, useI18n } from '../lib/i18n'
-import { IconDownload, IconUpload } from './icons'
+import { IconDownload, IconUpload, IconGridView, IconListView } from './icons'
 import { useToast } from './Toast'
 
 // Everything that is about the app rather than about a drink: which language
 // the interface speaks, and getting your data in and out of this browser.
 export default function SettingsSheet({ onClose }) {
   const { lang, t } = useI18n()
+  const folderView = useFolderView()
   const showToast = useToast()
   const fileRef = useRef(null)
   const { sheetRef, handleProps, sheetStyle, backdropStyle } = useDismissableSheet(onClose)
@@ -79,6 +80,29 @@ export default function SettingsSheet({ onClose }) {
             </div>
             <p className="muted" style={{ margin: '10px 2px 0', fontSize: 13 }}>
               {t('Interface and recipes. Drink names stay as they are.')}
+            </p>
+          </div>
+
+          <div className="field">
+            <label>{t('Folders')}</label>
+            <div className="seg">
+              {[
+                { key: 'grid', label: 'Tiles', Icon: IconGridView },
+                { key: 'list', label: 'List', Icon: IconListView },
+              ].map(({ key, label, Icon }) => (
+                <button
+                  key={key}
+                  className={'seg-option' + (folderView === key ? ' on' : '')}
+                  onClick={() => setFolderView(key)}
+                  aria-pressed={folderView === key}
+                >
+                  <Icon width="18" height="18" />
+                  {t(label)}
+                </button>
+              ))}
+            </div>
+            <p className="muted" style={{ margin: '10px 2px 0', fontSize: 13 }}>
+              {t('How your folders look in the Library.')}
             </p>
           </div>
 

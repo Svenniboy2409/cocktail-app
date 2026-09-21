@@ -129,3 +129,38 @@ export const IconGarnish = (p) => (
     <path d="M12 7c0-2 1-3 3-3" />
   </svg>
 )
+
+export const IconFolder = (p) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M3 7.5a2 2 0 0 1 2-2h3.8l2 2.5H19a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+  </svg>
+)
+
+export const IconFolderPlus = (p) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M3 7.5a2 2 0 0 1 2-2h3.8l2 2.5H19a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <path d="M12 11.5v5M9.5 14h5" />
+  </svg>
+)
+
+export const IconGridView = (p) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" {...S} {...p}>
+    <rect x="3.5" y="3.5" width="7" height="7" rx="1.6" />
+    <rect x="13.5" y="3.5" width="7" height="7" rx="1.6" />
+    <rect x="3.5" y="13.5" width="7" height="7" rx="1.6" />
+    <rect x="13.5" y="13.5" width="7" height="7" rx="1.6" />
+  </svg>
+)
+
+export const IconListView = (p) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M9 6.5h11M9 12h11M9 17.5h11" />
+    <path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01" />
+  </svg>
+)
+
+export const IconChevron = (p) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="m9.5 5.5 6.5 6.5-6.5 6.5" />
+  </svg>
+)

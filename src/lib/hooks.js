@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { getSavedIds, getUserRecipes, getPantry } from './storage'
+import { getSavedIds, getUserRecipes, getPantry, getFolders, getFolderView } from './storage'
 
 // Behaviour shared by the bottom sheets (New recipe, Your bar):
 //  1. lock the page behind the sheet so only the sheet is interactive;
@@ -126,4 +126,37 @@ export function useUserRecipes() {
     return () => window.removeEventListener('mixly:recipes-changed', refresh)
   }, [refresh])
   return { recipes, loading, refresh }
+}
+
+// Reactive list of folders from IndexedDB.
+export function useFolders() {
+  const [folders, setFolders] = useState([])
+  const [loading, setLoading] = useState(true)
+  const refresh = useCallback(() => {
+    getFolders().then((f) => {
+      setFolders(f)
+      setLoading(false)
+    })
+  }, [])
+  useEffect(() => {
+    refresh()
+    window.addEventListener('mixly:folders-changed', refresh)
+    return () => window.removeEventListener('mixly:folders-changed', refresh)
+  }, [refresh])
+  return { folders, loading, refresh }
+}
+
+// Whether the Library shows folders as cover tiles or as rows.
+export function useFolderView() {
+  const [view, setView] = useState(getFolderView)
+  useEffect(() => {
+    const sync = () => setView(getFolderView())
+    window.addEventListener('mixly:folder-view-changed', sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener('mixly:folder-view-changed', sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [])
+  return view
 }
