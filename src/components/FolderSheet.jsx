@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useDismissableSheet, useFolders } from '../lib/hooks'
 import { createFolder, updateFolder, deleteFolder, toggleInFolder } from '../lib/storage'
 import { fileToCompressedDataURL } from '../lib/image'
@@ -15,17 +15,20 @@ import { useI18n } from '../lib/i18n'
 //   mode 'pick'   + cocktailId — tick the folders this drink belongs to
 //   mode 'create'              — just make a folder
 //   mode 'edit'   + folder     — rename it, re-cover it, delete it
-export default function FolderSheet({ mode = 'pick', cocktailId, folder, onClose, onDeleted }) {
+export default function FolderSheet({ mode = 'pick', cocktailId, folder, onClose, onDeleted, onCreated }) {
   const { folders, loading } = useFolders()
   const { t } = useI18n()
   const showToast = useToast()
-  const { sheetRef, handleProps, sheetStyle, backdropStyle } = useDismissableSheet(onClose)
+  const { sheetRef, handleProps, sheetStyle, backdropStyle } = useDismissableSheet(() => dismiss())
 
   const [view, setView] = useState(mode === 'pick' ? 'pick' : 'form')
   const [name, setName] = useState(folder?.name || '')
   const [image, setImage] = useState(folder?.image || '')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  // What the picker changed, reported in one go when the sheet closes rather
+  // than firing a toast under the user's finger on every tap.
+  const changes = useRef({ added: [], removed: [] })
 
   const empty = folders.length === 0
 
@@ -41,10 +44,41 @@ export default function FolderSheet({ mode = 'pick', cocktailId, folder, onClose
     }
   }
 
+  // Remember a change under the folder's name, cancelling out an earlier
+  // change the other way — ticking and unticking the same folder is a no-op.
+  const note = (list, other, name) => {
+    const back = other.indexOf(name)
+    if (back > -1) other.splice(back, 1)
+    else if (!list.includes(name)) list.push(name)
+  }
+
   const handleToggle = async (id) => {
-    const added = await toggleInFolder(id, cocktailId)
     const f = folders.find((x) => x.id === id)
-    showToast(t(added ? 'Added to {folder}' : 'Removed from {folder}', { folder: f?.name || '' }))
+    const added = await toggleInFolder(id, cocktailId)
+    const { added: a, removed: r } = changes.current
+    if (added) note(a, r, f?.name || '')
+    else note(r, a, f?.name || '')
+  }
+
+  // One message for everything the picker did, on the way out.
+  const closePicker = () => {
+    const { added, removed } = changes.current
+    if (added.length && !removed.length) {
+      showToast(
+        added.length === 1
+          ? t('Added to {folder}', { folder: added[0] })
+          : t('Added to {n} folders', { n: added.length }),
+      )
+    } else if (removed.length && !added.length) {
+      showToast(
+        removed.length === 1
+          ? t('Removed from {folder}', { folder: removed[0] })
+          : t('Removed from {n} folders', { n: removed.length }),
+      )
+    } else if (added.length || removed.length) {
+      showToast(t('Folders updated'))
+    }
+    onClose()
   }
 
   const handleSubmit = async () => {
@@ -58,18 +92,19 @@ export default function FolderSheet({ mode = 'pick', cocktailId, folder, onClose
       } else {
         // A folder made from a drink's page starts with that drink in it.
         const made = await createFolder({ name, image, ids: cocktailId ? [cocktailId] : [] })
-        showToast(
-          cocktailId
-            ? t('Added to {folder}', { folder: made.name })
-            : t('Folder created'),
-        )
         if (mode === 'pick') {
+          // Back to the list with the new folder already ticked; the message
+          // waits until the whole picker is done.
+          changes.current.added.push(made.name)
           setName('')
           setImage('')
           setView('pick')
           setBusy(false)
         } else {
-          onClose()
+          showToast(t('Folder created'))
+          // Whoever opened this usually wants to go straight into it.
+          if (onCreated) onCreated(made)
+          else onClose()
         }
       }
     } catch {
@@ -88,6 +123,10 @@ export default function FolderSheet({ mode = 'pick', cocktailId, folder, onClose
     else onClose()
   }
 
+  // Closing from anywhere runs the picker's summary; the form has nothing to
+  // report because it says its piece when it saves.
+  const dismiss = () => (mode === 'pick' ? closePicker() : onClose())
+
   const title =
     view === 'form'
       ? mode === 'edit'
@@ -97,7 +136,7 @@ export default function FolderSheet({ mode = 'pick', cocktailId, folder, onClose
 
   return (
     <>
-      <div className="sheet-backdrop" style={backdropStyle} onClick={onClose} />
+      <div className="sheet-backdrop" style={backdropStyle} onClick={dismiss} />
       <div
         className="sheet"
         ref={sheetRef}
@@ -112,7 +151,7 @@ export default function FolderSheet({ mode = 'pick', cocktailId, folder, onClose
             <h2>{title}</h2>
             <button
               className="sheet-close"
-              onClick={view === 'form' && mode === 'pick' ? () => setView('pick') : onClose}
+              onClick={view === 'form' && mode === 'pick' ? () => setView('pick') : dismiss}
               onPointerDown={(e) => e.stopPropagation()}
             >
               {view === 'form' && mode === 'pick' ? t('Back') : t('Done')}
@@ -226,7 +265,7 @@ export default function FolderSheet({ mode = 'pick', cocktailId, folder, onClose
               {mode === 'edit' ? t('Save changes') : t('Create folder')}
             </button>
           ) : (
-            <button className="btn btn-primary btn-block" onClick={onClose}>
+            <button className="btn btn-primary btn-block" onClick={closePicker}>
               {t('Done')}
             </button>
           )}

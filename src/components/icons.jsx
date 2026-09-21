@@ -164,3 +164,23 @@ export const IconChevron = (p) => (
     <path d="m9.5 5.5 6.5 6.5-6.5 6.5" />
   </svg>
 )
+
+export const IconFolderMinus = (p) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M3 7.5a2 2 0 0 1 2-2h3.8l2 2.5H19a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <path d="M9.5 14h5" />
+  </svg>
+)
+
+export const IconSort = (p) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M7.5 20V5m0 0L4 8.5M7.5 5 11 8.5" />
+    <path d="M16.5 4v15m0 0L13 15.5M16.5 19l3.5-3.5" />
+  </svg>
+)
+
+export const IconDrag = (p) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M8 8h8M8 12h8M8 16h8" />
+  </svg>
+)

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { cocktails } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
 import PantrySheet from '../components/PantrySheet'
@@ -11,6 +11,7 @@ import { IconBottle, IconSettings, IconFolderPlus, IconChevron } from '../compon
 import { useI18n } from '../lib/i18n'
 
 export default function Library({ onCreate }) {
+  const navigate = useNavigate()
   const savedIds = useSavedIds()
   const { recipes } = useUserRecipes()
   const { folders } = useFolders()
@@ -155,7 +156,18 @@ export default function Library({ onCreate }) {
 
       {barOpen && <PantrySheet onClose={() => setBarOpen(false)} />}
       {settingsOpen && <SettingsSheet onClose={() => setSettingsOpen(false)} />}
-      {newFolder && <FolderSheet mode="create" onClose={() => setNewFolder(false)} />}
+      {newFolder && (
+        <FolderSheet
+          mode="create"
+          onClose={() => setNewFolder(false)}
+          // A folder you just made is empty, and filling it is the next thing
+          // you want, so go straight in.
+          onCreated={(f) => {
+            setNewFolder(false)
+            navigate(`/folder/${f.id}`)
+          }}
+        />
+      )}
     </div>
   )
 }

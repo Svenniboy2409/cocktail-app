@@ -145,8 +145,26 @@ const STRINGS = {
     'Folder not found': 'Map niet gevonden',
     'Back to Library': 'Terug naar bibliotheek',
     'This folder is empty': 'Deze map is leeg',
-    'Open a cocktail and tap “Save to folder” to put it in here.':
-      'Open een cocktail en tik op “Opslaan in map” om hem hierin te zetten.',
+    'Add cocktails to folder': 'Cocktails toevoegen',
+    'Add more cocktails to this folder': 'Meer cocktails aan deze map toevoegen',
+    'Browse in Discover': 'Bladeren in Ontdek',
+    'Add from your library': 'Toevoegen uit je bibliotheek',
+    'Nothing left to add': 'Niets meer om toe te voegen',
+    'Everything you have saved is already in this folder.':
+      'Alles wat je hebt bewaard zit al in deze map.',
+    'Add {n} cocktail': '{n} cocktail toevoegen',
+    'Add {n} cocktails': '{n} cocktails toevoegen',
+    'Added {n} cocktails to {folder}': '{n} cocktails toegevoegd aan {folder}',
+    'Added to {n} folders': 'Toegevoegd aan {n} mappen',
+    'Removed from {n} folders': 'Verwijderd uit {n} mappen',
+    'Folders updated': 'Mappen bijgewerkt',
+    'Remove from folder': 'Uit map verwijderen',
+    'Remove “{name}” from {folder}?': '“{name}” uit {folder} verwijderen?',
+    Rearrange: 'Volgorde aanpassen',
+    'Drag a cocktail to move it. The order here is the order in the folder.':
+      'Sleep een cocktail om hem te verplaatsen. Deze volgorde is de volgorde in de map.',
+    'Save order': 'Volgorde opslaan',
+    'Order saved': 'Volgorde opgeslagen',
     Back: 'Terug',
 
     // settings

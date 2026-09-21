@@ -160,6 +160,27 @@ export async function toggleInFolder(folderId, cocktailId) {
   return added
 }
 
+// Put several cocktails in at once, keeping whatever is already there. The
+// new ones go on top, in the order they were picked.
+export async function addToFolder(folderId, cocktailIds) {
+  const folders = await getFolders()
+  let added = 0
+  const next = folders.map((f) => {
+    if (f.id !== folderId) return f
+    const fresh = cocktailIds.filter((id) => !f.ids.includes(id))
+    added = fresh.length
+    return { ...f, ids: [...fresh, ...f.ids] }
+  })
+  await writeFolders(next)
+  return added
+}
+
+// Replace a folder's order outright, after a drag-and-drop rearrange.
+export async function setFolderIds(folderId, ids) {
+  const folders = await getFolders()
+  await writeFolders(folders.map((f) => (f.id === folderId ? { ...f, ids: [...ids] } : f)))
+}
+
 // Drop a cocktail from every folder — used when a user recipe is deleted.
 async function removeFromAllFolders(cocktailId) {
   const folders = await getFolders()

@@ -4,21 +4,22 @@ import { cocktails } from '../data/cocktails'
 import CocktailCard from '../components/CocktailCard'
 import FolderSheet from '../components/FolderSheet'
 import FolderCover from '../components/FolderCover'
+import AddCocktailsSheet from '../components/AddCocktailsSheet'
+import FolderReorderSheet from '../components/FolderReorderSheet'
 import { useFolders, useSavedIds, useUserRecipes } from '../lib/hooks'
-import { toggleInFolder } from '../lib/storage'
-import { IconBack, IconEdit } from '../components/icons'
-import { useToast } from '../components/Toast'
+import { IconBack, IconEdit, IconSort, IconFolderPlus } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 
 export default function FolderDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const showToast = useToast()
   const { t } = useI18n()
   const { folders, loading } = useFolders()
   const { recipes } = useUserRecipes()
   const savedIds = useSavedIds()
   const [editing, setEditing] = useState(false)
+  const [adding, setAdding] = useState(false)
+  const [sorting, setSorting] = useState(false)
 
   const folder = folders.find((f) => f.id === id)
 
@@ -42,10 +43,16 @@ export default function FolderDetail() {
     )
   }
 
-  const remove = async (cocktailId) => {
-    await toggleInFolder(folder.id, cocktailId)
-    showToast(t('Removed from {folder}', { folder: folder.name }))
-  }
+  // The same pair of ways to put something in, shown under an empty folder and
+  // again under a full one.
+  const addActions = (
+    <div className="folder-add">
+      <button className="btn btn-primary" onClick={() => setAdding(true)}>
+        <IconFolderPlus /> {t('Add cocktails to folder')}
+      </button>
+      <Link className="text-link" to="/">{t('Browse in Discover')}</Link>
+    </div>
+  )
 
   return (
     <div className="page">
@@ -62,6 +69,16 @@ export default function FolderDetail() {
             </div>
           </div>
         </div>
+        {drinks.length > 1 && (
+          <button
+            className="header-action icon-only"
+            onClick={() => setSorting(true)}
+            aria-label={t('Rearrange')}
+            title={t('Rearrange')}
+          >
+            <IconSort />
+          </button>
+        )}
         <button
           className="header-action icon-only"
           onClick={() => setEditing(true)}
@@ -76,23 +93,27 @@ export default function FolderDetail() {
         <div className="empty">
           <div className="icon">🍸</div>
           <h3>{t('This folder is empty')}</h3>
-          <p>{t('Open a cocktail and tap “Save to folder” to put it in here.')}</p>
-          <Link className="btn btn-primary" style={{ marginTop: 16 }} to="/">
-            {t('Back to Discover')}
-          </Link>
+          {addActions}
         </div>
       ) : (
-        <div className="grid">
-          {drinks.map((c) => (
-            <CocktailCard
-              key={c.id}
-              cocktail={c}
-              saved={savedIds.includes(c.id)}
-              onRemove={() => remove(c.id)}
-              removeLabel={t('Remove from {folder}', { folder: folder.name })}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid">
+            {drinks.map((c) => (
+              <CocktailCard
+                key={c.id}
+                cocktail={c}
+                saved={savedIds.includes(c.id)}
+                // Tells the cocktail's page which folder you came out of, so it
+                // can offer to take it back out again.
+                linkTo={`/cocktail/${c.id}?folder=${folder.id}`}
+              />
+            ))}
+          </div>
+          <div className="folder-more">
+            <p>{t('Add more cocktails to this folder')}</p>
+            {addActions}
+          </div>
+        </>
       )}
 
       {editing && (
@@ -103,6 +124,8 @@ export default function FolderDetail() {
           onDeleted={() => navigate('/library', { replace: true })}
         />
       )}
+      {adding && <AddCocktailsSheet folder={folder} onClose={() => setAdding(false)} />}
+      {sorting && <FolderReorderSheet folder={folder} onClose={() => setSorting(false)} />}
     </div>
   )
 }

@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { cocktailById, glassesOf } from '../data/cocktails'
 import { placesOf, cityOf, originLabel } from '../data/origins'
 import { useUserRecipes, useSavedIds, useFolders } from '../lib/hooks'
-import { toggleSaved, deleteRecipe } from '../lib/storage'
-import { IconBack, IconBookmark, IconGlass, IconGarnish, IconPlace, IconTrash, IconEdit, IconFolder } from '../components/icons'
+import { toggleSaved, deleteRecipe, toggleInFolder } from '../lib/storage'
+import { IconBack, IconBookmark, IconGlass, IconGarnish, IconPlace, IconTrash, IconEdit, IconFolder, IconFolderMinus } from '../components/icons'
 import { searchFor } from '../lib/discoverFilters'
 import { forgetScrollPosition } from '../components/ScrollManager'
 import { useToast } from '../components/Toast'
@@ -20,6 +20,9 @@ export default function CocktailDetail({ onEdit }) {
   const { recipes, loading } = useUserRecipes()
   const [folderOpen, setFolderOpen] = useState(false)
   const { folders } = useFolders()
+  // Set when you opened this drink from inside a folder.
+  const [params] = useSearchParams()
+  const fromFolder = folders.find((f) => f.id === params.get('folder'))
 
   const cocktail = useMemo(
     () => cocktailById(id) || recipes.find((r) => r.id === id),
@@ -68,6 +71,19 @@ export default function CocktailDetail({ onEdit }) {
   const handleSave = () => {
     const now = toggleSaved(cocktail.id)
     showToast(t(now ? 'Saved to library' : 'Removed from library'))
+  }
+
+  // Deliberately a button at the bottom rather than a cross on the card: this
+  // is easy to hit by accident while browsing, so it asks first.
+  const handleRemoveFromFolder = async () => {
+    if (
+      !window.confirm(
+        t('Remove “{name}” from {folder}?', { name: cocktail.name, folder: fromFolder.name }),
+      )
+    )
+      return
+    await toggleInFolder(fromFolder.id, cocktail.id)
+    showToast(t('Removed from {folder}', { folder: fromFolder.name }))
   }
 
   const handleDelete = async () => {
@@ -184,6 +200,14 @@ export default function CocktailDetail({ onEdit }) {
               : t('Save to folder')}
           </button>
         </div>
+
+        {fromFolder && fromFolder.ids?.includes(cocktail.id) && (
+          <div className="detail-actions">
+            <button className="btn btn-danger btn-block" onClick={handleRemoveFromFolder}>
+              <IconFolderMinus /> {t('Remove from folder')}
+            </button>
+          </div>
+        )}
 
         {cocktail.isCustom && (
           <div className="detail-actions">

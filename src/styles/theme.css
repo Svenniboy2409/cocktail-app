@@ -465,15 +465,11 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   padding-left: 7px;
 }
 .card-badge.recommended svg { color: var(--green); }
-.card-actions {
+.card-save {
   position: absolute;
   top: 8px;
   right: 8px;
   z-index: 2;
-  display: flex;
-  gap: 6px;
-}
-.card-action {
   width: 34px;
   height: 34px;
   display: grid;
@@ -485,7 +481,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   color: var(--text);
   cursor: pointer;
 }
-.card-action:active { transform: scale(0.92); }
+.card-save:active { transform: scale(0.92); }
 .card-save.on { color: var(--amber); }
 
 /* ---- section headers ---- */
@@ -860,8 +856,12 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   color: var(--text-muted);
   text-align: center;
 }
+/* `.field > label` turns every label in a form into a block, which would
+   flatten this one — it is a label because tapping it opens the file picker. */
+.field > label.image-upload { display: grid; place-items: center; }
 .image-upload img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.image-upload .up-inner { padding: 20px; z-index: 1; }
+.image-upload .up-inner { padding: 20px; z-index: 1; display: block; line-height: 1.45; }
+.image-upload .up-inner > svg { display: block; margin: 0 auto; }
 .image-upload .up-inner .ic { font-size: 32px; display: block; margin-bottom: 8px; }
 .image-upload input[type='file'] { display: none; }
 .image-upload .replace {
@@ -923,6 +923,11 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 @keyframes toast-in {
   from { opacity: 0; transform: translate(-50%, 10px); }
   to { opacity: 1; transform: translate(-50%, 0); }
+}
+.toast.leaving { animation: toast-out 0.26s ease forwards; }
+@keyframes toast-out {
+  from { opacity: 1; transform: translate(-50%, 0); }
+  to { opacity: 0; transform: translate(-50%, 8px); }
 }
 
 .hidden-file { display: none; }
@@ -1106,6 +1111,168 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .link-btn:hover { text-decoration: underline; }
 
+/* ---- filling a folder ---- */
+/* Under an empty folder, and again under a full one: the same two ways in. */
+.folder-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.folder-more {
+  margin-top: 30px;
+  text-align: center;
+}
+.folder-more p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14.5px;
+}
+.text-link {
+  background: none;
+  border: none;
+  padding: 4px;
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.text-link:hover { color: var(--amber-hi); }
+
+/* ---- picking cocktails out of the library ---- */
+/* Sheets that hold a grid or a list: tall enough to browse, but still
+   shrinking to the content when there is little of it. The body has to grow
+   explicitly, or a short list would leave the footer floating mid-sheet. */
+.sheet-tall {
+  min-height: 60dvh;
+  max-height: 88dvh;
+}
+.sheet-tall .sheet-body { flex: 1 1 auto; }
+.pick-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+.pick-card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-2);
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.16s ease, transform 0.16s ease;
+}
+.pick-card:active { transform: scale(0.97); }
+.pick-card.on { border-color: var(--amber); }
+.pick-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pick-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(14, 12, 11, 0.94) 6%, rgba(14, 12, 11, 0.1) 50%, transparent 72%);
+}
+.pick-tick {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1.5px solid rgba(243, 237, 228, 0.6);
+  background: rgba(20, 17, 16, 0.55);
+  backdrop-filter: blur(6px);
+  font-size: 13px;
+  font-weight: 700;
+  color: transparent;
+}
+.pick-card.on .pick-tick {
+  color: var(--bg-deep);
+  background: var(--amber);
+  border-color: var(--amber);
+}
+.pick-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 8px 9px 9px;
+}
+.pick-name {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.pick-tag { display: block; font-size: 10.5px; color: var(--gold); margin-top: 2px; }
+
+/* ---- dragging drinks into order ---- */
+/* Absolutely positioned so a row can be slid past its neighbours without the
+   list reflowing; the heights here are the ones FolderReorderSheet counts in. */
+.reorder-list { position: relative; }
+.reorder-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px 0 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  touch-action: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.reorder-row.dragging {
+  z-index: 3;
+  cursor: grabbing;
+  border-color: var(--amber);
+  background: var(--surface-hi);
+  box-shadow: var(--shadow);
+}
+.reorder-row img {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  object-fit: cover;
+  pointer-events: none;
+}
+.reorder-num {
+  flex: none;
+  width: 20px;
+  color: var(--text-dim);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+}
+.reorder-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.reorder-row > svg { flex: none; color: var(--text-dim); }
+
 /* ============================================================
    Responsive scaling — desktop, tablet & landscape
    The app is mobile-first: a single 520px column. On wider
@@ -1118,6 +1285,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 @media (min-width: 640px) {
   :root { --maxw: 720px; --page-x: 24px; }
   .grid { grid-template-columns: repeat(3, 1fr); }
+  .pick-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
 /* larger tablets / small laptops */
