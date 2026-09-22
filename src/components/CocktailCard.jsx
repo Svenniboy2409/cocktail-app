@@ -3,7 +3,7 @@ import { IconBookmark, IconStar } from './icons'
 import { isSaved, toggleSaved } from '../lib/storage'
 import { useI18n } from '../lib/i18n'
 
-export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, ready, linkTo }) {
+export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, ready, linkTo, still }) {
   const { t, tt } = useI18n()
   const handleSave = (e) => {
     e.preventDefault()
@@ -14,8 +14,13 @@ export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, r
 
   const isOn = saved ?? isSaved(cocktail.id)
 
+  // While a folder is being rearranged the cards are things you drag, not
+  // links you follow, and the bookmark would only get in the way.
+  const Shell = still ? 'div' : Link
+  const shellProps = still ? {} : { to: linkTo || `/cocktail/${cocktail.id}` }
+
   return (
-    <Link className="card" to={linkTo || `/cocktail/${cocktail.id}`}>
+    <Shell className="card" {...shellProps}>
       <div className="card-media">
         {ready ? (
           <span className="card-badge recommended">
@@ -24,13 +29,15 @@ export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, r
         ) : (
           cocktail.isCustom && <span className="card-badge">{t('Mine')}</span>
         )}
-        <button
-          className={'card-save' + (isOn ? ' on' : '')}
-          onClick={handleSave}
-          aria-label={t(isOn ? 'Remove from library' : 'Save to library')}
-        >
-          <IconBookmark filled={isOn} />
-        </button>
+        {!still && (
+          <button
+            className={'card-save' + (isOn ? ' on' : '')}
+            onClick={handleSave}
+            aria-label={t(isOn ? 'Remove from library' : 'Save to library')}
+          >
+            <IconBookmark filled={isOn} />
+          </button>
+        )}
         <img src={cocktail.image} alt={cocktail.name} loading="lazy" />
         <div className="card-body">
           <h3>{cocktail.name}</h3>
@@ -42,6 +49,6 @@ export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, r
           )}
         </div>
       </div>
-    </Link>
+    </Shell>
   )
 }

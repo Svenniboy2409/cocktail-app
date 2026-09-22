@@ -129,7 +129,21 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 
 /* Two buttons side by side in a page header (My bar + the settings cog). */
 .header-actions { display: flex; align-items: center; gap: 8px; flex: none; }
-.header-action.icon-only { padding: 9px; }
+/* A fixed square with the icon scaled to fit, so buttons stay the same size
+   whatever the icon's own intrinsic dimensions happen to be. */
+.header-action.icon-only {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+.header-action.icon-only > svg { width: 20px; height: 20px; }
+.header-action.on {
+  color: var(--amber);
+  border-color: var(--amber);
+  background: rgba(212, 160, 90, 0.14);
+}
 
 /* ---- settings: language picker ---- */
 .lang-options { display: flex; flex-direction: column; gap: 8px; }
@@ -946,7 +960,14 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   background: var(--surface-2);
   overflow: hidden;
 }
-.folder-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.folder-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* crop towards the middle of the picture, not one of its corners */
+  object-position: center;
+  display: block;
+}
 .folder-cover[data-tiles='1'] { grid-template-columns: 1fr; }
 .folder-cover[data-tiles='2'] { grid-template-columns: 1fr 1fr; }
 /* one tall shot beside two stacked ones, which reads better than three strips */
@@ -979,7 +1000,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 .folder-cover.sm.is-empty svg { width: 20px; height: 20px; }
 
 /* ---- folders as tiles ---- */
-.folder-card .card-media { aspect-ratio: 4 / 3; }
+.folder-card .card-media { aspect-ratio: 1 / 1; }
 .folder-card .card-body h3 { font-size: 16px; }
 
 /* ---- folders as rows ---- */
@@ -1218,60 +1239,42 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .pick-tag { display: block; font-size: 10.5px; color: var(--gold); margin-top: 2px; }
 
-/* ---- dragging drinks into order ---- */
-/* Absolutely positioned so a row can be slid past its neighbours without the
-   list reflowing; the heights here are the ones FolderReorderSheet counts in. */
-.reorder-list { position: relative; }
-.reorder-row {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 62px;
+/* ---- rearranging the folder in place ---- */
+.reorder-bar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  padding: 0 12px 0 10px;
+  margin: 0 0 14px;
+  padding: 10px 10px 10px 15px;
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+}
+.reorder-bar span { font-size: 14px; color: var(--text-muted); }
+.btn-sm { padding: 8px 16px; font-size: 14px; border-radius: 10px; }
+
+/* Each tile is shifted by a transform rather than by the grid, which is what
+   lets it animate instead of snapping to a new cell. */
+.reorder-tile {
+  position: relative;
   touch-action: none;
   cursor: grab;
   -webkit-user-select: none;
   user-select: none;
 }
-.reorder-row.dragging {
-  z-index: 3;
+.reorder-tile .card { pointer-events: none; }
+.reorder-tile.dragging {
+  z-index: 5;
   cursor: grabbing;
+}
+.reorder-tile.dragging .card {
   border-color: var(--amber);
-  background: var(--surface-hi);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.04);
 }
-.reorder-row img {
-  flex: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 9px;
-  object-fit: cover;
-  pointer-events: none;
-}
-.reorder-num {
-  flex: none;
-  width: 20px;
-  color: var(--text-dim);
-  font-size: 12.5px;
-  font-weight: 700;
-  text-align: center;
-}
-.reorder-name {
-  flex: 1;
-  min-width: 0;
-  font-size: 15px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.reorder-row > svg { flex: none; color: var(--text-dim); }
+.reorder-tile .card { transition: transform 0.18s ease, border-color 0.18s ease; }
+.grid.reordering { position: relative; }
 
 /* ============================================================
    Responsive scaling — desktop, tablet & landscape

@@ -161,10 +161,7 @@ const STRINGS = {
     'Remove from folder': 'Uit map verwijderen',
     'Remove “{name}” from {folder}?': '“{name}” uit {folder} verwijderen?',
     Rearrange: 'Volgorde aanpassen',
-    'Drag a cocktail to move it. The order here is the order in the folder.':
-      'Sleep een cocktail om hem te verplaatsen. Deze volgorde is de volgorde in de map.',
-    'Save order': 'Volgorde opslaan',
-    'Order saved': 'Volgorde opgeslagen',
+    'Drag a cocktail to move it': 'Sleep een cocktail om hem te verplaatsen',
     Back: 'Terug',
 
     // settings

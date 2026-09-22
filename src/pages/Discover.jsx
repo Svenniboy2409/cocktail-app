@@ -21,7 +21,7 @@ import Recommendations from '../components/Recommendations'
 import FilterChips from '../components/FilterChips'
 import FilterSheet from '../components/FilterSheet'
 import { IconSearch, IconClose, IconFilters } from '../components/icons'
-import { useSavedIds, useUserRecipes } from '../lib/hooks'
+import { useSavedIds } from '../lib/hooks'
 import { searchCocktails } from '../lib/search'
 import { useI18n } from '../lib/i18n'
 import { savedFilters } from '../lib/discoverFilters'
@@ -37,7 +37,6 @@ export default function Discover() {
   const [occasion, setOccasion] = useState(savedFilters.occasion)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const savedIds = useSavedIds()
-  const { recipes } = useUserRecipes()
   const { t, tt } = useI18n()
 
   // Remember the current selection for when we come back to this page.
@@ -45,19 +44,10 @@ export default function Discover() {
     Object.assign(savedFilters, { query, drinkType, tag, spirit, glass, serve, season, occasion })
   }, [query, drinkType, tag, spirit, glass, serve, season, occasion])
 
-  const all = useMemo(() => [...recipes, ...cocktails], [recipes])
-
-  // Spirit list = curated spirits plus any categories from the user's own
-  // recipes that aren't already covered, so custom drinks are filterable too.
-  const spirits = useMemo(() => {
-    const extra = recipes
-      .map((r) => r.category)
-      .filter((c) => c && !SPIRITS.includes(c))
-    return [...SPIRITS, ...Array.from(new Set(extra)).sort()]
-  }, [recipes])
-
+  // Discover is for finding drinks you don't know yet. Your own recipes are
+  // not that — you wrote them — so they stay in the Library.
   const filtered = useMemo(() => {
-    const chosen = all.filter((c) => {
+    const chosen = cocktails.filter((c) => {
       const matchType = drinkType === 'All' || drinkTypeOf(c) === drinkType
       const matchTag = tag === 'All' || c.tags?.includes(tag)
       const matchSpirit =
@@ -74,7 +64,7 @@ export default function Discover() {
     // Typo-tolerant, word-boundary search; best match first, and the list is
     // left in its usual fame order when the search box is empty.
     return searchCocktails(chosen, query, keywordsOf)
-  }, [all, query, drinkType, tag, spirit, glass, serve, season, occasion])
+  }, [query, drinkType, tag, spirit, glass, serve, season, occasion])
 
   // Everything the sheet offers, in the order it shows them.
   const groups = [
@@ -82,7 +72,7 @@ export default function Discover() {
     { label: 'Style', allLabel: 'All styles', options: TAGS, value: tag, onChange: setTag },
     { label: 'Season', allLabel: 'All year round', options: SEASONS_PRESENT, value: season, onChange: setSeason },
     { label: 'Occasion', allLabel: 'Any occasion', options: OCCASIONS_PRESENT, value: occasion, onChange: setOccasion },
-    { label: 'Base spirit', allLabel: 'All base spirits', options: spirits, value: spirit, onChange: setSpirit },
+    { label: 'Base spirit', allLabel: 'All base spirits', options: SPIRITS, value: spirit, onChange: setSpirit },
     { label: 'Glass', allLabel: 'All glasses', options: GLASSES, value: glass, onChange: setGlass },
     { label: 'Serve', allLabel: 'All serves', options: SERVES, value: serve, onChange: setServe },
   ]

@@ -5,8 +5,9 @@ import CocktailCard from '../components/CocktailCard'
 import FolderSheet from '../components/FolderSheet'
 import FolderCover from '../components/FolderCover'
 import AddCocktailsSheet from '../components/AddCocktailsSheet'
-import FolderReorderSheet from '../components/FolderReorderSheet'
+import ReorderableGrid from '../components/ReorderableGrid'
 import { useFolders, useSavedIds, useUserRecipes } from '../lib/hooks'
+import { setFolderIds } from '../lib/storage'
 import { IconBack, IconEdit, IconSort, IconFolderPlus } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 
@@ -71,9 +72,10 @@ export default function FolderDetail() {
         </div>
         {drinks.length > 1 && (
           <button
-            className="header-action icon-only"
-            onClick={() => setSorting(true)}
+            className={'header-action icon-only' + (sorting ? ' on' : '')}
+            onClick={() => setSorting((v) => !v)}
             aria-label={t('Rearrange')}
+            aria-pressed={sorting}
             title={t('Rearrange')}
           >
             <IconSort />
@@ -95,6 +97,21 @@ export default function FolderDetail() {
           <h3>{t('This folder is empty')}</h3>
           {addActions}
         </div>
+      ) : sorting ? (
+        <>
+          {/* Rearranging happens right here in the grid, so the folder looks
+              the way it will look rather than the way a list of it would. */}
+          <div className="reorder-bar">
+            <span>{t('Drag a cocktail to move it')}</span>
+            <button className="btn btn-primary btn-sm" onClick={() => setSorting(false)}>
+              {t('Done')}
+            </button>
+          </div>
+          <ReorderableGrid
+            items={drinks}
+            onReorder={(ids) => setFolderIds(folder.id, ids)}
+          />
+        </>
       ) : (
         <>
           <div className="grid">
@@ -125,7 +142,6 @@ export default function FolderDetail() {
         />
       )}
       {adding && <AddCocktailsSheet folder={folder} onClose={() => setAdding(false)} />}
-      {sorting && <FolderReorderSheet folder={folder} onClose={() => setSorting(false)} />}
     </div>
   )
 }
