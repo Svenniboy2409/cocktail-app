@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
+import { getScroller } from '../lib/scroller'
 
 // Pages that should pick up where you left off. Everything else — a cocktail's
 // detail page above all — always opens at the top.
@@ -21,16 +22,18 @@ export default function ScrollManager() {
   const { pathname } = useLocation()
   const prevPath = useRef(null)
   // Tracked continuously rather than read on navigation: by the time we switch
-  // routes the browser may already have clamped window.scrollY to the new,
+  // routes the browser may already have clamped the offset to the new,
   // possibly shorter page.
   const lastY = useRef(0)
 
   useEffect(() => {
+    const el = getScroller()
+    if (!el) return undefined
     const onScroll = () => {
-      lastY.current = window.scrollY
+      lastY.current = el.scrollTop
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
   }, [])
 
   useLayoutEffect(() => {
@@ -41,7 +44,8 @@ export default function ScrollManager() {
     prevPath.current = pathname
 
     const target = REMEMBERED.includes(pathname) ? positions.get(pathname) ?? 0 : 0
-    window.scrollTo(0, target)
+    const el = getScroller()
+    if (el) el.scrollTop = target
     lastY.current = target
   }, [pathname])
 

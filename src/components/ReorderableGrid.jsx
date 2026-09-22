@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import CocktailCard from './CocktailCard'
+import { getScroller } from '../lib/scroller'
 
 // How close to the edge of the screen the finger has to get before the page
 // starts scrolling under it, and how fast it goes at the very edge.
@@ -24,6 +25,7 @@ export default function ReorderableGrid({ items, onReorder }) {
   const start = useRef(null)
   const pointer = useRef({ x: 0, y: 0 })
   const scrollBy = useRef(0)
+  const scroller = useRef(null)
 
   // Follow the folder when it changes from outside (a drink added, say), but
   // never mid-drag.
@@ -69,9 +71,10 @@ export default function ReorderableGrid({ items, onReorder }) {
   // finger counts as travel too.
   const track = useCallback(() => {
     if (!start.current) return
+    const top = scroller.current?.scrollTop || 0
     setDelta({
       x: pointer.current.x - start.current.x,
-      y: pointer.current.y + window.scrollY - (start.current.y + start.current.scrollY),
+      y: pointer.current.y + top - (start.current.y + start.current.scrollTop),
     })
   }, [])
 
@@ -80,8 +83,8 @@ export default function ReorderableGrid({ items, onReorder }) {
     if (from == null) return undefined
     let raf
     const step = () => {
-      if (scrollBy.current) {
-        window.scrollBy(0, scrollBy.current)
+      if (scrollBy.current && scroller.current) {
+        scroller.current.scrollTop += scrollBy.current
         track()
       }
       raf = requestAnimationFrame(step)
@@ -101,7 +104,8 @@ export default function ReorderableGrid({ items, onReorder }) {
       stepX: cols > 1 ? rects[1].left - rects[0].left : 0,
       stepY: rects.length > cols ? rects[cols].top - rects[0].top : rects[0].height,
     }
-    start.current = { x: e.clientX, y: e.clientY, scrollY: window.scrollY }
+    scroller.current = getScroller()
+    start.current = { x: e.clientX, y: e.clientY, scrollTop: scroller.current?.scrollTop || 0 }
     pointer.current = { x: e.clientX, y: e.clientY }
     scrollBy.current = 0
     setFrom(i)
@@ -116,9 +120,12 @@ export default function ReorderableGrid({ items, onReorder }) {
   const move = (e) => {
     if (from == null) return
     pointer.current = { x: e.clientX, y: e.clientY }
-    const top = e.clientY - EDGE
-    const bottom = e.clientY - (window.innerHeight - EDGE)
-    scrollBy.current = top < 0 ? Math.max(-SPEED, top / 6) : bottom > 0 ? Math.min(SPEED, bottom / 6) : 0
+    // Measured against the scrolling element, not the window, since that is
+    // what actually moves.
+    const box = scroller.current?.getBoundingClientRect()
+    const over = box ? e.clientY - (box.top + EDGE) : 0
+    const under = box ? e.clientY - (box.bottom - EDGE) : 0
+    scrollBy.current = over < 0 ? Math.max(-SPEED, over / 6) : under > 0 ? Math.min(SPEED, under / 6) : 0
     track()
   }
 

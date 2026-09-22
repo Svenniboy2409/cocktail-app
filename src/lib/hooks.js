@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { getSavedIds, getUserRecipes, getPantry, getFolders, getFolderView } from './storage'
+import { getScroller } from './scroller'
 
 // Behaviour shared by the bottom sheets (New recipe, Your bar):
 //  1. lock the page behind the sheet so only the sheet is interactive;
@@ -11,24 +12,19 @@ export function useDismissableSheet(onDismiss) {
   const start = useRef(null)
   const sheetRef = useRef(null)
 
-  // Stop the page behind the sheet from scrolling, without repositioning the
-  // body — that keeps everything (including the fixed bottom nav) exactly in
-  // place instead of shifting when the sheet opens. Scrolling inside the
-  // sheet's own body is still allowed.
+  // Freeze the page behind the sheet. Only one element scrolls, so this is a
+  // matter of refusing its input rather than changing its overflow — switching
+  // overflow off would drop it back to the top, and the page would visibly
+  // jump behind the sheet. The sheet's own body scrolls as normal.
   useEffect(() => {
-    const prevent = (e) => {
-      const t = e.target instanceof Element ? e.target.closest('.sheet-body') : null
-      // Allow scrolling only inside the sheet's own body, and only when it is
-      // actually scrollable — otherwise a short sheet (like "Your bar") would
-      // let the scroll bleed through to the page behind it.
-      if (t && t.scrollHeight > t.clientHeight) return
-      e.preventDefault()
-    }
-    document.addEventListener('touchmove', prevent, { passive: false })
-    document.addEventListener('wheel', prevent, { passive: false })
+    const el = getScroller()
+    if (!el) return undefined
+    const stop = (e) => e.preventDefault()
+    el.classList.add('is-locked')
+    el.addEventListener('wheel', stop, { passive: false })
     return () => {
-      document.removeEventListener('touchmove', prevent)
-      document.removeEventListener('wheel', prevent)
+      el.classList.remove('is-locked')
+      el.removeEventListener('wheel', stop)
     }
   }, [])
 

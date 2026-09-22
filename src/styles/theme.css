@@ -44,10 +44,15 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* The document itself never scrolls — see lib/scroller.js. Without this the
+   address bar collapsing mid-scroll drags every fixed element with it. */
 html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
@@ -61,18 +66,37 @@ body {
 }
 
 #root {
-  min-height: 100dvh;
+  height: 100%;
 }
 
-/* app shell: centered mobile column */
+/* App shell: a centred column fixed to the viewport. Everything pinned to an
+   edge — the bottom bar, the sheets, the toast — is positioned against this
+   rather than against the viewport, so it cannot be moved by the address bar
+   or the keyboard. */
 .app {
-  position: relative;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   max-width: var(--maxw);
   margin: 0 auto;
-  min-height: 100dvh;
+  overflow: hidden;
   background: radial-gradient(120% 60% at 50% 0%, #1c1713 0%, var(--bg) 45%, var(--bg-deep) 100%);
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
 }
+
+/* The one scrolling element. */
+.app-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+/* Held still while a sheet is open. Refusing touch keeps the scroll position
+   exactly where it was, which turning overflow off would not. */
+.app-scroll.is-locked { touch-action: none; }
 
 .page {
   padding: 20px var(--page-x) calc(var(--nav-h) + var(--safe-b) + 28px);
@@ -565,11 +589,11 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 
 /* ---- bottom nav ---- */
 .bottom-nav {
-  position: fixed;
+  position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   max-width: var(--maxw);
   height: calc(var(--nav-h) + var(--safe-b));
   padding-bottom: var(--safe-b);
@@ -771,20 +795,22 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
    Create Recipe sheet
    ============================================================ */
 .sheet-backdrop {
-  position: fixed;
+  position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
   z-index: 100;
   animation: fade-in 0.2s ease;
 }
 .sheet {
-  position: fixed;
+  position: absolute;
   left: 50%;
   transform: translateX(-50%);
   bottom: 0;
   width: 100%;
   max-width: var(--maxw);
-  max-height: 94dvh;
+  /* a share of the shell, which is exactly the viewport, rather than of the
+     viewport itself — dvh changes under you while the address bar moves */
+  max-height: 94%;
   background: var(--bg);
   border-radius: 22px 22px 0 0;
   border-top: 1px solid var(--line-strong);
@@ -919,7 +945,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 
 /* toast */
 .toast {
-  position: fixed;
+  position: absolute;
   bottom: calc(var(--nav-h) + var(--safe-b) + 18px);
   left: 50%;
   transform: translateX(-50%);
@@ -1169,8 +1195,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
    shrinking to the content when there is little of it. The body has to grow
    explicitly, or a short list would leave the footer floating mid-sheet. */
 .sheet-tall {
-  min-height: 60dvh;
-  max-height: 88dvh;
+  min-height: 60%;
+  max-height: 88%;
 }
 .sheet-tall .sheet-body { flex: 1 1 auto; }
 .pick-grid {

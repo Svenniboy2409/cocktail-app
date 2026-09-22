@@ -23,13 +23,16 @@ export default function App() {
     <ToastProvider>
       <div className="app">
         <ScrollManager />
-        <Routes>
-          <Route path="/" element={<Discover />} />
-          <Route path="/library" element={<Library onCreate={openCreate} />} />
-          <Route path="/cocktail/:id" element={<CocktailDetail onEdit={openEdit} />} />
-          <Route path="/folder/:id" element={<FolderDetail />} />
-          <Route path="*" element={<Discover />} />
-        </Routes>
+        {/* The only thing that scrolls. See lib/scroller.js for why. */}
+        <div className="app-scroll" id="app-scroll">
+          <Routes>
+            <Route path="/" element={<Discover />} />
+            <Route path="/library" element={<Library onCreate={openCreate} />} />
+            <Route path="/cocktail/:id" element={<CocktailDetail onEdit={openEdit} />} />
+            <Route path="/folder/:id" element={<FolderDetail />} />
+            <Route path="*" element={<Discover />} />
+          </Routes>
+        </div>
 
         {!isDetail && <BottomNav onCreate={openCreate} />}
 
