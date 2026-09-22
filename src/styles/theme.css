@@ -92,7 +92,6 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
 }
 /* Held still while a sheet is open. Refusing touch keeps the scroll position
    exactly where it was, which turning overflow off would not. */
@@ -482,8 +481,10 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   top: 10px;
   left: 10px;
   z-index: 2;
-  background: rgba(20, 17, 16, 0.72);
-  backdrop-filter: blur(6px);
+  /* No backdrop-filter here, nor on any other per-card element: each one is a
+     compositing layer with a snapshot of the pixels behind it, and there is one
+     of these per cocktail. A slightly more opaque background reads the same. */
+  background: rgba(20, 17, 16, 0.88);
   border: 1px solid var(--line-strong);
   color: var(--amber);
   font-size: 10.5px;
@@ -514,8 +515,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   place-items: center;
   border-radius: 50%;
   border: none;
-  background: rgba(20, 17, 16, 0.6);
-  backdrop-filter: blur(6px);
+  background: rgba(20, 17, 16, 0.78);
   color: var(--text);
   cursor: pointer;
 }
@@ -710,10 +710,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   font-size: 12px;
   padding: 5px 11px;
   border-radius: 999px;
-  background: rgba(44, 37, 31, 0.75);
+  background: rgba(44, 37, 31, 0.88);
   border: 1px solid var(--line);
   color: var(--gold);
-  backdrop-filter: blur(4px);
 }
 
 /* The origin pill is a button — it runs a search for that place. */
@@ -942,6 +941,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 
 .field-error { color: var(--danger); font-size: 13px; margin-top: 8px; }
+
+/* Marks the end of a list that is still growing as you scroll. */
+.grid-sentinel { height: 1px; }
 
 /* toast */
 .toast {
@@ -1238,8 +1240,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   place-items: center;
   border-radius: 50%;
   border: 1.5px solid rgba(243, 237, 228, 0.6);
-  background: rgba(20, 17, 16, 0.55);
-  backdrop-filter: blur(6px);
+  background: rgba(20, 17, 16, 0.78);
   font-size: 13px;
   font-weight: 700;
   color: transparent;

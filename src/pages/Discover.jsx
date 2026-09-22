@@ -25,6 +25,7 @@ import { useSavedIds } from '../lib/hooks'
 import { searchCocktails } from '../lib/search'
 import { useI18n } from '../lib/i18n'
 import { savedFilters } from '../lib/discoverFilters'
+import { useVisibleCount } from '../lib/useVisibleCount'
 
 export default function Discover() {
   const [query, setQuery] = useState(savedFilters.query)
@@ -76,6 +77,13 @@ export default function Discover() {
     { label: 'Glass', allLabel: 'All glasses', options: GLASSES, value: glass, onChange: setGlass },
     { label: 'Serve', allLabel: 'All serves', options: SERVES, value: serve, onChange: setServe },
   ]
+
+  // The list grows as it is scrolled rather than putting all 476 cards in the
+  // page at once; a new search or filter starts it over.
+  const [shown, sentinel] = useVisibleCount(
+    filtered.length,
+    [query, drinkType, tag, spirit, glass, serve, season, occasion].join('\u0000'),
+  )
 
   const activeCount = groups.filter((g) => g.value !== 'All').length
   const hasFilters = activeCount > 0 || query.trim() !== ''
@@ -157,11 +165,14 @@ export default function Discover() {
           <p>{t('Try a different search or filter.')}</p>
         </div>
       ) : (
-        <div className="grid">
-          {filtered.map((c) => (
-            <CocktailCard key={c.id} cocktail={c} saved={savedIds.includes(c.id)} />
-          ))}
-        </div>
+        <>
+          <div className="grid">
+            {filtered.slice(0, shown).map((c) => (
+              <CocktailCard key={c.id} cocktail={c} saved={savedIds.includes(c.id)} />
+            ))}
+          </div>
+          {shown < filtered.length && <div className="grid-sentinel" ref={sentinel} />}
+        </>
       )}
 
       {filtersOpen && (
