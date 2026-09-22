@@ -6,6 +6,10 @@
   /* palette */
   --bg: #141110;
   --bg-deep: #0e0c0b;
+  /* what the bottom bar actually comes out as, once its translucent fill is
+     over the shell — the page behind wears the same colour, so a stray strip
+     under the bar cannot be seen as a strip */
+  --bg-behind: #100e0c;
   --surface: #221c17;
   --surface-2: #2c251f;
   --surface-hi: #362d25;
@@ -56,7 +60,7 @@ body {
 }
 
 body {
-  background: var(--bg-deep);
+  background: var(--bg-behind);
   color: var(--text);
   font-family: var(--font-body);
   font-size: 16px;
@@ -944,6 +948,15 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 
 .field-error { color: var(--danger); font-size: 13px; margin-top: 8px; }
+
+/* Pinch to zoom and the bar would hang somewhere across the middle of what you
+   are looking at, since the layout does not move with the visual viewport. It
+   steps out of the way until you zoom back. */
+.is-zoomed .bottom-nav {
+  opacity: 0;
+  pointer-events: none;
+}
+.bottom-nav { transition: opacity 0.16s ease; }
 
 /* Marks the end of a list that is still growing as you scroll. */
 .grid-sentinel { height: 1px; }
