@@ -76,9 +76,12 @@ body {
 .app {
   position: fixed;
   top: 0;
-  bottom: 0;
   left: 0;
   right: 0;
+  /* Measured in lib/viewport.js, because Safari's own answer is stale for the
+     first moments after load and leaves a strip of page below the bar.
+     100dvh is the fallback until that runs, and for anything without JS. */
+  height: var(--app-h, 100dvh);
   max-width: var(--maxw);
   margin: 0 auto;
   overflow: hidden;
