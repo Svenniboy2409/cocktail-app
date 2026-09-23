@@ -1,18 +1,35 @@
-import { useRef } from 'react'
-import { useDismissableSheet, useFolderView } from '../lib/hooks'
-import { exportAll, importAll, setFolderView } from '../lib/storage'
+import { useRef, useState } from 'react'
+import { useDismissableSheet, useFolderView, useSectionOrder } from '../lib/hooks'
+import { exportAll, importAll, setFolderView, setSectionOrder } from '../lib/storage'
 import { LANGUAGES, setLang, useI18n } from '../lib/i18n'
-import { IconDownload, IconUpload, IconGridView, IconListView } from './icons'
+import { IconDownload, IconUpload, IconGridView, IconListView, IconDrag } from './icons'
+import ReorderableGrid from './ReorderableGrid'
 import { useToast } from './Toast'
 
+const LABELS = { folders: 'Folders', recipes: 'My recipes', saved: 'Saved' }
+
 // Everything that is about the app rather than about a drink: which language
-// the interface speaks, and getting your data in and out of this browser.
+// the interface speaks, how the library runs, and getting your data in and out
+// of this browser.
 export default function SettingsSheet({ onClose }) {
   const { lang, t } = useI18n()
   const folderView = useFolderView()
+  const saved = useSectionOrder()
   const showToast = useToast()
   const fileRef = useRef(null)
-  const { sheetRef, handleProps, sheetStyle, backdropStyle } = useDismissableSheet(onClose)
+
+  // The running order is held here while the sheet is open and only written
+  // when it closes, so the library behind stays still until you are done — and
+  // then slides into its new shape in one go.
+  const [order, setOrder] = useState(saved)
+  const finish = () => {
+    if (order.join() !== saved.join()) setSectionOrder(order)
+    onClose()
+  }
+
+  const { sheetRef, handleProps, sheetStyle, backdropStyle } = useDismissableSheet(() => finish())
+
+  const SECTION_NAMES = order.map((key) => ({ key, label: LABELS[key] }))
 
   const handleExport = async () => {
     const json = await exportAll()
@@ -42,7 +59,7 @@ export default function SettingsSheet({ onClose }) {
 
   return (
     <>
-      <div className="sheet-backdrop" style={backdropStyle} onClick={onClose} />
+      <div className="sheet-backdrop" style={backdropStyle} onClick={finish} />
       <div
         className="sheet"
         ref={sheetRef}
@@ -55,7 +72,7 @@ export default function SettingsSheet({ onClose }) {
           <div className="sheet-grip" />
           <div className="sheet-head">
             <h2>{t('Settings')}</h2>
-            <button className="sheet-close" onClick={onClose} onPointerDown={(e) => e.stopPropagation()}>
+            <button className="sheet-close" onClick={finish} onPointerDown={(e) => e.stopPropagation()}>
               {t('Done')}
             </button>
           </div>
@@ -80,6 +97,24 @@ export default function SettingsSheet({ onClose }) {
             </div>
             <p className="muted" style={{ margin: '10px 2px 0', fontSize: 13 }}>
               {t('Interface and recipes. Drink names stay as they are.')}
+            </p>
+          </div>
+
+          <div className="field">
+            <label>{t('Library order')}</label>
+            <ReorderableGrid
+              items={SECTION_NAMES.map(({ key, label }) => ({ id: key, label: t(label) }))}
+              className="order-rows"
+              renderItem={(row) => (
+                <div className="order-row">
+                  <span className="order-row-name">{row.label}</span>
+                  <IconDrag />
+                </div>
+              )}
+              onReorder={setOrder}
+            />
+            <p className="muted" style={{ margin: '10px 2px 0', fontSize: 13 }}>
+              {t('Drag to set which part of your library comes first.')}
             </p>
           </div>
 
@@ -132,7 +167,7 @@ export default function SettingsSheet({ onClose }) {
         </div>
 
         <div className="sheet-footer">
-          <button className="btn btn-primary btn-block" onClick={onClose}>
+          <button className="btn btn-primary btn-block" onClick={finish}>
             {t('Done')}
           </button>
         </div>

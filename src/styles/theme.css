@@ -1147,6 +1147,29 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .folder-pick.on .tick { color: var(--amber); border-color: var(--amber); }
 
+/* ---- the library's running order (Settings) ---- */
+.order-rows { display: flex; flex-direction: column; gap: 8px; }
+.order-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+.order-row-name { flex: 1; font-size: 15px; font-weight: 600; }
+.order-row > svg { flex: none; color: var(--text-dim); }
+.reorder-tile.dragging .order-row {
+  border-color: var(--amber);
+  background: var(--surface-hi);
+  box-shadow: var(--shadow);
+  transform: scale(1.02);
+}
+.order-rows.reordering { position: relative; display: flex; flex-direction: column; gap: 8px; }
+.reorder-tile .order-row { pointer-events: none; }
+
 /* ---- segmented control (Settings) ---- */
 .seg {
   display: flex;
@@ -1295,36 +1318,10 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .pick-tag { display: block; font-size: 10.5px; color: var(--gold); margin-top: 2px; }
 
-/* ---- rearranging the library ---- */
-/* Each section is a block that can be picked up by its heading, so the blocks
-   are spaced by their own margin rather than by the headings' own. */
-.section-stack { position: relative; }
+/* ---- the library's sections ---- */
+/* Positioned so a section can be slid from where it used to be to where it now
+   belongs, when the order is changed in Settings. */
 .section-block { position: relative; }
-.section-grip {
-  touch-action: none;
-  cursor: grab;
-  -webkit-user-select: none;
-  user-select: none;
-}
-.section-grip:active { cursor: grabbing; }
-/* The heading is the handle, so it says so. */
-.section-grip .section-head {
-  padding: 8px 10px;
-  margin: 20px -10px 10px;
-  border-radius: 12px;
-  border: 1px dashed var(--line-strong);
-}
-/* While a heading is being held the sections fold down to their headings, so
-   the whole stack is one screenful of equal rows and a move can be seen. */
-.section-stack.is-folded .section-body { display: none; }
-.section-stack.is-folded .section-head { margin-top: 10px; margin-bottom: 10px; }
-.section-block.dragging { z-index: 4; }
-.section-block.dragging .section-head {
-  border-style: solid;
-  border-color: var(--amber);
-  background: rgba(212, 160, 90, 0.12);
-}
-.section-block.dragging .section-head h2 { color: var(--amber); }
 .section-empty {
   margin: 0;
   padding: 14px 2px 4px;

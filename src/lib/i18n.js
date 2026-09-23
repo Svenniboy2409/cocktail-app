@@ -163,8 +163,8 @@ const STRINGS = {
     Rearrange: 'Volgorde aanpassen',
     'Rearrange library': 'Bibliotheek ordenen',
     'Drag a cocktail to move it': 'Sleep een cocktail om hem te verplaatsen',
-    'Drag a card, or a heading to move the whole section':
-      'Sleep een kaartje, of een kop om de hele sectie te verplaatsen',
+    'Drag a card to move it within its section':
+      'Sleep een kaartje om het binnen zijn sectie te verplaatsen',
     'Nothing here yet': 'Hier staat nog niets',
     Back: 'Terug',
 
@@ -172,6 +172,9 @@ const STRINGS = {
     Language: 'Taal',
     'Interface and recipes. Drink names stay as they are.':
       'De app en de recepten. De namen van de drankjes blijven zoals ze zijn.',
+    'Library order': 'Volgorde bibliotheek',
+    'Drag to set which part of your library comes first.':
+      'Sleep om te bepalen welk deel van je bibliotheek vooraan staat.',
     Tiles: 'Tegels',
     List: 'Lijst',
     'How your folders look in the Library.': 'Hoe je mappen eruitzien in de bibliotheek.',

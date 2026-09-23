@@ -7,7 +7,7 @@ import SettingsSheet from '../components/SettingsSheet'
 import FolderSheet from '../components/FolderSheet'
 import FolderCover from '../components/FolderCover'
 import ReorderableGrid from '../components/ReorderableGrid'
-import ReorderableSections from '../components/ReorderableSections'
+import SectionList from '../components/SectionList'
 import {
   useSavedIds,
   useUserRecipes,
@@ -16,7 +16,7 @@ import {
   useFolderView,
   useSectionOrder,
 } from '../lib/hooks'
-import { setFolderOrder, setRecipeOrder, setSavedOrder, setSectionOrder } from '../lib/storage'
+import { setFolderOrder, setRecipeOrder, setSavedOrder } from '../lib/storage'
 import {
   IconBottle,
   IconSettings,
@@ -252,24 +252,17 @@ export default function Library({ onCreate }) {
         </div>
       </header>
 
-      {sorting ? (
-        <>
-          <div className="reorder-bar">
-            <span>{t('Drag a card, or a heading to move the whole section')}</span>
-            <button className="btn btn-primary btn-sm" onClick={() => setSorting(false)}>
-              {t('Done')}
-            </button>
-          </div>
-          <ReorderableSections sections={ordered} onReorder={setSectionOrder} />
-        </>
-      ) : (
-        ordered.map((s) => (
-          <div key={s.key}>
-            {s.header}
-            {s.body}
-          </div>
-        ))
+      {sorting && (
+        <div className="reorder-bar">
+          <span>{t('Drag a card to move it within its section')}</span>
+          <button className="btn btn-primary btn-sm" onClick={() => setSorting(false)}>
+            {t('Done')}
+          </button>
+        </div>
       )}
+      {/* Which section comes first is set in Settings; here they only slide
+          into place when it changes. */}
+      <SectionList sections={ordered} />
 
       {barOpen && <PantrySheet onClose={() => setBarOpen(false)} />}
       {settingsOpen && <SettingsSheet onClose={() => setSettingsOpen(false)} />}
