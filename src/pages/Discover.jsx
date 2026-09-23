@@ -25,7 +25,7 @@ import { useSavedIds } from '../lib/hooks'
 import { searchCocktails } from '../lib/search'
 import { useI18n } from '../lib/i18n'
 import { savedFilters } from '../lib/discoverFilters'
-import { useVisibleCount } from '../lib/useVisibleCount'
+import { useWindowedGrid } from '../lib/useWindowedGrid'
 import { getScroller } from '../lib/scroller'
 
 // Is the search row riding along at the top of the page rather than sitting in
@@ -83,6 +83,19 @@ export default function Discover() {
     Object.assign(savedFilters, { query, drinkType, tag, spirit, glass, serve, season, occasion })
   }, [query, drinkType, tag, spirit, glass, serve, season, occasion])
 
+  // A new search or filter is a new list, and its best matches are at the top.
+  // Keyed on the selection rather than on "is this the first run", so arriving
+  // back at a page we had scrolled into is left alone however many times the
+  // effect is invoked.
+  const filterKey = [query, drinkType, tag, spirit, glass, serve, season, occasion].join('\u0000')
+  const lastKey = useRef(filterKey)
+  useEffect(() => {
+    if (lastKey.current === filterKey) return
+    lastKey.current = filterKey
+    const scroller = getScroller()
+    if (scroller) scroller.scrollTop = 0
+  }, [filterKey])
+
   // Discover is for finding drinks you don't know yet. Your own recipes are
   // not that — you wrote them — so they stay in the Library.
   const filtered = useMemo(() => {
@@ -116,12 +129,10 @@ export default function Discover() {
     { label: 'Serve', allLabel: 'All serves', options: SERVES, value: serve, onChange: setServe },
   ]
 
-  // The list grows as it is scrolled rather than putting all 476 cards in the
-  // page at once; a new search or filter starts it over.
-  const [shown, sentinel] = useVisibleCount(
-    filtered.length,
-    [query, drinkType, tag, spirit, glass, serve, season, occasion].join('\u0000'),
-  )
+  // Only the rows near the view are in the page; the rest are accounted for as
+  // space above and below, so scrolling stays the same weight all the way down.
+  const gridRef = useRef(null)
+  const { start, end, padTop, padBottom } = useWindowedGrid(filtered.length, gridRef)
 
   const activeCount = groups.filter((g) => g.value !== 'All').length
   const hasFilters = activeCount > 0 || query.trim() !== ''
@@ -204,14 +215,15 @@ export default function Discover() {
           <p>{t('Try a different search or filter.')}</p>
         </div>
       ) : (
-        <>
-          <div className="grid">
-            {filtered.slice(0, shown).map((c) => (
-              <CocktailCard key={c.id} cocktail={c} saved={savedIds.includes(c.id)} />
-            ))}
-          </div>
-          {shown < filtered.length && <div className="grid-sentinel" ref={sentinel} />}
-        </>
+        <div
+          className="grid"
+          ref={gridRef}
+          style={{ paddingTop: padTop, paddingBottom: padBottom }}
+        >
+          {filtered.slice(start, end).map((c) => (
+            <CocktailCard key={c.id} cocktail={c} saved={savedIds.includes(c.id)} />
+          ))}
+        </div>
       )}
 
       {filtersOpen && (

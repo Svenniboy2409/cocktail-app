@@ -45,7 +45,17 @@ export default function ScrollManager() {
 
     const target = REMEMBERED.includes(pathname) ? positions.get(pathname) ?? 0 : 0
     const el = getScroller()
-    if (el) el.scrollTop = target
+    if (el) {
+      el.scrollTop = target
+      // A page whose length depends on what has been rendered may still be
+      // growing into its full height, and a scroll past the end of a short page
+      // is simply clamped. Ask again once it has settled.
+      if (target && el.scrollTop !== target) {
+        requestAnimationFrame(() => {
+          if (el.scrollTop !== target) el.scrollTop = target
+        })
+      }
+    }
     lastY.current = target
   }, [pathname])
 

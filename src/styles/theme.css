@@ -1003,9 +1003,6 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 
 .field-error { color: var(--danger); font-size: 13px; margin-top: 8px; }
 
-/* Marks the end of a list that is still growing as you scroll. */
-.grid-sentinel { height: 1px; }
-
 /* toast */
 .toast {
   position: absolute;
