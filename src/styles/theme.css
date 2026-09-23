@@ -224,6 +224,12 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 
 /* ---- recommendations (Discover, above search) ---- */
 .recs {
+  /* In front of the search row, which is sticky and would otherwise cover
+     these two while they are still on screen — earliest of all on a phone,
+     where the row's background reaches up behind the status bar. They scroll
+     off the top edge the way the rest of the page does instead. */
+  position: relative;
+  z-index: 21;
   margin-bottom: 22px;
   animation: fade-in 0.4s ease;
 }

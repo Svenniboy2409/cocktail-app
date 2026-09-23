@@ -36,6 +36,18 @@ import { getScroller } from '../lib/scroller'
 function useStuck(rowRef) {
   const [stuck, setStuck] = useState(false)
   const markerRef = useRef(null)
+  // Turning the screen changes the inset, and with it where the row settles,
+  // so the observer is made again rather than left watching the old line.
+  const [epoch, setEpoch] = useState(0)
+  useEffect(() => {
+    const bump = () => setEpoch((n) => n + 1)
+    window.addEventListener('resize', bump)
+    window.addEventListener('orientationchange', bump)
+    return () => {
+      window.removeEventListener('resize', bump)
+      window.removeEventListener('orientationchange', bump)
+    }
+  }, [])
   useEffect(() => {
     const marker = markerRef.current
     const row = rowRef.current
@@ -47,7 +59,7 @@ function useStuck(rowRef) {
     })
     io.observe(marker)
     return () => io.disconnect()
-  }, [rowRef])
+  }, [rowRef, epoch])
   return [stuck, markerRef]
 }
 
