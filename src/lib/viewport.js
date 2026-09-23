@@ -37,12 +37,38 @@ function probeHeight() {
   return probe.getBoundingClientRect().height
 }
 
+// Launched from the home screen rather than opened in a browser tab. There the
+// app owns the whole screen, so the screen's own height is a fair answer — and
+// the one iOS gets right when the others come up an inset short.
+function standalone() {
+  if (window.navigator.standalone === true) return true
+  try {
+    return (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.matchMedia('(display-mode: fullscreen)').matches
+    )
+  } catch {
+    return false
+  }
+}
+
 export function trackViewportHeight() {
   const apply = () => {
     if (typing()) return
-    const h = Math.ceil(
-      Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0, probeHeight()),
+    let h = Math.max(
+      window.innerHeight || 0,
+      document.documentElement.clientHeight || 0,
+      probeHeight(),
     )
+    // Only from the home screen, and only by about an inset: a bigger gap than
+    // that is not an inset but a wrong answer, and is left alone. In a browser
+    // tab the screen is taller than the page by the whole of the chrome, which
+    // would put the bar behind the toolbar.
+    if (standalone()) {
+      const screenH = window.screen?.height || 0
+      if (screenH > h && screenH - h <= 200) h = screenH
+    }
+    h = Math.ceil(h)
     if (h > 0) document.documentElement.style.setProperty('--app-h', `${h}px`)
   }
 

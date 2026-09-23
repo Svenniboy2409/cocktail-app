@@ -51,14 +51,25 @@
 
 /* The document itself never scrolls — see lib/scroller.js. Without this the
    address bar collapsing mid-scroll drags every fixed element with it. */
+/* html, body, #root and .app are all given the same height, because the shell
+   sits inside the other three: if it came out taller than any of them, their
+   `overflow: hidden` would clip the bottom bar off rather than reveal it. The
+   plain `height` line is the fallback for anything without dvh or max(). */
 html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
+  height: max(100dvh, 100%, var(--app-h, 0px));
   overflow: hidden;
   overscroll-behavior: none;
 }
+
+/* Set on the root as well as the body: this is the colour a browser paints
+   behind and around the document, which on a phone includes the inset around
+   the home indicator. Matching the bottom bar means a strip there reads as
+   part of the bar rather than as a black band under it. */
+html { background: var(--bg-behind); }
 
 body {
   background: var(--bg-behind);
@@ -72,6 +83,7 @@ body {
 
 #root {
   height: 100%;
+  height: max(100dvh, 100%, var(--app-h, 0px));
 }
 
 /* App shell: a centred column fixed to the viewport. Everything pinned to an
@@ -87,8 +99,14 @@ body {
      and a fixed box follows the visual viewport, so pinching to zoom dragged
      the bar across the middle of the screen. In ordinary flow it fills the
      viewport by construction and keeps its place in the layout when zoomed.
-     The measured height in lib/viewport.js is only a floor, never a ceiling. */
-  height: max(100%, var(--app-h, 0px));
+     The measured height in lib/viewport.js is only a floor, never a ceiling.
+     Sized in dvh rather than %, because a percentage inherits down through
+     html, and for an app launched from the home screen iOS resolves html's
+     height against the safe area — leaving the strip around the home indicator
+     uncovered. A dynamic viewport unit is the viewport itself, insets and all,
+     and with the document unable to scroll it never fluctuates. */
+  height: 100%;
+  height: max(100dvh, 100%, var(--app-h, 0px));
   max-width: var(--maxw);
   margin: 0 auto;
   overflow: hidden;
