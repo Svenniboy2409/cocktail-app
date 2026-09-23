@@ -297,12 +297,38 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 
 /* ---- search + filters ---- */
+/* The search box and the filter button come along once they would otherwise
+   scroll away, so the top of the catalogue is always one tap off however far
+   down you are. The rows of chips below them stay where they are. */
 .search-row {
+  position: sticky;
+  top: var(--safe-t);
+  z-index: 20;
   display: flex;
   align-items: stretch;
   gap: 10px;
-  margin-bottom: 14px;
+  /* Spans the full width of the page so its background can too, while the
+     padding puts the controls back where they were. */
+  margin: 0 calc(-1 * var(--page-x)) 6px;
+  padding: 8px var(--page-x);
 }
+.search-row.is-stuck {
+  background: var(--bg);
+  box-shadow: 0 8px 18px -6px rgba(0, 0, 0, 0.55);
+}
+/* Covers the strip above it — the status bar's own space on a phone — which
+   the row would otherwise leave for the page to scroll through. */
+.search-row.is-stuck::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: calc(var(--safe-t) + 2px);
+  background: var(--bg);
+}
+/* Sits where the row belongs, and reports when that place has scrolled away. */
+.stick-marker { height: 1px; }
 .search {
   flex: 1;
   min-width: 0;

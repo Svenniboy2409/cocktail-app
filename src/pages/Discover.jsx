@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import {
   cocktails,
   TAGS,
@@ -26,6 +26,30 @@ import { searchCocktails } from '../lib/search'
 import { useI18n } from '../lib/i18n'
 import { savedFilters } from '../lib/discoverFilters'
 import { useVisibleCount } from '../lib/useVisibleCount'
+import { getScroller } from '../lib/scroller'
+
+// Is the search row riding along at the top of the page rather than sitting in
+// its own place? A marker just above it answers that: once the marker has
+// scrolled past the top of the page, the row is holding on there instead.
+// The row's own `top` offset is read off it, so the answer changes at the exact
+// moment it starts to stick rather than a status bar's height later.
+function useStuck(rowRef) {
+  const [stuck, setStuck] = useState(false)
+  const markerRef = useRef(null)
+  useEffect(() => {
+    const marker = markerRef.current
+    const row = rowRef.current
+    if (!marker || !row) return undefined
+    const top = parseFloat(getComputedStyle(row).top) || 0
+    const io = new IntersectionObserver(([entry]) => setStuck(!entry.isIntersecting), {
+      root: getScroller(),
+      rootMargin: `-${Math.ceil(top) + 1}px 0px 0px 0px`,
+    })
+    io.observe(marker)
+    return () => io.disconnect()
+  }, [rowRef])
+  return [stuck, markerRef]
+}
 
 export default function Discover() {
   const [query, setQuery] = useState(savedFilters.query)
@@ -39,6 +63,8 @@ export default function Discover() {
   const [filtersOpen, setFiltersOpen] = useState(false)
   const savedIds = useSavedIds()
   const { t, tt } = useI18n()
+  const searchRef = useRef(null)
+  const [stuck, markerRef] = useStuck(searchRef)
 
   // Remember the current selection for when we come back to this page.
   useEffect(() => {
@@ -105,7 +131,8 @@ export default function Discover() {
 
       <Recommendations />
 
-      <div className="search-row">
+      <div className="stick-marker" ref={markerRef} />
+      <div className={'search-row' + (stuck ? ' is-stuck' : '')} ref={searchRef}>
         <div className="search">
           <IconSearch />
           <input
