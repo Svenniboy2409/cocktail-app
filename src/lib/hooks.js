@@ -1,5 +1,12 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { getSavedIds, getUserRecipes, getPantry, getFolders, getFolderView } from './storage'
+import {
+  getSavedIds,
+  getUserRecipes,
+  getPantry,
+  getFolders,
+  getFolderView,
+  getSectionOrder,
+} from './storage'
 import { getScroller } from './scroller'
 
 // Behaviour shared by the bottom sheets (New recipe, Your bar):
@@ -155,4 +162,19 @@ export function useFolderView() {
     }
   }, [])
   return view
+}
+
+// The order the library's three sections run in.
+export function useSectionOrder() {
+  const [order, setOrder] = useState(getSectionOrder)
+  useEffect(() => {
+    const sync = () => setOrder(getSectionOrder())
+    window.addEventListener('mixly:sections-changed', sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener('mixly:sections-changed', sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [])
+  return order
 }

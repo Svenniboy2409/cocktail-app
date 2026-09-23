@@ -6,8 +6,24 @@ import PantrySheet from '../components/PantrySheet'
 import SettingsSheet from '../components/SettingsSheet'
 import FolderSheet from '../components/FolderSheet'
 import FolderCover from '../components/FolderCover'
-import { useSavedIds, useUserRecipes, usePantry, useFolders, useFolderView } from '../lib/hooks'
-import { IconBottle, IconSettings, IconFolderPlus, IconChevron } from '../components/icons'
+import ReorderableGrid from '../components/ReorderableGrid'
+import ReorderableSections from '../components/ReorderableSections'
+import {
+  useSavedIds,
+  useUserRecipes,
+  usePantry,
+  useFolders,
+  useFolderView,
+  useSectionOrder,
+} from '../lib/hooks'
+import { setFolderOrder, setRecipeOrder, setSavedOrder, setSectionOrder } from '../lib/storage'
+import {
+  IconBottle,
+  IconSettings,
+  IconFolderPlus,
+  IconChevron,
+  IconSort,
+} from '../components/icons'
 import { useI18n } from '../lib/i18n'
 
 export default function Library({ onCreate }) {
@@ -16,11 +32,13 @@ export default function Library({ onCreate }) {
   const { recipes } = useUserRecipes()
   const { folders } = useFolders()
   const folderView = useFolderView()
+  const sectionOrder = useSectionOrder()
   const pantry = usePantry()
   const { t } = useI18n()
   const [barOpen, setBarOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [newFolder, setNewFolder] = useState(false)
+  const [sorting, setSorting] = useState(false)
 
   const savedCocktails = useMemo(() => {
     const pool = [...recipes, ...cocktails]
@@ -31,47 +49,67 @@ export default function Library({ onCreate }) {
 
   const count = (n) => t(n === 1 ? '{n} cocktail' : '{n} cocktails', { n })
 
-  return (
-    <div className="page">
-      <header className="app-header">
-        <div>
-          <div className="eyebrow">{t('Your collection')}</div>
-          <h1>{t('Library')}</h1>
-          <div className="sub">{t('Folders, saved cocktails and your own recipes')}</div>
-        </div>
-        <div className="header-actions">
-          <button
-            className="header-action"
-            onClick={() => setBarOpen(true)}
-            aria-label={t('Set up your bar')}
-          >
-            <IconBottle />
-            <span>{t('My bar')}{pantry.length ? ` · ${pantry.length}` : ''}</span>
-          </button>
-          <button
-            className="header-action icon-only"
-            onClick={() => setSettingsOpen(true)}
-            aria-label={t('Open settings')}
-            title={t('Settings')}
-          >
-            <IconSettings />
-          </button>
-        </div>
-      </header>
+  const head = (title, n, action) => (
+    <div className="section-head">
+      <div className="section-title">
+        <h2>{title}</h2>
+        <span className="count">{n}</span>
+      </div>
+      {!sorting && action}
+    </div>
+  )
 
-      {/* ---- folders ---- */}
-      <div className="section-head">
-        <div className="section-title">
-          <h2>{t('Folders')}</h2>
-          <span className="count">{folders.length}</span>
+  const nothing = <p className="section-empty">{t('Nothing here yet')}</p>
+
+  const folderCard = (f) => (
+    <div className="card folder-card">
+      <div className="card-media">
+        <FolderCover folder={f} />
+        <div className="card-body">
+          <h3>{f.name}</h3>
+          <div className="card-tag">{count(f.ids?.length || 0)}</div>
         </div>
-        {folders.length > 0 && (
+      </div>
+    </div>
+  )
+
+  const folderRow = (f) => (
+    <div className="folder-row">
+      <FolderCover folder={f} className="sm" />
+      <span className="folder-row-text">
+        <span className="folder-row-name">{f.name}</span>
+        <span className="folder-row-count">{count(f.ids?.length || 0)}</span>
+      </span>
+      <IconChevron width="18" height="18" />
+    </div>
+  )
+
+  // Each section knows how to draw itself both ways: as it normally reads, and
+  // as something you can pick items out of and drop them somewhere else.
+  const sections = {
+    folders: {
+      key: 'folders',
+      header: head(
+        t('Folders'),
+        folders.length,
+        folders.length > 0 && (
           <button className="section-action" onClick={() => setNewFolder(true)}>
             <IconFolderPlus width="18" height="18" /> {t('New folder')}
           </button>
-        )}
-      </div>
-      {folders.length === 0 ? (
+        ),
+      ),
+      body: sorting ? (
+        folders.length === 0 ? (
+          nothing
+        ) : (
+          <ReorderableGrid
+            items={folders}
+            className={folderView === 'list' ? 'folder-rows' : 'grid folder-grid'}
+            renderItem={folderView === 'list' ? folderRow : folderCard}
+            onReorder={setFolderOrder}
+          />
+        )
+      ) : folders.length === 0 ? (
         <div className="empty">
           <div className="icon">📁</div>
           <h3>{t('No folders yet')}</h3>
@@ -107,16 +145,23 @@ export default function Library({ onCreate }) {
             </Link>
           ))}
         </div>
-      )}
+      ),
+    },
 
-      {/* ---- your recipes ---- */}
-      <div className="section-head">
-        <div className="section-title">
-          <h2>{t('My recipes')}</h2>
-          <span className="count">{recipes.length}</span>
-        </div>
-      </div>
-      {recipes.length === 0 ? (
+    recipes: {
+      key: 'recipes',
+      header: head(t('My recipes'), recipes.length),
+      body: sorting ? (
+        recipes.length === 0 ? (
+          nothing
+        ) : (
+          <ReorderableGrid
+            items={recipes}
+            renderItem={(c) => <CocktailCard cocktail={c} still />}
+            onReorder={setRecipeOrder}
+          />
+        )
+      ) : recipes.length === 0 ? (
         <div className="empty">
           <div className="icon">📝</div>
           <h3>{t('No recipes yet')}</h3>
@@ -131,16 +176,23 @@ export default function Library({ onCreate }) {
             <CocktailCard key={c.id} cocktail={c} saved={savedIds.includes(c.id)} />
           ))}
         </div>
-      )}
+      ),
+    },
 
-      {/* ---- saved cocktails ---- */}
-      <div className="section-head">
-        <div className="section-title">
-          <h2>{t('Saved')}</h2>
-          <span className="count">{savedCocktails.length}</span>
-        </div>
-      </div>
-      {savedCocktails.length === 0 ? (
+    saved: {
+      key: 'saved',
+      header: head(t('Saved'), savedCocktails.length),
+      body: sorting ? (
+        savedCocktails.length === 0 ? (
+          nothing
+        ) : (
+          <ReorderableGrid
+            items={savedCocktails}
+            renderItem={(c) => <CocktailCard cocktail={c} still />}
+            onReorder={setSavedOrder}
+          />
+        )
+      ) : savedCocktails.length === 0 ? (
         <div className="empty">
           <div className="icon">🔖</div>
           <h3>{t('Nothing saved yet')}</h3>
@@ -152,6 +204,71 @@ export default function Library({ onCreate }) {
             <CocktailCard key={c.id} cocktail={c} saved={true} />
           ))}
         </div>
+      ),
+    },
+  }
+
+  const ordered = sectionOrder.map((k) => sections[k]).filter(Boolean)
+  const anything = folders.length + recipes.length + savedCocktails.length > 0
+
+  return (
+    <div className="page">
+      <header className="app-header">
+        <div>
+          <div className="eyebrow">{t('Your collection')}</div>
+          <h1>{t('Library')}</h1>
+          <div className="sub">{t('Folders, saved cocktails and your own recipes')}</div>
+        </div>
+        <div className="header-actions">
+          {!sorting && (
+            <button
+              className="header-action"
+              onClick={() => setBarOpen(true)}
+              aria-label={t('Set up your bar')}
+            >
+              <IconBottle />
+              <span>{t('My bar')}{pantry.length ? ` · ${pantry.length}` : ''}</span>
+            </button>
+          )}
+          {anything && (
+            <button
+              className={'header-action icon-only' + (sorting ? ' on' : '')}
+              onClick={() => setSorting((v) => !v)}
+              aria-label={t('Rearrange library')}
+              aria-pressed={sorting}
+              title={t('Rearrange library')}
+            >
+              <IconSort />
+            </button>
+          )}
+          <button
+            className="header-action icon-only"
+            onClick={() => setSettingsOpen(true)}
+            aria-label={t('Open settings')}
+            title={t('Settings')}
+          >
+            <IconSettings />
+          </button>
+        </div>
+      </header>
+
+      {sorting ? (
+        <>
+          <div className="reorder-bar">
+            <span>{t('Drag a card, or a heading to move the whole section')}</span>
+            <button className="btn btn-primary btn-sm" onClick={() => setSorting(false)}>
+              {t('Done')}
+            </button>
+          </div>
+          <ReorderableSections sections={ordered} onReorder={setSectionOrder} />
+        </>
+      ) : (
+        ordered.map((s) => (
+          <div key={s.key}>
+            {s.header}
+            {s.body}
+          </div>
+        ))
       )}
 
       {barOpen && <PantrySheet onClose={() => setBarOpen(false)} />}

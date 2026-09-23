@@ -109,6 +109,7 @@ export default function FolderDetail() {
           </div>
           <ReorderableGrid
             items={drinks}
+            renderItem={(c) => <CocktailCard cocktail={c} still />}
             onReorder={(ids) => setFolderIds(folder.id, ids)}
           />
         </>

@@ -1295,6 +1295,39 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .pick-tag { display: block; font-size: 10.5px; color: var(--gold); margin-top: 2px; }
 
+/* ---- rearranging the library ---- */
+/* Each section is a block that can be picked up by its heading, so the blocks
+   are spaced by their own margin rather than by the headings' own. */
+.section-stack { position: relative; }
+.section-block { position: relative; }
+.section-grip {
+  touch-action: none;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.section-grip:active { cursor: grabbing; }
+/* The heading is the handle, so it says so. */
+.section-grip .section-head {
+  padding: 8px 10px;
+  margin: 20px -10px 10px;
+  border-radius: 12px;
+  border: 1px dashed var(--line-strong);
+}
+.section-block.dragging { z-index: 4; }
+.section-block.dragging .section-head {
+  border-style: solid;
+  border-color: var(--amber);
+  background: rgba(212, 160, 90, 0.12);
+}
+.section-block.dragging .section-head h2 { color: var(--amber); }
+.section-empty {
+  margin: 0;
+  padding: 14px 2px 4px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
 /* ---- rearranging the folder in place ---- */
 .reorder-bar {
   display: flex;
@@ -1319,18 +1352,24 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   -webkit-user-select: none;
   user-select: none;
 }
-.reorder-tile .card { pointer-events: none; }
+.reorder-tile .card,
+.reorder-tile .folder-row { pointer-events: none; }
 .reorder-tile.dragging {
   z-index: 5;
   cursor: grabbing;
 }
-.reorder-tile.dragging .card {
+.reorder-tile.dragging .card,
+.reorder-tile.dragging .folder-row {
   border-color: var(--amber);
   box-shadow: var(--shadow-lg);
   transform: scale(1.04);
 }
-.reorder-tile .card { transition: transform 0.18s ease, border-color 0.18s ease; }
-.grid.reordering { position: relative; }
+.reorder-tile .card,
+.reorder-tile .folder-row { transition: transform 0.18s ease, border-color 0.18s ease; }
+.grid.reordering,
+.folder-rows.reordering { position: relative; }
+/* A list of rows keeps its own spacing when it becomes draggable. */
+.folder-rows.reordering { display: flex; flex-direction: column; gap: 10px; }
 
 /* ============================================================
    Responsive scaling — desktop, tablet & landscape

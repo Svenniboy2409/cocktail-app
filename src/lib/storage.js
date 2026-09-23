@@ -10,6 +10,7 @@ const RECIPES_KEY = 'mixly.recipes.v1'
 const PANTRY_KEY = 'mixly.pantry.v1'
 const FOLDERS_KEY = 'mixly.folders.v1'
 const FOLDER_VIEW_KEY = 'mixly.folderView.v1'
+const SECTIONS_KEY = 'mixly.sections.v1'
 
 /* -------------------- your bar / pantry (localStorage) -------------------- */
 // The set of base spirits the user has at home, used to power personal
@@ -57,6 +58,12 @@ export function isSaved(id) {
   return getSavedIds().includes(id)
 }
 
+// Rearranged in the library. The saved list has always been an order — newest
+// first — so putting it in the order somebody chose is the same write.
+export function setSavedOrder(ids) {
+  writeSaved([...ids])
+}
+
 export function toggleSaved(id) {
   const ids = getSavedIds()
   const next = ids.includes(id) ? ids.filter((x) => x !== id) : [id, ...ids]
@@ -95,6 +102,17 @@ export async function addRecipe(recipe) {
 export async function updateRecipe(id, patch) {
   const recipes = await getUserRecipes()
   const next = recipes.map((r) => (r.id === id ? { ...r, ...patch } : r))
+  await writeRecipes(next)
+}
+
+// Rearranged in the library.
+export async function setRecipeOrder(ids) {
+  const recipes = await getUserRecipes()
+  const byId = new Map(recipes.map((r) => [r.id, r]))
+  const next = ids.map((id) => byId.get(id)).filter(Boolean)
+  // Anything the caller did not mention keeps its place at the end, so a
+  // recipe added in another tab cannot be lost by a stale reorder.
+  for (const r of recipes) if (!ids.includes(r.id)) next.push(r)
   await writeRecipes(next)
 }
 
@@ -181,6 +199,15 @@ export async function setFolderIds(folderId, ids) {
   await writeFolders(folders.map((f) => (f.id === folderId ? { ...f, ids: [...ids] } : f)))
 }
 
+// Rearranged in the library.
+export async function setFolderOrder(ids) {
+  const folders = await getFolders()
+  const byId = new Map(folders.map((f) => [f.id, f]))
+  const next = ids.map((id) => byId.get(id)).filter(Boolean)
+  for (const f of folders) if (!ids.includes(f.id)) next.push(f)
+  await writeFolders(next)
+}
+
 // Drop a cocktail from every folder — used when a user recipe is deleted.
 async function removeFromAllFolders(cocktailId) {
   const folders = await getFolders()
@@ -210,6 +237,36 @@ export function setFolderView(view) {
   }
   window.dispatchEvent(new Event('mixly:folder-view-changed'))
   return view
+}
+
+/* -------------------- the library's own running order -------------------- */
+// Which of the three sections comes first. A preference, like the folder view,
+// so it lives in localStorage rather than travelling in a backup.
+
+export const SECTIONS = ['folders', 'recipes', 'saved']
+
+export function getSectionOrder() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SECTIONS_KEY))
+    if (Array.isArray(saved)) {
+      const known = saved.filter((k) => SECTIONS.includes(k))
+      // Anything a newer version adds is appended rather than dropped.
+      return [...new Set([...known, ...SECTIONS])]
+    }
+  } catch {
+    /* private mode, blocked storage, or nonsense in there */
+  }
+  return SECTIONS
+}
+
+export function setSectionOrder(order) {
+  try {
+    localStorage.setItem(SECTIONS_KEY, JSON.stringify(order))
+  } catch {
+    /* the choice just won't survive a reload */
+  }
+  window.dispatchEvent(new Event('mixly:sections-changed'))
+  return order
 }
 
 /* -------------------- export / import -------------------- */

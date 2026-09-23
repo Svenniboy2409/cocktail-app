@@ -161,7 +161,11 @@ const STRINGS = {
     'Remove from folder': 'Uit map verwijderen',
     'Remove “{name}” from {folder}?': '“{name}” uit {folder} verwijderen?',
     Rearrange: 'Volgorde aanpassen',
+    'Rearrange library': 'Bibliotheek ordenen',
     'Drag a cocktail to move it': 'Sleep een cocktail om hem te verplaatsen',
+    'Drag a card, or a heading to move the whole section':
+      'Sleep een kaartje, of een kop om de hele sectie te verplaatsen',
+    'Nothing here yet': 'Hier staat nog niets',
     Back: 'Terug',
 
     // settings

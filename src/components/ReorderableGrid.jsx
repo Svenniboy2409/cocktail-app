@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
-import CocktailCard from './CocktailCard'
 import { getScroller } from '../lib/scroller'
 
 // How close to the edge of the screen the finger has to get before the page
@@ -14,9 +13,15 @@ const SPEED = 14
 // transforms, so every step animates. The order is only rewritten on release,
 // by which point the grid already looks exactly like that — nothing jumps.
 //
-// The grid's geometry is read off the DOM when a drag starts rather than
-// hard-coded, so this keeps working at every column count the page uses.
-export default function ReorderableGrid({ items, onReorder }) {
+// The geometry is read off the DOM when a drag starts rather than hard-coded,
+// so this works at every column count the page uses — and at one column, which
+// is how it serves a plain list as well as a grid.
+export default function ReorderableGrid({
+  items,
+  onReorder,
+  renderItem,
+  className = 'grid',
+}) {
   const gridRef = useRef(null)
   const [order, setOrder] = useState(items)
   const [from, setFrom] = useState(null)
@@ -145,12 +150,12 @@ export default function ReorderableGrid({ items, onReorder }) {
   }
 
   return (
-    <div className="grid reordering" ref={gridRef}>
-      {order.map((c, i) => {
+    <div className={className + ' reordering'} ref={gridRef}>
+      {order.map((item, i) => {
         const d = shift(i)
         return (
           <div
-            key={c.id}
+            key={item.id}
             className={'reorder-tile' + (i === from ? ' dragging' : '')}
             style={{
               transform: `translate(${d.x}px, ${d.y}px)`,
@@ -161,7 +166,7 @@ export default function ReorderableGrid({ items, onReorder }) {
             onPointerUp={up}
             onPointerCancel={up}
           >
-            <CocktailCard cocktail={c} still />
+            {renderItem(item)}
           </div>
         )
       })}
