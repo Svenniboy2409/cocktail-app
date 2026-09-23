@@ -49,6 +49,20 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Nothing here should zoom the page by itself. Tapping twice in quick
+   succession on something you can press is a press, not a request to zoom in;
+   pinching still does what it always did. */
+button,
+a,
+label,
+input,
+textarea,
+select,
+.card,
+.chip {
+  touch-action: manipulation;
+}
+
 /* The document itself never scrolls — see lib/scroller.js. Without this the
    address bar collapsing mid-scroll drags every fixed element with it. */
 /* html, body, #root and .app are all given the same height, because the shell
@@ -384,11 +398,14 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .search input {
   flex: 1;
+  min-width: 0;
   background: none;
   border: none;
   outline: none;
   color: var(--text);
-  font-size: 15px;
+  /* 16px for the same reason as every other field: anything smaller and iOS
+     zooms the page in as soon as it is tapped. */
+  font-size: 16px;
   font-family: inherit;
 }
 .search input::placeholder { color: var(--text-dim); }
@@ -935,7 +952,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   padding: 13px 14px;
   color: var(--text);
   font-family: inherit;
-  font-size: 15px;
+  /* Not a pixel under 16: a smaller one makes iOS zoom the page in the moment
+     the field takes focus, and then you are typing into a zoomed page. */
+  font-size: 16px;
   outline: none;
   transition: border-color 0.16s ease;
 }
