@@ -31,6 +31,7 @@ export default function ReorderableGrid({
   const pointer = useRef({ x: 0, y: 0 })
   const scrollBy = useRef(0)
   const scroller = useRef(null)
+  const [settling, setSettling] = useState(false)
 
   // Follow the folder when it changes from outside (a drink added, say), but
   // never mid-drag.
@@ -140,6 +141,13 @@ export default function ReorderableGrid({
       const next = [...order]
       const [moved] = next.splice(from, 1)
       next.splice(to, 0, moved)
+      // Letting go swaps two things at once: every tile takes its new place in
+      // the grid and drops its transform. Those cancel out exactly, so nothing
+      // should move — but the transforms would animate their way to nothing
+      // while the grid has already moved, which is the little lurch you saw
+      // after a card had settled. Transitions are off for the frame that
+      // commits, and back on before the next drag.
+      setSettling(true)
       setOrder(next)
       onReorder(next.map((c) => c.id))
     }
@@ -148,6 +156,18 @@ export default function ReorderableGrid({
     setFrom(null)
     setDelta({ x: 0, y: 0 })
   }
+
+  useEffect(() => {
+    if (!settling) return undefined
+    let inner
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setSettling(false))
+    })
+    return () => {
+      cancelAnimationFrame(outer)
+      if (inner) cancelAnimationFrame(inner)
+    }
+  }, [settling])
 
   return (
     <div className={className + ' reordering'} ref={gridRef}>
@@ -159,7 +179,10 @@ export default function ReorderableGrid({
             className={'reorder-tile' + (i === from ? ' dragging' : '')}
             style={{
               transform: `translate(${d.x}px, ${d.y}px)`,
-              transition: i === from ? 'none' : 'transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1)',
+              transition:
+                i === from || settling
+                  ? 'none'
+                  : 'transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1)',
             }}
             onPointerDown={(e) => down(e, i)}
             onPointerMove={move}

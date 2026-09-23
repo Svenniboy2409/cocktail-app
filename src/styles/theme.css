@@ -1314,6 +1314,10 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   border-radius: 12px;
   border: 1px dashed var(--line-strong);
 }
+/* While a heading is being held the sections fold down to their headings, so
+   the whole stack is one screenful of equal rows and a move can be seen. */
+.section-stack.is-folded .section-body { display: none; }
+.section-stack.is-folded .section-head { margin-top: 10px; margin-bottom: 10px; }
 .section-block.dragging { z-index: 4; }
 .section-block.dragging .section-head {
   border-style: solid;

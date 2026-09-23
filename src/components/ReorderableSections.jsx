@@ -6,18 +6,25 @@ import { getScroller } from '../lib/scroller'
 const EDGE = 90
 const SPEED = 14
 
-// A stack of blocks, rearranged by dragging one of them by its heading.
+// A stack of sections, rearranged by dragging one of them by its heading.
 //
-// Same idea as the grid: nothing moves in the array while you drag, the block
-// follows your finger and the ones it passes slide out of the way, and the
-// order is only rewritten when you let go — so every step animates and nothing
-// jumps. Unlike the grid the blocks are all different heights, so the distance
-// each one travels is measured rather than counted in rows.
+// The sections are wildly different heights — a handful of folders against
+// four hundred saved drinks — and that breaks the way the grid previews a
+// move. Sliding a short section out of a long one's way means moving it by the
+// long one's height, which is thousands of pixels: correct, and useless to
+// look at, because the section simply leaves the screen.
+//
+// So taking hold of a heading folds every section down to its heading for as
+// long as you are dragging. What is left is a short list of equal rows that
+// reorders the way anything else does — the row follows your finger, the ones
+// it passes slide over, and you can see the whole thing at once. Let go and
+// the sections open again, in their new order.
 export default function ReorderableSections({ sections, onReorder }) {
   const wrapRef = useRef(null)
   const [order, setOrder] = useState(sections)
   const [from, setFrom] = useState(null)
   const [dy, setDy] = useState(0)
+  const [settling, setSettling] = useState(false)
   const boxes = useRef([])
   const start = useRef(null)
   const pointer = useRef(0)
@@ -30,7 +37,7 @@ export default function ReorderableSections({ sections, onReorder }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keys])
 
-  // Where the block would land if you let go now. Walk outwards from where it
+  // Where the section would land if you let go now. Walk outwards from where it
   // started, taking each neighbour it has travelled more than halfway across.
   const to = useMemo(() => {
     if (from == null || !boxes.current.length) return null
@@ -39,27 +46,27 @@ export default function ReorderableSections({ sections, onReorder }) {
     if (dy > 0) {
       let past = 0
       for (let i = from + 1; i < b.length; i++) {
-        past += b[i].outer
-        if (dy > past - b[i].outer / 2) target = i
+        past += b[i]
+        if (dy > past - b[i] / 2) target = i
         else break
       }
     } else if (dy < 0) {
       let past = 0
       for (let i = from - 1; i >= 0; i--) {
-        past += b[i].outer
-        if (-dy > past - b[i].outer / 2) target = i
+        past += b[i]
+        if (-dy > past - b[i] / 2) target = i
         else break
       }
     }
     return target
   }, [from, dy])
 
-  // Every block between the two positions moves over by exactly the height of
-  // the one being dragged — that is the gap it leaves and the room it needs.
+  // Folded down, every row is the same height, so a displaced one moves by
+  // exactly the height of the row being dragged.
   const offset = (i) => {
     if (from == null || to == null) return 0
     if (i === from) return dy
-    const moved = boxes.current[from]?.outer || 0
+    const moved = boxes.current[from] || 0
     if (from < to && i > from && i <= to) return -moved
     if (to < from && i >= to && i < from) return moved
     return 0
@@ -88,14 +95,25 @@ export default function ReorderableSections({ sections, onReorder }) {
   const down = (e, i) => {
     if (e.button != null && e.button !== 0) return
     e.preventDefault()
-    const blocks = [...wrapRef.current.children]
-    const rects = blocks.map((el) => el.getBoundingClientRect())
-    // The distance from one block's top to the next, which is its height plus
-    // whatever the stylesheet puts between them.
-    boxes.current = rects.map((r, idx) => ({
-      outer: idx + 1 < rects.length ? rects[idx + 1].top - r.top : r.height,
-    }))
+    const wrap = wrapRef.current
+    const blocks = [...wrap.children]
+    const before = blocks[i].getBoundingClientRect().top
+
+    // Fold first, then measure, so the numbers describe what is on screen.
+    // Done on the element rather than through state because the measurements
+    // below need it to have happened already.
+    wrap.classList.add('is-folded')
+
     scroller.current = getScroller()
+    // Folding pulls everything upwards; scroll by as much as the heading you
+    // are holding moved, so it stays under your finger.
+    const shifted = blocks[i].getBoundingClientRect().top - before
+    if (scroller.current && shifted) scroller.current.scrollTop += shifted
+
+    const rects = blocks.map((el) => el.getBoundingClientRect())
+    boxes.current = rects.map((r, idx) =>
+      idx + 1 < rects.length ? rects[idx + 1].top - r.top : r.height,
+    )
     start.current = { y: e.clientY, scrollTop: scroller.current?.scrollTop || 0 }
     pointer.current = e.clientY
     scrollBy.current = 0
@@ -124,24 +142,44 @@ export default function ReorderableSections({ sections, onReorder }) {
       const next = [...order]
       const [moved] = next.splice(from, 1)
       next.splice(to, 0, moved)
+      // The same swap the grid makes: new places and no transforms, which
+      // cancel out — but only if the transforms are not left animating their
+      // way to nothing afterwards. Transitions off for the frame that commits.
+      setSettling(true)
       setOrder(next)
       onReorder(next.map((s) => s.key))
     }
+    wrapRef.current?.classList.remove('is-folded')
     scrollBy.current = 0
     start.current = null
     setFrom(null)
     setDy(0)
   }
 
+  useEffect(() => {
+    if (!settling) return undefined
+    let inner
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setSettling(false))
+    })
+    return () => {
+      cancelAnimationFrame(outer)
+      if (inner) cancelAnimationFrame(inner)
+    }
+  }, [settling])
+
   return (
-    <div className="section-stack" ref={wrapRef}>
+    <div className={'section-stack' + (from != null ? ' is-folded' : '')} ref={wrapRef}>
       {order.map((section, i) => (
         <div
           key={section.key}
           className={'section-block' + (i === from ? ' dragging' : '')}
           style={{
             transform: `translateY(${offset(i)}px)`,
-            transition: i === from ? 'none' : 'transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1)',
+            transition:
+              i === from || settling
+                ? 'none'
+                : 'transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1)',
           }}
         >
           {/* Only the heading picks the section up, so dragging a card inside
@@ -155,7 +193,7 @@ export default function ReorderableSections({ sections, onReorder }) {
           >
             {section.header}
           </div>
-          {section.body}
+          <div className="section-body">{section.body}</div>
         </div>
       ))}
     </div>
