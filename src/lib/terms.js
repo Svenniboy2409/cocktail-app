@@ -99,6 +99,7 @@ export const NL_EXTRA = {
   Cocktail: ['cocktail'],
   Coffee: ['cafeine', 'koffie'],
   Shooter: ['shotje', 'shotjes'],
+  Shot: ['shotje', 'shotjes', 'borrel', 'borrelglas'],
   Frozen: ['geblend', 'bevroren'],
   Hot: ['warm', 'heet'],
   Creamy: ['romig', 'nagerecht', 'dessert'],

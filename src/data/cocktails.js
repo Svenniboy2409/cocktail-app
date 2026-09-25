@@ -11089,8 +11089,13 @@ export const SPIRITS = (() => {
 // the top filter row on Discover. Derived from each drink's ingredients so it
 // also classifies the user's own recipes automatically.
 
-export const DRINK_TYPES = ['Cocktail', 'Mixed drink', 'Coffee', 'Mocktail']
+export const DRINK_TYPES = ['Cocktail', 'Mixed drink', 'Shot', 'Coffee', 'Mocktail']
 
+// The glass is the recipe's own word on how a drink is served, and a shot
+// glass says shot more plainly than any ingredient could. Several of these are
+// built on coffee liqueur and were landing under Coffee, which is true of the
+// bottle and not of the drink.
+const SHOT_RE = /shot/i
 const COFFEE_RE = /coffee|espresso|cold brew/i
 const MIXER_RE =
   /(tonic|soda water|club soda|\bsoda\b|cola|coke|ginger beer|ginger ale|lemonade|grapefruit soda|sprite|7[- ]?up|bitter lemon)/i
@@ -11110,6 +11115,8 @@ export function drinkTypeOf(cocktail) {
   if (!cocktail) return 'Cocktail'
   if (cocktail.type) return cocktail.type
   if (TYPE_OVERRIDES[cocktail.id]) return TYPE_OVERRIDES[cocktail.id]
+
+  if (SHOT_RE.test(cocktail.glass || '')) return 'Shot'
 
   const names = (cocktail.ingredients || []).map((i) => i.name)
   const text = names.join(' | ')
@@ -11229,6 +11236,7 @@ const TYPE_WORDS = {
   Mocktail: ['alcohol free', 'non alcoholic', 'no alcohol', 'virgin', 'zero proof', 'soft drink', 'sober'],
   Coffee: ['caffeine', 'espresso'],
   'Mixed drink': ['highball', 'easy', 'simple'],
+  Shot: ['shot', 'shots', 'shooter', 'shooters', 'shot glass'],
 }
 
 const SERVE_WORDS = {
