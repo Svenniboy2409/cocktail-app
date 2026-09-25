@@ -213,23 +213,37 @@ export default function Library({ onCreate }) {
 
   return (
     <div className="page">
-      <header className="app-header">
-        <div>
+      {/* Two rows rather than a column of text beside a column of buttons, so
+          the title and the line under it have the whole width to themselves. */}
+      <header className="app-header library-header">
+        <div className="header-row">
           <div className="eyebrow">{t('Your collection')}</div>
-          <h1>{t('Library')}</h1>
-          <div className="sub">{t('Folders, saved cocktails and your own recipes')}</div>
-        </div>
-        <div className="header-actions">
-          {!sorting && (
+          <div className="header-actions">
+            {!sorting && (
+              <button
+                className="header-action"
+                onClick={() => setBarOpen(true)}
+                aria-label={t('Set up your bar')}
+              >
+                <IconBottle />
+                <span>{t('My bar')}{pantry.length ? ` · ${pantry.length}` : ''}</span>
+              </button>
+            )}
             <button
-              className="header-action"
-              onClick={() => setBarOpen(true)}
-              aria-label={t('Set up your bar')}
+              className="header-action icon-only"
+              onClick={() => setSettingsOpen(true)}
+              aria-label={t('Open settings')}
+              title={t('Settings')}
             >
-              <IconBottle />
-              <span>{t('My bar')}{pantry.length ? ` · ${pantry.length}` : ''}</span>
+              <IconSettings />
             </button>
-          )}
+          </div>
+        </div>
+
+        <h1>{t('Library')}</h1>
+
+        <div className="header-row header-row-end">
+          <div className="sub">{t('Folders, saved cocktails and your own recipes')}</div>
           {anything && (
             <button
               className={'header-action icon-only' + (sorting ? ' on' : '')}
@@ -241,14 +255,6 @@ export default function Library({ onCreate }) {
               <IconSort />
             </button>
           )}
-          <button
-            className="header-action icon-only"
-            onClick={() => setSettingsOpen(true)}
-            aria-label={t('Open settings')}
-            title={t('Settings')}
-          >
-            <IconSettings />
-          </button>
         </div>
       </header>
 

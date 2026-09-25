@@ -195,6 +195,21 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 
 /* Two buttons side by side in a page header (My bar + the settings cog). */
 .header-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+
+/* The library's header stacks instead of putting the text beside the buttons,
+   which was squeezing the title and its line into the left half of the screen.
+   The buttons sit at the right of the row they belong to. */
+.library-header { display: block; }
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+}
+.header-row-end { align-items: flex-end; margin-top: 2px; }
+.header-row .sub { flex: 1; min-width: 0; }
+.library-header h1 { margin-top: 2px; }
 /* A fixed square with the icon scaled to fit, so buttons stay the same size
    whatever the icon's own intrinsic dimensions happen to be. */
 .header-action.icon-only {
