@@ -87,6 +87,7 @@ export const NL_TERMS = {
   'Apple schnapps': 'Appelschnaps',
   'Cinnamon schnapps': 'Kaneelschnaps',
   'Peppermint schnapps': 'Pepermuntschnaps',
+  'Butterscotch schnapps': 'Butterscotchschnaps',
   'Crème de menthe': 'Crème de menthe',
   'Irish cream': 'Irish cream',
   'Sloe gin': 'Sleedoorngin',
