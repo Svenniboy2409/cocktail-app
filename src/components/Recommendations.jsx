@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { cocktails, spiritsInIngredientOrder } from '../data/cocktails'
 import CocktailCard from './CocktailCard'
 import { IconSparkle } from './icons'
@@ -33,7 +33,18 @@ export default function Recommendations() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipes, savedIds, pantry, tick])
 
-  const picks = useMemo(() => pickRotating(ranked, tick, 2), [ranked, tick])
+  // What the strip was showing a moment ago, so the next turn of it lands on
+  // something else.
+  const shown = useRef([])
+  const picks = useMemo(
+    () => pickRotating(ranked, tick, 2, 24, shown.current),
+    // `shown` is read, deliberately, without making this depend on it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ranked, tick],
+  )
+  useEffect(() => {
+    shown.current = picks.map((c) => c.id)
+  }, [picks])
 
   if (picks.length < 2) return null
 

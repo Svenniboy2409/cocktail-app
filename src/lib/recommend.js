@@ -55,13 +55,35 @@ function scoreCocktail(cocktail, profile, pantrySet) {
   return score
 }
 
-// Deterministic small shuffle so equally-scored cocktails don't always show in
-// the same order. Seeded, so it's stable within a render.
+// A seeded random number generator (mulberry32). The same seed always gives
+// the same sequence, so a render is reproducible and the strip does not
+// reshuffle under your finger — but the numbers are genuinely spread across
+// the range.
+//
+// This replaces a sine trick that looked like a shuffle and was not one: the
+// step it used, 37.7, sits within a thousandth of 12π, so sin(seed + i · 37.7)
+// climbed almost straight up as i grew and sorting by it simply returned the
+// list, or the list backwards. Every tick produced the same order, which is
+// why the same handful of drinks kept coming round.
+function seededRandom(seed) {
+  let a = (Math.imul(seed ^ 0x9e3779b9, 0x85ebca6b) ^ 0xc2b2ae35) >>> 0
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+// Fisher–Yates, drawing from a seeded generator.
 function seededOrder(items, seed) {
-  return items
-    .map((item, i) => ({ item, k: Math.sin(seed * 999 + i * 37.7) }))
-    .sort((a, b) => a.k - b.k)
-    .map((x) => x.item)
+  const out = [...items]
+  const next = seededRandom(seed)
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(next() * (i + 1))
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
 }
 
 // Rank the catalogue for this user. Returns the best candidates first.
@@ -91,16 +113,18 @@ export function rankCandidates({ pool, library, savedIds, pantry, seed = 0 }) {
 }
 
 // Pick `count` cocktails from the ranked list for a given rotation tick.
-// We keep a window of the best `poolSize` candidates and slide a pair through
-// it, so suggestions rotate among strong matches rather than drifting to weak
-// ones.
-export function pickRotating(ranked, tick, count = 2, poolSize = 6) {
+//
+// The window is still the strongest matches rather than the whole catalogue,
+// so what you are shown is something you can actually pour — but which of them
+// you get is drawn fresh each tick instead of stepped through in order, and
+// the window is wide enough that a bar with a few bottles in it has real
+// choice. Whatever was on screen a moment ago is held back, so two ticks
+// running do not repeat while there is anything else to show.
+export function pickRotating(ranked, tick, count = 2, poolSize = 24, seen = []) {
   if (ranked.length <= count) return ranked
-  const window = ranked.slice(0, Math.min(poolSize, ranked.length))
-  const start = ((tick % window.length) + window.length) % window.length
-  const out = []
-  for (let i = 0; i < count; i++) {
-    out.push(window[(start + i) % window.length])
-  }
-  return out
+  const recent = new Set(seen)
+  const fresh = ranked.filter((c) => !recent.has(c.id))
+  const list = fresh.length >= count ? fresh : ranked
+  const window = list.slice(0, Math.min(poolSize, list.length))
+  return seededOrder(window, tick + 1).slice(0, count)
 }
