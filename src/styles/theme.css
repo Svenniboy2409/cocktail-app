@@ -34,6 +34,16 @@
   /* metrics */
   --maxw: 520px;        /* content column width — widened on larger screens */
   --page-x: 18px;       /* horizontal page padding — kept in sync with chip bleed */
+  --grid-cols: 2;       /* cocktails across the page — raised on larger screens */
+  --grid-gap: 14px;
+  /* What one cocktail tile comes out at. The main grid gets there on its own,
+     dividing the row; the Discover belt cannot, since its track is as wide as
+     its contents — so the figure is worked out here and both read it, and the
+     two stay the same size by construction rather than by coincidence. */
+  --tile-w: calc(
+    (min(100vw, var(--maxw)) - 2 * var(--page-x) - (var(--grid-cols) - 1) * var(--grid-gap)) /
+      var(--grid-cols)
+  );
   --radius: 18px;
   --radius-sm: 12px;
   --nav-h: 68px;
@@ -304,15 +314,16 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .recs-track {
   display: flex;
-  gap: 12px;
+  gap: var(--grid-gap);
   width: max-content;
   /* One compositing layer for the whole belt, moved on the GPU. */
   will-change: transform;
 }
-/* Narrow enough that two drinks sit side by side with a third coming in. */
+/* A tile the same size as one in the grid below, so the belt reads as the
+   same kind of thing passing by rather than a different one. */
 .recs-slot {
   flex: 0 0 auto;
-  width: clamp(136px, 41vw, 188px);
+  width: var(--tile-w);
 }
 .recs-hint {
   margin: 12px 2px 0;
@@ -539,11 +550,17 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 /* ---- cocktail grid + cards ---- */
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  gap: var(--grid-gap);
 }
 
 .card {
+  /* A card is an <a>, and an inline box ignores both the overflow that clips
+     its picture to the rounded corners and the height of what is inside it.
+     Being a grid item used to blockify it; the Discover belt wraps it in a
+     flex slot instead, where it does not. Said once here rather than left to
+     whatever happens to contain it. */
+  display: block;
   position: relative;
   border-radius: var(--radius);
   overflow: hidden;
@@ -1475,21 +1492,18 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 
 /* small tablets / phones in landscape */
 @media (min-width: 640px) {
-  :root { --maxw: 720px; --page-x: 24px; }
-  .grid { grid-template-columns: repeat(3, 1fr); }
+  :root { --maxw: 720px; --page-x: 24px; --grid-cols: 3; }
   .pick-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
 /* larger tablets / small laptops */
 @media (min-width: 900px) {
-  :root { --maxw: 940px; --page-x: 28px; }
-  .grid { grid-template-columns: repeat(4, 1fr); }
+  :root { --maxw: 940px; --page-x: 28px; --grid-cols: 4; }
 }
 
 /* desktops */
 @media (min-width: 1200px) {
-  :root { --maxw: 1180px; }
-  .grid { grid-template-columns: repeat(5, 1fr); }
+  :root { --maxw: 1180px; --grid-cols: 5; }
 }
 
 /* Keep the bottom nav and modal sheets compact and centered even when the

@@ -9,9 +9,9 @@ import { useI18n } from '../lib/i18n'
 // How fast the belt walks, in pixels a second. Slow enough to read a label on
 // the way past, quick enough that you can see it is moving without waiting.
 const SPEED = 16
-// How many drinks stand on the belt at once: a screenful, plus enough lead that
-// the next one is already in the page before it reaches the edge.
-const SEATS = 6
+// Enough drinks to cover a phone with a tile to spare at each end. A wider
+// screen fits more across, and tops this up once the belt has been measured.
+const MIN_SEATS = 6
 // How far down the ranking the belt draws from. The scores across the top of
 // the list sit within a point or two of each other, so this is a band of
 // comparable matches rather than a ladder.
@@ -71,6 +71,23 @@ export default function Recommendations() {
     [ranked],
   )
 
+  // Put drinks on the belt until there are `n` of them. Returns whether it
+  // actually added any, so a caller knows whether anything needs redrawing.
+  const fill = useCallback(
+    (n) => {
+      const grown = [...seats.current]
+      while (grown.length < n) {
+        const cocktail = draw(grown.map((s) => s.cocktail.id))
+        if (!cocktail) break
+        grown.push({ seat: nextSeat.current++, cocktail })
+      }
+      const added = grown.length > seats.current.length
+      seats.current = grown
+      return added
+    },
+    [draw],
+  )
+
   // Build the belt, or pick it up where it was left. Done during the render
   // that first sees a new ranking rather than in an effect, so the strip is
   // never briefly empty — and written only to refs, so it is safe to repeat.
@@ -85,17 +102,13 @@ export default function Recommendations() {
     const revived =
       parked.key === key ? parked.ids.map((id) => byId.get(id)).filter(Boolean) : []
 
-    if (revived.length === SEATS) {
+    if (revived.length === parked.ids.length && revived.length >= MIN_SEATS) {
       offset.current = parked.offset
       seats.current = revived.map((cocktail) => ({ seat: nextSeat.current++, cocktail }))
     } else {
       offset.current = 0
       seats.current = []
-      for (let i = 0; i < SEATS; i++) {
-        const cocktail = draw(seats.current.map((s) => s.cocktail.id))
-        if (!cocktail) break
-        seats.current.push({ seat: nextSeat.current++, cocktail })
-      }
+      fill(MIN_SEATS)
     }
     parked.key = key
   }
@@ -141,6 +154,11 @@ export default function Recommendations() {
       if (!first) return
       const gap = parseFloat(getComputedStyle(track).columnGap) || 0
       stride.current = first.getBoundingClientRect().width + gap
+      // A wider screen fits more tiles across, and the belt has to reach past
+      // the right edge for the whole of its travel — one tile short and a gap
+      // opens there just before the next one is recycled in.
+      const across = track.parentElement.getBoundingClientRect().width
+      if (fill(Math.ceil(across / stride.current) + 2)) redraw()
     }
     measure()
     window.addEventListener('resize', measure)
@@ -176,7 +194,7 @@ export default function Recommendations() {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', measure)
     }
-  }, [count, advance])
+  }, [count, advance, fill])
 
   if (count < 2) return null
 
