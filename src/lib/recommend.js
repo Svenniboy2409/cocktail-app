@@ -112,19 +112,21 @@ export function rankCandidates({ pool, library, savedIds, pantry, seed = 0 }) {
   return shuffled.map((x) => x.c)
 }
 
-// Pick `count` cocktails from the ranked list for a given rotation tick.
+// Draw `count` cocktails from the ranked list for a given turn.
 //
-// The window is still the strongest matches rather than the whole catalogue,
-// so what you are shown is something you can actually pour — but which of them
-// you get is drawn fresh each tick instead of stepped through in order, and
-// the window is wide enough that a bar with a few bottles in it has real
-// choice. Whatever was on screen a moment ago is held back, so two ticks
-// running do not repeat while there is anything else to show.
-export function pickRotating(ranked, tick, count = 2, poolSize = 24, seen = []) {
-  if (ranked.length <= count) return ranked
+// The window is the strongest matches rather than the whole catalogue, so what
+// comes up is something you can actually pour — but which of them you get is
+// drawn fresh each turn instead of stepped through in order, and the window is
+// wide enough that a bar with a few bottles in it has real choice. Whatever is
+// already on screen is held back, so one turn does not repeat the last while
+// there is anything else to show.
+//
+// Always a new array, never the one passed in: the caller owns what it gets
+// back and the Discover belt consumes it a drink at a time.
+export function pickRotating(ranked, turn, count = 2, poolSize = 24, seen = []) {
   const recent = new Set(seen)
   const fresh = ranked.filter((c) => !recent.has(c.id))
   const list = fresh.length >= count ? fresh : ranked
   const window = list.slice(0, Math.min(poolSize, list.length))
-  return seededOrder(window, tick + 1).slice(0, count)
+  return seededOrder(window, turn + 1).slice(0, count)
 }

@@ -273,16 +273,46 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 .recs-title svg { color: var(--amber); }
 .recs-title h2 { font-size: 20px; }
 .recs-sub { font-size: 12px; color: var(--text-dim); text-align: right; }
-.recs-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 260px));
-  justify-content: start;
-  gap: 14px;
-  animation: rec-swap 0.5s ease;
+/* The belt. Runs to both edges of the screen, because a band that stopped at
+   the page margin would look like a row that happens to slide rather than
+   something passing by. */
+.recs-belt {
+  margin: 0 calc(-1 * var(--page-x));
+  /* The track is far wider than the screen, and without this it counts towards
+     how wide the page is: the one scrolling element would gain several hundred
+     pixels of sideways travel that a stray focus could jump it to. Nothing here
+     overflows upwards or downwards, so clipping both ways costs nothing. */
+  overflow: hidden;
+  /* A card dissolves at each edge rather than being sliced off — the belt looks
+     like it carries on past the screen instead of stopping at it. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 26px,
+    #000 calc(100% - 26px),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 26px,
+    #000 calc(100% - 26px),
+    transparent
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
-@keyframes rec-swap {
-  from { opacity: 0.35; transform: translateY(4px); }
-  to { opacity: 1; transform: none; }
+.recs-track {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  /* One compositing layer for the whole belt, moved on the GPU. */
+  will-change: transform;
+}
+/* Narrow enough that two drinks sit side by side with a third coming in. */
+.recs-slot {
+  flex: 0 0 auto;
+  width: clamp(136px, 41vw, 188px);
 }
 .recs-hint {
   margin: 12px 2px 0;
