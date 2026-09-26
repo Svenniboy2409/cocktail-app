@@ -55,6 +55,7 @@ export default function Recommendations() {
   const offset = useRef(0) // how far the belt has travelled, in pixels
   const stride = useRef(0) // one card plus one gap
   const held = useRef(false) // a finger is down: hold still so it can be tapped
+  const rewind = useRef(0) // travel owed back once the re-cut row is on screen
   const built = useRef(null)
   const trackRef = useRef(null)
   const [, redraw] = useReducer((n) => n + 1, 0)
@@ -125,19 +126,35 @@ export default function Recommendations() {
   // The first drink walks off the left; a new one joins at the right.
   const advance = useCallback(() => {
     const incoming = draw(seats.current.map((s) => s.cocktail.id))
-    if (!incoming) return
+    if (!incoming) return false
     seats.current = [
       ...seats.current.slice(1),
       { seat: nextSeat.current++, cocktail: incoming },
     ]
     redraw()
+    return true
   }, [draw])
 
   const count = seats.current.length
 
-  // Put the belt back at its parked position before the first paint, so
-  // returning to Discover does not show a frame of it at the start.
+  // Sets the belt's position, after every render.
+  //
+  // This is also where a finished tile's travel is taken off the clock, and it
+  // has to be here rather than in the frame that asks for the tile to be
+  // recycled. Re-cutting the row is a state change, and React commits those
+  // after the frame that asked for them: discounting the travel any earlier
+  // left one painted frame where the row was still the old one but the belt had
+  // already been wound back a tile, so the drink that had just left reappeared
+  // at the left edge and everything jumped sideways — a flicker once every
+  // eleven seconds. Winding back here instead puts the two in the same paint.
+  //
+  // It runs before the browser draws, which also means returning to Discover
+  // never shows a frame of the belt back at its start.
   useLayoutEffect(() => {
+    if (rewind.current) {
+      offset.current -= rewind.current
+      rewind.current = 0
+    }
     if (trackRef.current && !reducedMotion()) {
       trackRef.current.style.transform = `translate3d(${-offset.current}px, 0, 0)`
     }
@@ -182,9 +199,12 @@ export default function Recommendations() {
       const dt = Math.min(now - last, 120) / 1000
       last = now
       if (!held.current) offset.current += SPEED * dt
-      if (stride.current && offset.current >= stride.current) {
-        offset.current -= stride.current
-        advance()
+      // Ask for the row to be re-cut, but leave the offset alone: it still
+      // describes where the row currently on screen belongs. The layout effect
+      // winds it back a tile at the same moment the new row lands.
+      if (stride.current && !rewind.current && offset.current >= stride.current) {
+        if (advance()) rewind.current = stride.current
+        else offset.current -= stride.current
       }
       track.style.transform = `translate3d(${-offset.current}px, 0, 0)`
       raf = requestAnimationFrame(frame)
