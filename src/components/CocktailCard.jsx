@@ -22,22 +22,27 @@ export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, r
   return (
     <Shell className="card" {...shellProps}>
       <div className="card-media">
-        {ready ? (
-          <span className="card-badge recommended">
-            <IconStar /> {t('Recommended')}
-          </span>
-        ) : (
-          cocktail.isCustom && <span className="card-badge">{t('Mine')}</span>
-        )}
-        {!still && (
-          <button
-            className={'card-save' + (isOn ? ' on' : '')}
-            onClick={handleSave}
-            aria-label={t(isOn ? 'Remove from library' : 'Save to library')}
-          >
-            <IconBookmark filled={isOn} />
-          </button>
-        )}
+        {/* Badge and bookmark share one row rather than being pinned to
+            opposite corners, so a long label cannot run underneath the
+            button. */}
+        <div className="card-top">
+          {ready ? (
+            <span className="card-badge recommended">
+              <IconStar width="11" height="11" /> {t('Recommended')}
+            </span>
+          ) : (
+            cocktail.isCustom && <span className="card-badge">{t('Mine')}</span>
+          )}
+          {!still && (
+            <button
+              className={'card-save' + (isOn ? ' on' : '')}
+              onClick={handleSave}
+              aria-label={t(isOn ? 'Remove from library' : 'Save to library')}
+            >
+              <IconBookmark filled={isOn} />
+            </button>
+          )}
+        </div>
         <img src={cocktail.image} alt={cocktail.name} loading="lazy" />
         <div className="card-body">
           <h3>{cocktail.name}</h3>

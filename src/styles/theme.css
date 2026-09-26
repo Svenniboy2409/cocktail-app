@@ -616,11 +616,27 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
   flex-wrap: wrap;
 }
 .card-spirits.is-complete { color: var(--green); font-weight: 600; }
-.card-badge {
+/* The strip along the top of a card: a badge on the left, the bookmark on the
+   right. They used to be pinned to their own corners, which is fine until the
+   label is long — the English "Recommended" reached 19px under the button on a
+   170px tile. As a row they cannot reach each other whatever the wording, in
+   whatever language. */
+.card-top {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
+  right: 8px;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-badge {
+  /* Shrinks rather than pushing the bookmark off the card, and stays one line
+     high whatever it has to say. */
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
   /* No backdrop-filter here, nor on any other per-card element: each one is a
      compositing layer with a snapshot of the pixels behind it, and there is one
      of these per cocktail. A slightly more opaque background reads the same. */
@@ -637,18 +653,27 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 .card-badge.recommended {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   color: var(--green);
   border-color: rgba(122, 198, 127, 0.45);
   background: rgba(20, 30, 20, 0.72);
-  padding-left: 7px;
+  /* A size down from the plain badge, which is only ever a short word: this one
+     carries a whole label and has to share a 170px tile with the bookmark. */
+  font-size: 9px;
+  letter-spacing: 0;
+  padding: 3px 7px 3px 5px;
 }
-.card-badge.recommended svg { color: var(--green); }
+.card-badge.recommended svg { color: var(--green); flex: none; }
+/* Narrower than this and the longest label — the English "Recommended", at
+   107px — no longer fits beside a 34px button on half a page. The star is the
+   part that can go: the word is the part that says something. */
+@media (max-width: 379px) {
+  .card-badge.recommended svg { display: none; }
+  .card-badge.recommended { padding-left: 7px; }
+}
 .card-save {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 2;
+  margin-left: auto;
+  flex: none;
   width: 34px;
   height: 34px;
   display: grid;
