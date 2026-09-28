@@ -8,7 +8,7 @@ rules_version = '2';
 // friends see what you share, nobody becomes your friend without you saying
 // yes — is made here.
 //
-//   profiles/{uid}              your username and friend code
+//   profiles/{uid}              your display name, username and friend code
 //   usernames/{lowercased}      who owns a username; makes them unique
 //   friendCodes/{code}          who owns a friend code; makes them unique
 //   requests/{from}_{to}        a friend request waiting for an answer
@@ -22,8 +22,9 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Reading other people and making friends needs a confirmed address, so
-    // every account on the social side can be recovered and is a real person.
+    // Reading other people and making friends needs a confirmed address.
+    // Accounts sign in with Google, whose addresses always are; the check
+    // stays so that no other way in can skip it.
     function verified() {
       return signedIn() && request.auth.token.email_verified == true;
     }
@@ -35,6 +36,13 @@ service cloud.firestore {
     function friends(a, b) {
       return exists(/databases/$(database)/documents/friendships/$(a + '_' + b))
           || exists(/databases/$(database)/documents/friendships/$(b + '_' + a));
+    }
+
+    function validNames(p) {
+      return p.usernameLower == p.username.lower()
+        && p.displayName is string
+        && p.displayName.size() >= 1
+        && p.displayName.size() <= 40;
     }
 
     function hasProfile(uid) {
@@ -50,13 +58,24 @@ service cloud.firestore {
       // Made once, together with the username and code it names, in the same
       // write — so a profile can only claim a name and a code its owner holds.
       allow create: if signedIn() && uid == me()
-        && request.resource.data.keys().hasOnly(['username', 'usernameLower', 'friendCode', 'createdAt'])
-        && request.resource.data.usernameLower == request.resource.data.username.lower()
+        && request.resource.data.keys().hasOnly(['username', 'usernameLower', 'displayName', 'friendCode', 'createdAt'])
+        && validNames(request.resource.data)
         && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == me()
         && getAfter(/databases/$(database)/documents/friendCodes/$(request.resource.data.friendCode)).data.uid == me();
 
-      // A username is permanent: it is how friends know you.
-      allow update: if false;
+      // The display name can change freely. The username can too, but only
+      // by holding the new one and letting go of the old one in the same
+      // write — so nobody ends up sitting on two names. The friend code
+      // never changes.
+      allow update: if signedIn() && uid == me()
+        && request.resource.data.keys().hasOnly(['username', 'usernameLower', 'displayName', 'friendCode', 'createdAt'])
+        && request.resource.data.friendCode == resource.data.friendCode
+        && request.resource.data.createdAt == resource.data.createdAt
+        && validNames(request.resource.data)
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)).data.uid == me()
+        && (request.resource.data.usernameLower == resource.data.usernameLower
+          || !existsAfter(/databases/$(database)/documents/usernames/$(resource.data.usernameLower)));
+
       allow delete: if signedIn() && uid == me();
     }
 
@@ -68,7 +87,8 @@ service cloud.firestore {
       allow get: if true;
       allow list: if false;
       // "create" only ever succeeds on a name nobody holds, and there is no
-      // update, so a name cannot be taken from its owner.
+      // update, so a name cannot be taken from its owner. Letting go of it —
+      // on a rename, or when the account closes — is the only way it frees.
       allow create: if signedIn()
         && request.resource.data.keys().hasOnly(['uid'])
         && request.resource.data.uid == me()

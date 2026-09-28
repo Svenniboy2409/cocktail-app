@@ -790,6 +790,15 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 }
 .nav-item.active { color: var(--amber); }
 
+/* Two equal halves either side of the + keep it centred however many tabs
+   each side has. */
+.nav-half {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+}
+
 /* the big TikTok-style + button */
 .fab-wrap {
   flex: 0 0 74px;
@@ -1568,6 +1577,17 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; lett
 .profile-intro p { margin: 0 0 14px; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
 .profile-intro-actions { display: flex; gap: 10px; }
 .profile-intro-actions .btn { flex: 1; }
+
+/* Google's own look for its button, as its guidelines ask: white, with the
+   coloured G. */
+.btn-google {
+  background: #fff;
+  color: #1f1f1f;
+  border-color: #dadce0;
+  font-weight: 600;
+}
+.btn-google:disabled { opacity: 0.6; }
+.profile-edit { margin-left: auto; flex: none; align-self: flex-start; }
 
 /* the friend code, big enough to read out across a table */
 .code-row {

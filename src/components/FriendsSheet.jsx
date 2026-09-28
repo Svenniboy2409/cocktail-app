@@ -37,9 +37,9 @@ export default function FriendsSheet({ onClose, prefill = '' }) {
       setInput('')
       setOk(
         res.result === 'accepted'
-          ? t('@{name} had already asked you — you are now friends.', { name: res.username })
-          : t('Request sent to @{name}. You will see their cocktails once they accept.', {
-              name: res.username,
+          ? t('{name} had already asked you — you are now friends.', { name: res.displayName })
+          : t('Request sent to {name}. You will see their cocktails once they accept.', {
+              name: res.displayName,
             }),
       )
     } catch (err) {
@@ -74,11 +74,11 @@ export default function FriendsSheet({ onClose, prefill = '' }) {
   }
 
   const remove = async (f) => {
-    if (!window.confirm(t('Remove @{name} as a friend? You will no longer see each other’s cocktails.', { name: f.username })))
+    if (!window.confirm(t('Remove {name} as a friend? You will no longer see each other’s cocktails.', { name: f.displayName })))
       return
     try {
       await api.removeFriend(me.uid, f.uid)
-      showToast(t('@{name} removed', { name: f.username }))
+      showToast(t('{name} removed', { name: f.displayName }))
     } catch (err) {
       showToast(explain(err))
     }
@@ -142,10 +142,10 @@ export default function FriendsSheet({ onClose, prefill = '' }) {
               <label>{t('So friends can find you')}</label>
               <div className="me-card">
                 <div className="profile-card">
-                  <div className="profile-avatar">{profile.username.slice(0, 1).toUpperCase()}</div>
+                  <div className="profile-avatar">{(profile.displayName || profile.username).slice(0, 1).toUpperCase()}</div>
                   <div className="profile-text">
-                    <div className="profile-name">@{profile.username}</div>
-                    <div className="profile-meta">{t('Your username')}</div>
+                    <div className="profile-name">{profile.displayName || profile.username}</div>
+                    <div className="profile-meta">@{profile.username}</div>
                   </div>
                 </div>
                 <button className="code-row" onClick={copy}>
@@ -166,10 +166,10 @@ export default function FriendsSheet({ onClose, prefill = '' }) {
               <div className="friend-list">
                 {requests.outgoing.map((r) => (
                   <div className="friend-row" key={r.id}>
-                    <div className="profile-avatar sm">{r.toName.slice(0, 1).toUpperCase()}</div>
+                    <div className="profile-avatar sm">{r.other.displayName.slice(0, 1).toUpperCase()}</div>
                     <div className="friend-row-name">
-                      @{r.toName}
-                      <small>{t('Request sent')}</small>
+                      {r.other.displayName}
+                      <small>@{r.other.username} · {t('Request sent')}</small>
                     </div>
                     <button className="btn" onClick={() => withdraw(r)}>
                       {t('Withdraw')}
@@ -192,8 +192,11 @@ export default function FriendsSheet({ onClose, prefill = '' }) {
               <div className="friend-list">
                 {friends.map((f) => (
                   <div className="friend-row" key={f.uid}>
-                    <div className="profile-avatar sm">{f.username.slice(0, 1).toUpperCase()}</div>
-                    <div className="friend-row-name">@{f.username}</div>
+                    <div className="profile-avatar sm">{f.displayName.slice(0, 1).toUpperCase()}</div>
+                    <div className="friend-row-name">
+                      {f.displayName}
+                      <small>@{f.username}</small>
+                    </div>
                     <button className="btn" onClick={() => remove(f)}>
                       {t('Remove')}
                     </button>

@@ -49,7 +49,7 @@ export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, r
         <div className="card-body">
           <h3>{cocktail.name}</h3>
           <div className="card-tag">{tt(cocktail.tags?.[0] || cocktail.category)}</div>
-          {author && <div className="card-author">@{author}</div>}
+          {author && <div className="card-author">{author}</div>}
           {spirits?.length > 0 && (
             <div className={'card-spirits' + (ready ? ' is-complete' : '')}>
               {spirits.map(tt).join(' - ')}

@@ -10,17 +10,15 @@ import {
   initializeAuth,
   indexedDBLocalPersistence,
   browserLocalPersistence,
+  browserPopupRedirectResolver,
   connectAuthEmulator,
   onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithCredential,
+  reauthenticateWithPopup,
   signOut as fbSignOut,
-  sendEmailVerification,
-  sendPasswordResetEmail,
-  reload,
   deleteUser,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
 } from 'firebase/auth'
 import {
   initializeFirestore,
@@ -41,16 +39,29 @@ import { shrinkDataURL } from './image'
 
 const app = initializeApp(activeConfig())
 
-// Persistence without the popup/redirect machinery, which Mixly never uses and
-// which would otherwise come along in the download.
+// Signed in with Google, through a popup: the redirect flow needs Firebase's
+// sign-in page on the same domain as the app, which GitHub Pages cannot give.
 export const auth = initializeAuth(app, {
   persistence: [indexedDBLocalPersistence, browserLocalPersistence],
+  popupRedirectResolver: browserPopupRedirectResolver,
 })
+const google = new GoogleAuthProvider()
+google.setCustomParameters({ prompt: 'select_account' })
 const db = initializeFirestore(app, {})
 
 if (useEmulator) {
   connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true })
   connectFirestoreEmulator(db, '127.0.0.1', 8080)
+  // Tests sign in as a made-up Google account, which only the emulator
+  // accepts. Never part of a real build: useEmulator is false there, and this
+  // whole branch is dropped from the download.
+  window.__mixlyTestSignIn = (email, name) =>
+    signInWithCredential(
+      auth,
+      GoogleAuthProvider.credential(
+        JSON.stringify({ sub: email, email, email_verified: true, name }),
+      ),
+    )
 }
 
 /* ------------------------------------------------------------------ errors */
@@ -71,20 +82,22 @@ const fail = (code) => {
 export function errorCode(err) {
   if (err instanceof SocialError) return err.code
   const c = err?.code || ''
-  if (c.includes('email-already-in-use')) return 'email-taken'
-  if (c.includes('invalid-email')) return 'email-invalid'
-  if (c.includes('weak-password')) return 'weak-password'
-  if (c.includes('wrong-password') || c.includes('invalid-credential') || c.includes('user-not-found'))
-    return 'wrong-login'
+  if (c.includes('popup-closed') || c.includes('cancelled-popup') || c.includes('user-cancelled')) return 'cancelled'
+  if (c.includes('popup-blocked')) return 'popup-blocked'
+  if (c.includes('user-mismatch')) return 'wrong-google'
   if (c.includes('too-many-requests')) return 'too-many'
   if (c.includes('network') || c.includes('unavailable')) return 'offline'
   if (c.includes('requires-recent-login')) return 'relogin'
+  if (c.includes('web-storage-unsupported') || c.includes('operation-not-supported')) return 'unsupported'
   return 'unknown'
 }
 
 /* ----------------------------------------------------------------- helpers */
 
 export const USERNAME_RE = /^[A-Za-z0-9_.]{3,20}$/
+
+// What friends see on your cocktails. Anything goes, within reason.
+export const cleanDisplayName = (s) => (s || '').replace(/\s+/g, ' ').trim().slice(0, 40)
 
 // No 0/O, 1/I/L: a code gets read out loud and typed off a screenshot.
 const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
@@ -119,13 +132,34 @@ export async function isUsernameFree(username) {
   return !snap.exists()
 }
 
+// Is this name free for me — either nobody holds it, or I already do.
+export async function isUsernameMine(username) {
+  const snap = await getDoc(doc(db, 'usernames', username.toLowerCase()))
+  return !snap.exists() || snap.data().uid === auth.currentUser?.uid
+}
+
+// One button: Google asks who you are, and Mixly remembers it. The first time,
+// a profile is made afterwards (see claimProfile); every time after that you
+// are simply back.
+export async function signInWithGoogle(lang) {
+  auth.languageCode = lang || 'en'
+  await signInWithPopup(auth, google)
+}
+
+// What Google knows your name to be, as a starting point for the display name.
+export function googleName() {
+  return cleanDisplayName(auth.currentUser?.displayName || '')
+}
+
 // Claim a username and a fresh friend code for the signed-in user, in one
 // write. The rules only let the profile name what the same write claims, and
 // only let a name be claimed while nobody holds it.
-export async function claimProfile(username) {
+export async function claimProfile(username, displayName) {
   const user = auth.currentUser
   if (!user) fail('signed-out')
   if (!USERNAME_RE.test(username)) fail('username-invalid')
+  const name = cleanDisplayName(displayName)
+  if (!name) fail('display-name-empty')
   if (!(await isUsernameFree(username))) fail('username-taken')
 
   let code = newFriendCode()
@@ -140,6 +174,7 @@ export async function claimProfile(username) {
   const profile = {
     username,
     usernameLower: username.toLowerCase(),
+    displayName: name,
     friendCode: code,
     createdAt: Date.now(),
   }
@@ -153,52 +188,40 @@ export async function claimProfile(username) {
     // Somebody took the name between the check and the write.
     fail('username-taken')
   }
-  return profile
+  return { uid: user.uid, ...profile }
 }
 
-export async function signUp({ email, password, username, lang }) {
+// Change the display name, the username, or both. A new username is claimed
+// and the old one let go of in the same write, so friends never see you
+// without one and nobody can take it in between.
+export async function updateProfile(current, { username, displayName }) {
+  const uid = auth.currentUser?.uid
+  if (!uid) fail('signed-out')
+  const name = cleanDisplayName(displayName)
+  if (!name) fail('display-name-empty')
   if (!USERNAME_RE.test(username)) fail('username-invalid')
-  if (!(await isUsernameFree(username))) fail('username-taken')
-  auth.languageCode = lang || 'en'
-  const { user } = await createUserWithEmailAndPassword(auth, email.trim(), password)
+
+  const lower = username.toLowerCase()
+  const batch = writeBatch(db)
+  if (lower !== current.usernameLower) {
+    if (!(await isUsernameFree(username))) fail('username-taken')
+    batch.set(doc(db, 'usernames', lower), { uid })
+    batch.delete(doc(db, 'usernames', current.usernameLower))
+  }
+  // Only the case changed, or nothing did: the name is already ours.
+  batch.update(doc(db, 'profiles', uid), { username, usernameLower: lower, displayName: name })
   try {
-    const profile = await claimProfile(username)
-    await sendEmailVerification(user)
-    return profile
+    await batch.commit()
   } catch (err) {
-    // An account without a profile would be stuck, so a failed claim takes
-    // the account back out rather than leaving it half made.
-    await deleteUser(user).catch(() => {})
+    if (lower !== current.usernameLower) fail('username-taken')
     throw err
   }
-}
-
-export async function signIn({ email, password }) {
-  await signInWithEmailAndPassword(auth, email.trim(), password)
+  profileCache.delete(uid)
+  return { ...current, username, usernameLower: lower, displayName: name }
 }
 
 export function signOut() {
   return fbSignOut(auth)
-}
-
-export async function resendVerification(lang) {
-  if (!auth.currentUser) return
-  auth.languageCode = lang || 'en'
-  await sendEmailVerification(auth.currentUser)
-}
-
-export async function resetPassword(email, lang) {
-  auth.languageCode = lang || 'en'
-  await sendPasswordResetEmail(auth, email.trim())
-}
-
-// Asks the server whether the address has been confirmed since. The token is
-// refreshed too, because that is what the database rules read.
-export async function refreshUser() {
-  if (!auth.currentUser) return null
-  await reload(auth.currentUser)
-  if (auth.currentUser.emailVerified) await auth.currentUser.getIdToken(true)
-  return auth.currentUser
 }
 
 export async function getProfile(uid) {
@@ -208,32 +231,80 @@ export async function getProfile(uid) {
 
 /* ------------------------------------------------------------------ friends */
 
+// Names change, so nothing here is remembered for long: friends' profiles are
+// watched live (see watchFriends), and everyone else is looked up fresh.
 const profileCache = new Map()
-async function nameOf(uid) {
+function profileOf(uid) {
   if (!profileCache.has(uid)) {
     profileCache.set(uid, getProfile(uid).catch(() => null))
   }
-  const p = await profileCache.get(uid)
-  return p?.username || '?'
+  return profileCache.get(uid)
+}
+const shown = (uid, p) => ({
+  uid,
+  username: p?.username || '?',
+  displayName: p?.displayName || p?.username || '?',
+})
+// How a person is shown: the name they chose, and the handle to tell apart
+// two people who chose the same one.
+async function person(uid) {
+  profileCache.delete(uid)
+  return shown(uid, await profileOf(uid))
 }
 
-// Live list of friends: [{ uid, username, since }].
+// Live list of friends: [{ uid, username, displayName, since }]. Each
+// friend's profile is watched as well, so a new name shows up straight away.
 export function watchFriends(uid, cb) {
-  const q = query(collection(db, 'friendships'), where('members', 'array-contains', uid))
-  return onSnapshot(
-    q,
-    async (snap) => {
-      const list = await Promise.all(
-        snap.docs.map(async (d) => {
-          const other = d.data().members.find((m) => m !== uid)
-          return { uid: other, username: await nameOf(other), since: d.data().createdAt }
-        }),
-      )
-      list.sort((a, b) => a.username.localeCompare(b.username))
-      cb(list)
+  const since = new Map() // friend uid -> when you became friends
+  const names = new Map() // friend uid -> their profile, as last seen
+  const watching = new Map() // friend uid -> unsubscribe
+
+  const emit = () => {
+    const list = [...since.keys()]
+      .filter((f) => names.has(f))
+      .map((f) => ({ ...shown(f, names.get(f)), since: since.get(f) }))
+    list.sort((a, b) => a.displayName.localeCompare(b.displayName))
+    cb(list)
+  }
+
+  const unFriends = onSnapshot(
+    query(collection(db, 'friendships'), where('members', 'array-contains', uid)),
+    (snap) => {
+      since.clear()
+      for (const d of snap.docs) since.set(d.data().members.find((m) => m !== uid), d.data().createdAt)
+      for (const [f, stop] of watching) {
+        if (!since.has(f)) {
+          stop()
+          watching.delete(f)
+          names.delete(f)
+        }
+      }
+      for (const f of since.keys()) {
+        if (watching.has(f)) continue
+        watching.set(
+          f,
+          onSnapshot(
+            doc(db, 'profiles', f),
+            (p) => {
+              names.set(f, p.exists() ? p.data() : null)
+              profileCache.set(f, Promise.resolve(p.exists() ? { uid: f, ...p.data() } : null))
+              emit()
+            },
+            () => {
+              names.set(f, null)
+              emit()
+            },
+          ),
+        )
+      }
+      emit()
     },
     () => cb([]),
   )
+  return () => {
+    unFriends()
+    for (const stop of watching.values()) stop()
+  }
 }
 
 // Live lists of requests to you and from you.
@@ -244,16 +315,20 @@ export function watchRequests(uid, cb) {
   const byNewest = (a, b) => b.createdAt - a.createdAt
   const unIn = onSnapshot(
     query(collection(db, 'requests'), where('to', '==', uid)),
-    (snap) => {
-      incoming = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort(byNewest)
+    async (snap) => {
+      incoming = (
+        await Promise.all(snap.docs.map(async (d) => ({ id: d.id, ...d.data(), other: await person(d.data().from) })))
+      ).sort(byNewest)
       emit()
     },
     () => {},
   )
   const unOut = onSnapshot(
     query(collection(db, 'requests'), where('from', '==', uid)),
-    (snap) => {
-      outgoing = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort(byNewest)
+    async (snap) => {
+      outgoing = (
+        await Promise.all(snap.docs.map(async (d) => ({ id: d.id, ...d.data(), other: await person(d.data().to) })))
+      ).sort(byNewest)
       emit()
     },
     () => {},
@@ -292,21 +367,21 @@ export async function sendRequest(me, input) {
   const theirs = await getDoc(doc(db, 'requests', `${them}_${me.uid}`)).catch(() => null)
   if (theirs?.exists()) {
     await accept({ id: theirs.id, ...theirs.data() }, me.uid)
-    return { result: 'accepted', username: theirs.data().fromName }
+    return { result: 'accepted', ...(await person(them)) }
   }
 
   const mine = await getDoc(doc(db, 'requests', `${me.uid}_${them}`)).catch(() => null)
   if (mine?.exists()) fail('already-asked')
 
-  const toName = await nameOf(them)
+  const other = await person(them)
   await setDoc(doc(db, 'requests', `${me.uid}_${them}`), {
     from: me.uid,
     to: them,
     fromName: me.username,
-    toName,
+    toName: other.username,
     createdAt: Date.now(),
   })
-  return { result: 'sent', username: toName }
+  return { result: 'sent', ...other }
 }
 
 // Saying yes makes the friendship and clears the request in the same write.
@@ -336,7 +411,8 @@ const shelf = (uid) => collection(db, 'users', uid, 'shared')
 async function toShared(recipe, owner) {
   return {
     owner: owner.uid,
-    ownerName: owner.username,
+    ownerName: owner.displayName,
+    ownerUsername: owner.username,
     name: recipe.name,
     image: await shrinkDataURL(recipe.image),
     category: recipe.category || '',
@@ -363,7 +439,7 @@ export async function syncShared(owner, recipes) {
   for (const [id, recipe] of wanted) {
     const there = online.get(id)
     const stamp = recipe.updatedAt || recipe.createdAt || 0
-    if (!there || (there.updatedAt || 0) < stamp || there.ownerName !== owner.username) {
+    if (!there || (there.updatedAt || 0) < stamp || there.ownerName !== owner.displayName || there.ownerUsername !== owner.username) {
       jobs.push(toShared(recipe, owner).then((data) => setDoc(doc(shelf(owner.uid), id), data)))
     }
   }
@@ -390,12 +466,12 @@ export async function sharedRecipe(ownerUid, id) {
 /* ------------------------------------------------------------ closing down */
 
 // Remove everything this account put online, then the account itself. Asks
-// for the password again first: Firebase only deletes an account whose owner
-// has just proved it is them.
-export async function deleteAccount(password) {
+// Google to confirm it is you first: Firebase only deletes an account whose
+// owner has just proved it.
+export async function deleteAccount() {
   const user = auth.currentUser
   if (!user) return
-  await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, password))
+  await reauthenticateWithPopup(user, google)
 
   const uid = user.uid
   const profile = await getProfile(uid)

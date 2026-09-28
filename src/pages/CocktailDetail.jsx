@@ -125,7 +125,7 @@ export default function CocktailDetail({ onEdit }) {
               </span>
             )}
             {cocktail.from && (
-              <span className="share-state">{t('From @{name}', { name: cocktail.from })}</span>
+              <span className="share-state">{t('From {name}', { name: cocktail.from })}</span>
             )}
           </div>
         )}

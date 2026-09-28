@@ -41,8 +41,7 @@ export function AccountProvider({ children }) {
   // 'idle'       not loaded yet
   // 'loading'    downloading and asking Firebase who this is
   // 'signedOut'  nobody is signed in
-  // 'noProfile'  signed in but no username yet (sign-up was interrupted)
-  // 'unverified' has a profile, email not confirmed yet
+  // 'noProfile'  signed in with Google, but no username chosen yet
   // 'ready'      everything works
   const [status, setStatus] = useState(configured ? (hint ? 'loading' : 'idle') : 'off')
   const [user, setUser] = useState(null)
@@ -77,7 +76,7 @@ export function AccountProvider({ children }) {
           return
         }
         writeHint({ profile: p })
-        setStatus(u.emailVerified ? 'ready' : 'unverified')
+        setStatus('ready')
       })
     })
   }, [configured])
@@ -112,7 +111,7 @@ export function AccountProvider({ children }) {
     let timer
     let running = false
     let again = false
-    const owner = { uid: user.uid, username: profile.username }
+    const owner = { uid: user.uid, username: profile.username, displayName: profile.displayName || profile.username }
     const run = async () => {
       if (running) {
         again = true
@@ -144,32 +143,6 @@ export function AccountProvider({ children }) {
     }
   }, [status, api, profile, user])
 
-  // Re-read the account after the address may have been confirmed elsewhere
-  // (in the mail app, in Safari) — on demand and whenever the app comes back
-  // to the foreground.
-  const recheck = useCallback(async () => {
-    if (!api) return
-    const u = await api.refreshUser().catch(() => null)
-    if (u && profile) setStatus(u.emailVerified ? 'ready' : 'unverified')
-    if (u && !profile) {
-      const p = await api.getProfile(u.uid).catch(() => null)
-      setProfile(p)
-      setStatus(p ? (u.emailVerified ? 'ready' : 'unverified') : 'noProfile')
-      if (p) writeHint({ profile: p })
-    }
-  }, [api, profile])
-
-  useEffect(() => {
-    if (status !== 'unverified') return undefined
-    const onShow = () => document.visibilityState === 'visible' && recheck()
-    document.addEventListener('visibilitychange', onShow)
-    window.addEventListener('focus', recheck)
-    return () => {
-      document.removeEventListener('visibilitychange', onShow)
-      window.removeEventListener('focus', recheck)
-    }
-  }, [status, recheck])
-
   const value = useMemo(
     () => ({
       configured,
@@ -180,19 +153,20 @@ export function AccountProvider({ children }) {
       requests,
       api,
       start,
-      recheck,
-      // Called once a username has been claimed. Firebase reports the new
-      // account a moment before the profile exists, which reads as "no
-      // profile"; this puts the screen straight.
+      // Called once a profile has been made or changed, so the screen follows
+      // without waiting for another round trip.
       claimed: (p) => {
         claimedFor.current = api?.auth.currentUser?.uid || null
         setProfile(p)
         writeHint({ profile: p })
-        setStatus('unverified')
+        setStatus('ready')
       },
-      me: user && profile ? { uid: user.uid, username: profile.username } : null,
+      me:
+        user && profile
+          ? { uid: user.uid, username: profile.username, displayName: profile.displayName || profile.username }
+          : null,
     }),
-    [configured, status, user, profile, friends, requests, api, start, recheck],
+    [configured, status, user, profile, friends, requests, api, start],
   )
 
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>

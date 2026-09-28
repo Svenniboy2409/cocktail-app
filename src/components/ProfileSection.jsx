@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react'
 import { useAccount } from '../lib/account'
 import { useI18n } from '../lib/i18n'
 import { useToast } from './Toast'
-import { IconCheck, IconCopy, IconMail } from './icons'
+import { IconCopy, IconEdit } from './icons'
 
 // What each error means to someone holding a phone.
 export const SOCIAL_ERRORS = {
   'username-invalid': '3 to 20 letters, digits, dots or underscores.',
   'username-taken': 'That username is already taken.',
-  'email-taken': 'There is already an account with this email address. Log in instead.',
-  'email-invalid': 'That does not look like an email address.',
-  'weak-password': 'Use at least 6 characters for your password.',
-  'wrong-login': 'Email address or password is not right.',
+  'display-name-empty': 'Enter the name friends will see.',
+  cancelled: 'Signing in was cancelled.',
+  'popup-blocked': 'Your browser blocked the Google window. Allow pop-ups for this site and try again.',
+  'wrong-google': 'That is a different Google account from the one you signed in with.',
+  unsupported: 'Signing in with Google does not work in this browser. Try Safari or Chrome.',
   'too-many': 'Too many attempts. Wait a moment and try again.',
   offline: 'No connection. Check your internet and try again.',
   relogin: 'For your safety, log out and in again first.',
@@ -43,14 +44,14 @@ export default function ProfileSection() {
         <div className="profile-card is-loading">
           <div className="profile-avatar" />
           <div className="profile-text">
-            <div className="profile-name">{account.profile ? '@' + account.profile.username : '…'}</div>
+            <div className="profile-name">{account.profile?.displayName || '…'}</div>
             <div className="profile-meta">{t('Loading your profile…')}</div>
           </div>
         </div>
       ) : account.status === 'signedOut' ? (
-        <AuthForms />
+        <SignIn />
       ) : account.status === 'noProfile' ? (
-        <ChooseUsername />
+        <NamesForm mode="create" />
       ) : (
         <SignedIn />
       )}
@@ -58,33 +59,85 @@ export default function ProfileSection() {
   )
 }
 
-function Avatar({ name }) {
-  return <div className="profile-avatar">{(name || '?').slice(0, 1).toUpperCase()}</div>
+function GoogleMark() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+      <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.5-4.5 2.4-7.2 2.4-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+    </svg>
+  )
 }
 
 /* ------------------------------------------------------------ signed out */
 
-function AuthForms() {
+function SignIn() {
   const account = useAccount()
   const { t, lang } = useI18n()
   const explain = useSocialError()
-  const showToast = useToast()
-  const [mode, setMode] = useState(null) // null | 'signup' | 'signin'
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  const [nameState, setNameState] = useState(null) // null | 'checking' | 'free' | 'taken' | 'invalid'
 
-  // Tell people whether a name is free while they are still typing it.
+  const go = async () => {
+    setError('')
+    setBusy(true)
+    try {
+      await account.api.signInWithGoogle(lang)
+    } catch (err) {
+      // Kept in the console: when sign-in fails on someone's phone, the code
+      // there is what says why.
+      console.warn('Google sign-in failed:', err?.code || err)
+      if (account.api.errorCode(err) !== 'cancelled') setError(explain(err))
+    }
+    setBusy(false)
+  }
+
+  return (
+    <div className="profile-intro">
+      <p>{t('Make a profile to share your own cocktails with friends and see theirs in Social.')}</p>
+      <button className="btn btn-google btn-block" onClick={go} disabled={busy || !account.api}>
+        <GoogleMark /> {busy ? t('One moment…') : t('Continue with Google')}
+      </button>
+      {error && <div className="field-error">{error}</div>}
+      <p className="muted auth-small" style={{ marginTop: 12 }}>
+        {t('New here? After signing in you choose the name friends see. Been here before? You are straight back in, on any phone.')}
+      </p>
+    </div>
+  )
+}
+
+/* ------------------------------------------ choosing or changing your names */
+
+// Used twice: right after the first Google sign-in, to make the profile, and
+// later from "Edit profile", to change it.
+function NamesForm({ mode, onDone }) {
+  const account = useAccount()
+  const { t } = useI18n()
+  const explain = useSocialError()
+  const showToast = useToast()
+  const current = account.profile
+  const [displayName, setDisplayName] = useState(
+    () => current?.displayName || account.api?.googleName() || '',
+  )
+  const [username, setUsername] = useState(() => current?.username || '')
+  const [nameState, setNameState] = useState(mode === 'edit' ? 'mine' : null)
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  // Tell people whether a name is free while they are still typing it. Their
+  // own current name counts as free.
   useEffect(() => {
-    if (mode !== 'signup' || !account.api || !username) {
+    if (!account.api || !username) {
       setNameState(null)
       return undefined
     }
     if (!account.api.USERNAME_RE.test(username)) {
       setNameState('invalid')
+      return undefined
+    }
+    if (current && username.toLowerCase() === current.usernameLower) {
+      setNameState('mine')
       return undefined
     }
     setNameState('checking')
@@ -99,38 +152,20 @@ function AuthForms() {
       live = false
       clearTimeout(id)
     }
-  }, [username, mode, account.api])
-
-  if (!mode) {
-    return (
-      <div className="profile-intro">
-        <p>
-          {t('Make a profile to share your own cocktails with friends and see theirs in Social.')}
-        </p>
-        <div className="profile-intro-actions">
-          <button className="btn btn-primary" onClick={() => setMode('signup')}>
-            {t('Create profile')}
-          </button>
-          <button className="btn" onClick={() => setMode('signin')}>
-            {t('Log in')}
-          </button>
-        </div>
-      </div>
-    )
-  }
+  }, [username, account.api, current])
 
   const submit = async (e) => {
     e.preventDefault()
-    if (!account.api) return
     setError('')
     setBusy(true)
     try {
-      if (mode === 'signup') {
-        const profile = await account.api.signUp({ email, password, username, lang })
-        account.claimed(profile)
-        showToast(t('Profile created — check your email'))
+      if (mode === 'create') {
+        account.claimed(await account.api.claimProfile(username, displayName))
+        showToast(t('Welcome to Social, {name}', { name: account.api.cleanDisplayName(displayName) }))
       } else {
-        await account.api.signIn({ email, password })
+        account.claimed(await account.api.updateProfile(current, { username, displayName }))
+        showToast(t('Profile updated'))
+        onDone?.()
       }
     } catch (err) {
       setError(explain(err))
@@ -138,166 +173,88 @@ function AuthForms() {
     }
   }
 
-  const forgot = async () => {
-    if (!email.trim()) {
-      setError(t('Enter your email address first.'))
-      return
-    }
-    try {
-      await account.api.resetPassword(email, lang)
-      setError('')
-      showToast(t('We sent you an email to reset your password'))
-    } catch (err) {
-      setError(explain(err))
-    }
-  }
+  const unchanged =
+    mode === 'edit' &&
+    displayName.trim() === current?.displayName &&
+    username === current?.username
 
   return (
     <form className="auth-form" onSubmit={submit}>
-      <div className="seg auth-switch">
-        {['signup', 'signin'].map((m) => (
-          <button
-            type="button"
-            key={m}
-            className={'seg-option' + (mode === m ? ' on' : '')}
-            onClick={() => {
-              setMode(m)
-              setError('')
-            }}
-          >
-            {t(m === 'signup' ? 'Create profile' : 'Log in')}
-          </button>
-        ))}
-      </div>
-
-      {mode === 'signup' && (
-        <div className="auth-row">
-          <span className="auth-label">{t('Username')}</span>
-          <div className="input-at">
-            <span>@</span>
-            <input
-              className="input"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck="false"
-              autoComplete="username"
-              maxLength={20}
-              value={username}
-              onChange={(e) => setUsername(e.target.value.replace(/\s/g, ''))}
-            />
-          </div>
-          <span className={'auth-note ' + (nameState || '')}>
-            {nameState === 'free'
-              ? t('Available')
-              : nameState === 'taken'
-                ? t('That username is already taken.')
-                : nameState === 'invalid'
-                  ? t('3 to 20 letters, digits, dots or underscores.')
-                  : nameState === 'checking'
-                    ? t('Checking…')
-                    : t('Friends find you by this name. It cannot be changed later.')}
-          </span>
-        </div>
-      )}
-
-      <div className="auth-row">
-        <span className="auth-label">{t('Email address')}</span>
-        <input
-          className="input"
-          type="email"
-          inputMode="email"
-          autoCapitalize="none"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-
-      <div className="auth-row">
-        <span className="auth-label">{t('Password')}</span>
-        <input
-          className="input"
-          type="password"
-          autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {mode === 'signin' && (
-          <button type="button" className="text-link auth-forgot" onClick={forgot}>
-            {t('Forgot your password?')}
-          </button>
-        )}
-      </div>
-
-      {error && <div className="field-error">{error}</div>}
-
-      <button
-        className="btn btn-primary btn-block"
-        type="submit"
-        disabled={
-          busy ||
-          !account.api ||
-          !email ||
-          !password ||
-          (mode === 'signup' && nameState !== 'free')
-        }
-      >
-        {busy ? t('One moment…') : t(mode === 'signup' ? 'Create profile' : 'Log in')}
-      </button>
-      {mode === 'signup' && (
-        <p className="muted auth-small">
-          {t('We send you an email to confirm your address, so you can always get back into your account.')}
+      {mode === 'create' && (
+        <p className="muted auth-small" style={{ marginTop: 0 }}>
+          {t('Signed in with Google as {email}. One more step: how should friends know you?', {
+            email: account.user?.email,
+          })}
         </p>
       )}
-    </form>
-  )
-}
 
-/* ------------------------------------- signed in, sign-up was cut short */
-
-function ChooseUsername() {
-  const account = useAccount()
-  const { t } = useI18n()
-  const explain = useSocialError()
-  const [username, setUsername] = useState('')
-  const [error, setError] = useState('')
-  const [busy, setBusy] = useState(false)
-
-  const submit = async (e) => {
-    e.preventDefault()
-    setBusy(true)
-    setError('')
-    try {
-      account.claimed(await account.api.claimProfile(username))
-    } catch (err) {
-      setError(explain(err))
-      setBusy(false)
-    }
-  }
-
-  return (
-    <form className="auth-form" onSubmit={submit}>
-      <p className="muted auth-small" style={{ marginTop: 0 }}>
-        {t('Choose the username friends will know you by.')}
-      </p>
-      <div className="input-at">
-        <span>@</span>
+      <div className="auth-row">
+        <span className="auth-label">{t('Display name')}</span>
         <input
           className="input"
-          autoCapitalize="none"
-          autoCorrect="off"
-          maxLength={20}
-          value={username}
-          onChange={(e) => setUsername(e.target.value.replace(/\s/g, ''))}
+          maxLength={40}
+          autoComplete="name"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
         />
+        <span className="auth-note">{t('Shown on the cocktails you share.')}</span>
       </div>
+
+      <div className="auth-row">
+        <span className="auth-label">{t('Username')}</span>
+        <div className="input-at">
+          <span>@</span>
+          <input
+            className="input"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck="false"
+            autoComplete="username"
+            maxLength={20}
+            value={username}
+            onChange={(e) => setUsername(e.target.value.replace(/\s/g, ''))}
+          />
+        </div>
+        <span className={'auth-note ' + (nameState || '')}>
+          {nameState === 'free'
+            ? t('Available')
+            : nameState === 'taken'
+              ? t('That username is already taken.')
+              : nameState === 'invalid'
+                ? t('3 to 20 letters, digits, dots or underscores.')
+                : nameState === 'checking'
+                  ? t('Checking…')
+                  : t('Friends can add you by this name. You can change it later.')}
+        </span>
+      </div>
+
       {error && <div className="field-error">{error}</div>}
-      <button className="btn btn-primary btn-block" disabled={busy || !username} type="submit">
-        {t('Save username')}
-      </button>
-      <button type="button" className="text-link auth-forgot" onClick={() => account.api.signOut()}>
-        {t('Log out')}
-      </button>
+
+      <div className="profile-actions">
+        {mode === 'edit' && (
+          <button type="button" className="btn" onClick={onDone}>
+            {t('Cancel')}
+          </button>
+        )}
+        <button
+          className="btn btn-primary"
+          type="submit"
+          disabled={
+            busy ||
+            unchanged ||
+            !displayName.trim() ||
+            !(nameState === 'free' || nameState === 'mine')
+          }
+        >
+          {busy ? t('One moment…') : t(mode === 'create' ? 'Create profile' : 'Save')}
+        </button>
+      </div>
+
+      {mode === 'create' && (
+        <button type="button" className="text-link auth-forgot" onClick={() => account.api.signOut()}>
+          {t('Use a different Google account')}
+        </button>
+      )}
     </form>
   )
 }
@@ -306,14 +263,14 @@ function ChooseUsername() {
 
 function SignedIn() {
   const account = useAccount()
-  const { t, lang } = useI18n()
+  const { t } = useI18n()
   const showToast = useToast()
   const explain = useSocialError()
+  const [editing, setEditing] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  const { profile, user, status } = account
+  const { profile, user } = account
   if (!profile) return null
 
   const copyCode = async () => {
@@ -325,77 +282,44 @@ function SignedIn() {
     }
   }
 
-  const resend = async () => {
-    try {
-      await account.api.resendVerification(lang)
-      showToast(t('Email sent'))
-    } catch (err) {
-      showToast(explain(err))
-    }
-  }
-
-  const checkAgain = async () => {
-    await account.recheck()
-    if (account.api?.auth.currentUser?.emailVerified) showToast(t('Email address confirmed'))
-    else showToast(t('Not confirmed yet — open the link in the email first'))
-  }
-
   const remove = async () => {
     setBusy(true)
     setError('')
     try {
-      await account.api.deleteAccount(password)
+      await account.api.deleteAccount()
       showToast(t('Your account has been deleted'))
     } catch (err) {
-      setError(explain(err))
+      if (account.api.errorCode(err) !== 'cancelled') setError(explain(err))
       setBusy(false)
     }
   }
 
+  if (editing) return <NamesForm mode="edit" onDone={() => setEditing(false)} />
+
   return (
     <div className="profile-block">
       <div className="profile-card">
-        <Avatar name={profile.username} />
+        <div className="profile-avatar">{(profile.displayName || profile.username).slice(0, 1).toUpperCase()}</div>
         <div className="profile-text">
-          <div className="profile-name">@{profile.username}</div>
-          <div className="profile-meta">
-            {user?.email}
-            {status === 'ready' && (
-              <span className="profile-verified" title={t('Email address confirmed')}>
-                <IconCheck width="14" height="14" />
-              </span>
-            )}
-          </div>
+          <div className="profile-name">{profile.displayName || profile.username}</div>
+          <div className="profile-meta">@{profile.username}</div>
+          <div className="profile-meta">{user?.email}</div>
         </div>
+        <button
+          className="header-action icon-only profile-edit"
+          onClick={() => setEditing(true)}
+          aria-label={t('Edit profile')}
+          title={t('Edit profile')}
+        >
+          <IconEdit />
+        </button>
       </div>
 
-      {status === 'unverified' ? (
-        <div className="notice">
-          <IconMail />
-          <div>
-            <strong>{t('Confirm your email address')}</strong>
-            <p>
-              {t('We sent a link to {email}. Open it, then come back here — Social unlocks once your address is confirmed.', {
-                email: user?.email,
-              })}
-            </p>
-            <div className="notice-actions">
-              <button className="btn btn-primary" onClick={checkAgain}>
-                {t('I have confirmed it')}
-              </button>
-              <button className="btn" onClick={resend}>
-                {t('Send again')}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <button className="code-row" onClick={copyCode}>
-          <span className="code-label">{t('Your friend code')}</span>
-          <span className="code-value">{account.api?.formatCode(profile.friendCode)}</span>
-          <IconCopy />
-        </button>
-      )}
+      <button className="code-row" onClick={copyCode}>
+        <span className="code-label">{t('Your friend code')}</span>
+        <span className="code-value">{account.api?.formatCode(profile.friendCode)}</span>
+        <IconCopy />
+      </button>
 
       <div className="profile-actions">
         <button className="btn" onClick={() => account.api.signOut()}>
@@ -409,18 +333,10 @@ function SignedIn() {
       {confirmDelete && (
         <div className="danger-box">
           <p>
-            {t('This removes your profile, your friends and everything you shared. Your recipes stay on this phone. Enter your password to confirm.')}
+            {t('This removes your profile, your friends and everything you shared. Your recipes stay on this phone. Google asks you to confirm it is you.')}
           </p>
-          <input
-            className="input"
-            type="password"
-            autoComplete="current-password"
-            placeholder={t('Password')}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
           {error && <div className="field-error">{error}</div>}
-          <button className="btn btn-danger btn-block" disabled={busy || !password} onClick={remove}>
+          <button className="btn btn-danger btn-block" disabled={busy} onClick={remove}>
             {busy ? t('One moment…') : t('Delete my account for good')}
           </button>
         </div>

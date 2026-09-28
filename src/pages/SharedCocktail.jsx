@@ -75,7 +75,7 @@ export default function SharedCocktail() {
           <h1>{cocktail.name}</h1>
           <div className="by-line">
             <div className="profile-avatar">{(cocktail.ownerName || '?').slice(0, 1).toUpperCase()}</div>
-            {t('Created by @{name}', { name: cocktail.ownerName })}
+            {t('Created by {name}', { name: cocktail.ownerName })}
           </div>
           {cocktail.tags?.length > 0 && (
             <div className="detail-meta-row" style={{ marginTop: 10 }}>

@@ -19,7 +19,8 @@ async function loadFeed(api, friends) {
     friends.map((f) =>
       api
         .friendShelf(f.uid)
-        .then((items) => items.map((c) => ({ ...c, owner: f.uid, ownerName: f.username })))
+        // The name as the friend has it now, whatever it was when they shared.
+        .then((items) => items.map((c) => ({ ...c, owner: f.uid, ownerName: f.displayName, ownerUsername: f.username })))
         .catch(() => []),
     ),
   )
@@ -81,8 +82,6 @@ export default function Social() {
             {t('Create profile')}
           </button>
         </div>
-      ) : status === 'unverified' ? (
-        <Unverified />
       ) : (
         <Feed
           api={api}
@@ -102,47 +101,6 @@ export default function Social() {
         />
       )}
       {settingsOpen && <SettingsSheet onClose={() => setSettingsOpen(false)} />}
-    </div>
-  )
-}
-
-function Unverified() {
-  const account = useAccount()
-  const { t, lang } = useI18n()
-  const showToast = useToast()
-  const explain = useSocialError()
-  return (
-    <div className="social-gate">
-      <div className="icon">✉️</div>
-      <h3>{t('Confirm your email address')}</h3>
-      <p>
-        {t('We sent a link to {email}. Open it, then come back here — Social unlocks once your address is confirmed.', {
-          email: account.user?.email,
-        })}
-      </p>
-      <div className="notice-actions" style={{ justifyContent: 'center' }}>
-        <button
-          className="btn btn-primary"
-          onClick={async () => {
-            await account.recheck()
-            if (!account.api?.auth.currentUser?.emailVerified)
-              showToast(t('Not confirmed yet — open the link in the email first'))
-          }}
-        >
-          {t('I have confirmed it')}
-        </button>
-        <button
-          className="btn"
-          onClick={() =>
-            account.api
-              .resendVerification(lang)
-              .then(() => showToast(t('Email sent')))
-              .catch((err) => showToast(explain(err)))
-          }
-        >
-          {t('Send again')}
-        </button>
-      </div>
     </div>
   )
 }
@@ -183,7 +141,7 @@ function Feed({ api, friends, incoming, onAddFriends }) {
     try {
       if (yes) {
         await api.accept(r, account.me.uid)
-        showToast(t('You and @{name} are now friends', { name: r.fromName }))
+        showToast(t('You and {name} are now friends', { name: r.other.displayName }))
       } else {
         await api.dropRequest(r)
       }
@@ -198,10 +156,10 @@ function Feed({ api, friends, incoming, onAddFriends }) {
         <div className="social-requests">
           {incoming.map((r) => (
             <div className="request-card" key={r.id}>
-              <div className="profile-avatar sm">{r.fromName.slice(0, 1).toUpperCase()}</div>
+              <div className="profile-avatar sm">{r.other.displayName.slice(0, 1).toUpperCase()}</div>
               <div className="request-text">
-                <strong>@{r.fromName}</strong>
-                <span>{t('wants to be friends')}</span>
+                <strong>{r.other.displayName}</strong>
+                <span>@{r.other.username} · {t('wants to be friends')}</span>
               </div>
               <div className="request-actions">
                 <button className="btn" onClick={() => answer(r, false)}>
@@ -237,7 +195,7 @@ function Feed({ api, friends, incoming, onAddFriends }) {
                 className={'chip' + (who === f.uid ? ' active' : '')}
                 onClick={() => setWho(f.uid)}
               >
-                @{f.username}
+                {f.displayName}
               </button>
             ))}
           </div>
