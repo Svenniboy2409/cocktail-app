@@ -94,6 +94,7 @@ export async function addRecipe(recipe) {
     id: recipe.id || 'user-' + Date.now().toString(36),
     isCustom: true,
     createdAt: Date.now(),
+    updatedAt: Date.now(),
   }
   await writeRecipes([record, ...recipes])
   return record
@@ -101,7 +102,8 @@ export async function addRecipe(recipe) {
 
 export async function updateRecipe(id, patch) {
   const recipes = await getUserRecipes()
-  const next = recipes.map((r) => (r.id === id ? { ...r, ...patch } : r))
+  // Stamped, so a copy shared with friends can tell it is out of date.
+  const next = recipes.map((r) => (r.id === id ? { ...r, ...patch, updatedAt: Date.now() } : r))
   await writeRecipes(next)
 }
 

@@ -5,6 +5,9 @@ import Library from './pages/Library'
 import CocktailDetail from './pages/CocktailDetail'
 import FolderDetail from './pages/FolderDetail'
 import CreateRecipe from './pages/CreateRecipe'
+import Social from './pages/Social'
+import SharedCocktail from './pages/SharedCocktail'
+import { socialConfigured } from './lib/firebase-config'
 import BottomNav from './components/BottomNav'
 import ScrollManager from './components/ScrollManager'
 import { ToastProvider } from './components/Toast'
@@ -17,7 +20,8 @@ export default function App() {
   const openEdit = useCallback((recipe) => setSheet({ editing: recipe }), [])
   const closeSheet = useCallback(() => setSheet(null), [])
 
-  const isDetail = location.pathname.startsWith('/cocktail/')
+  const isDetail =
+    location.pathname.startsWith('/cocktail/') || /^\/social\/[^/]+\/[^/]+/.test(location.pathname)
 
   return (
     <ToastProvider>
@@ -30,6 +34,10 @@ export default function App() {
             <Route path="/library" element={<Library onCreate={openCreate} />} />
             <Route path="/cocktail/:id" element={<CocktailDetail onEdit={openEdit} />} />
             <Route path="/folder/:id" element={<FolderDetail />} />
+            {socialConfigured() && <Route path="/social" element={<Social />} />}
+            {socialConfigured() && (
+              <Route path="/social/:owner/:id" element={<SharedCocktail />} />
+            )}
             <Route path="*" element={<Discover />} />
           </Routes>
         </div>

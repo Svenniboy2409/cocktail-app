@@ -32,3 +32,26 @@ export function fileToCompressedDataURL(file, { maxSize = 1000, quality = 0.8 } 
     reader.readAsDataURL(file)
   })
 }
+
+// Make an image that is already a data URL smaller still. A recipe shared with
+// friends travels inside its database record, which has a hard size limit, so
+// its photo is brought down to something a phone screen still shows sharply.
+export function shrinkDataURL(dataUrl, { maxSize = 640, quality = 0.72 } = {}) {
+  return new Promise((resolve) => {
+    if (!dataUrl || !dataUrl.startsWith('data:image')) {
+      resolve(dataUrl || '')
+      return
+    }
+    const img = new Image()
+    img.onerror = () => resolve('')
+    img.onload = () => {
+      const scale = Math.min(1, maxSize / Math.max(img.width, img.height))
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(img.width * scale)
+      canvas.height = Math.round(img.height * scale)
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+      resolve(canvas.toDataURL('image/jpeg', quality))
+    }
+    img.src = dataUrl
+  })
+}

@@ -3,7 +3,7 @@ import { IconBookmark, IconStar } from './icons'
 import { isSaved, toggleSaved } from '../lib/storage'
 import { useI18n } from '../lib/i18n'
 
-export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, ready, linkTo, still }) {
+export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, ready, linkTo, still, author }) {
   const { t, tt } = useI18n()
   const handleSave = (e) => {
     e.preventDefault()
@@ -33,7 +33,9 @@ export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, r
           ) : (
             cocktail.isCustom && <span className="card-badge">{t('Mine')}</span>
           )}
-          {!still && (
+          {/* A friend's drink is not in the catalogue, so there is nothing for
+              the bookmark to point at; it is kept by saving a copy instead. */}
+          {!still && !author && (
             <button
               className={'card-save' + (isOn ? ' on' : '')}
               onClick={handleSave}
@@ -47,6 +49,7 @@ export default function CocktailCard({ cocktail, saved, onToggleSave, spirits, r
         <div className="card-body">
           <h3>{cocktail.name}</h3>
           <div className="card-tag">{tt(cocktail.tags?.[0] || cocktail.category)}</div>
+          {author && <div className="card-author">@{author}</div>}
           {spirits?.length > 0 && (
             <div className={'card-spirits' + (ready ? ' is-complete' : '')}>
               {spirits.map(tt).join(' - ')}

@@ -184,3 +184,54 @@ export const IconDrag = (p) => (
     <path d="M8 8h8M8 12h8M8 16h8" />
   </svg>
 )
+
+export const IconFriends = (p) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" {...S} {...p}>
+    <circle cx="9" cy="8.5" r="3.2" />
+    <path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5" />
+    <circle cx="16.5" cy="9.5" r="2.6" />
+    <path d="M15.5 14.2c2.6-.3 4.5 1.3 5 4.3" />
+  </svg>
+)
+
+export const IconUserPlus = (p) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" {...S} {...p}>
+    <circle cx="10" cy="8.5" r="3.4" />
+    <path d="M4 19.5c.7-3.4 3-5.3 6-5.3 1.4 0 2.6.4 3.6 1.1" />
+    <path d="M18 13v6M15 16h6" />
+  </svg>
+)
+
+export const IconCopy = (p) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" {...S} {...p}>
+    <rect x="8.5" y="8.5" width="11" height="11" rx="2.2" />
+    <path d="M15.5 8.5V6.2a1.7 1.7 0 0 0-1.7-1.7H6.2a1.7 1.7 0 0 0-1.7 1.7v7.6a1.7 1.7 0 0 0 1.7 1.7h2.3" />
+  </svg>
+)
+
+export const IconShare = (p) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M12 15V4M8 8l4-4 4 4" />
+    <path d="M6 12v6.5A1.5 1.5 0 0 0 7.5 20h9a1.5 1.5 0 0 0 1.5-1.5V12" />
+  </svg>
+)
+
+export const IconCheck = (p) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" {...S} {...p}>
+    <path d="M5 12.5 10 17l9-10" />
+  </svg>
+)
+
+export const IconLock = (p) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" {...S} {...p}>
+    <rect x="5" y="10.5" width="14" height="9.5" rx="2" />
+    <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" />
+  </svg>
+)
+
+export const IconMail = (p) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" {...S} {...p}>
+    <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+    <path d="m4 7 8 6 8-6" />
+  </svg>
+)

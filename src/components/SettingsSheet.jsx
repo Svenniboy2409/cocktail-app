@@ -5,6 +5,7 @@ import { LANGUAGES, setLang, useI18n } from '../lib/i18n'
 import { IconDownload, IconUpload, IconGridView, IconListView, IconDrag } from './icons'
 import ReorderableGrid from './ReorderableGrid'
 import { useToast } from './Toast'
+import ProfileSection from './ProfileSection'
 
 const LABELS = { folders: 'Folders', recipes: 'My recipes', saved: 'Saved' }
 
@@ -79,6 +80,9 @@ export default function SettingsSheet({ onClose }) {
         </div>
 
         <div className="sheet-body">
+          {/* Who you are comes first: it is the one setting other people see. */}
+          <ProfileSection />
+
           <div className="field">
             <label>{t('Language')}</label>
             <div className="lang-options">

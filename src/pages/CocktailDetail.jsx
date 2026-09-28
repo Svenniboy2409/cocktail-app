@@ -10,6 +10,8 @@ import { forgetScrollPosition } from '../components/ScrollManager'
 import { useToast } from '../components/Toast'
 import { useI18n } from '../lib/i18n'
 import FolderSheet from '../components/FolderSheet'
+import { socialConfigured } from '../lib/firebase-config'
+import { IconFriends, IconLock } from '../components/icons'
 
 export default function CocktailDetail({ onEdit }) {
   const { id } = useParams()
@@ -112,6 +114,22 @@ export default function CocktailDetail({ onEdit }) {
       </div>
 
       <div className="detail-body">
+        {/* Your own drink: who can see it, and whose it was if it came from
+            a friend. */}
+        {cocktail.isCustom && (socialConfigured() || cocktail.from) && (
+          <div className="detail-meta-row" style={{ marginBottom: 18 }}>
+            {socialConfigured() && (
+              <span className={'share-state' + (cocktail.shared ? ' on' : '')}>
+                {cocktail.shared ? <IconFriends width="16" height="16" /> : <IconLock width="16" height="16" />}
+                {t(cocktail.shared ? 'Shared with friends' : 'Private')}
+              </span>
+            )}
+            {cocktail.from && (
+              <span className="share-state">{t('From @{name}', { name: cocktail.from })}</span>
+            )}
+          </div>
+        )}
+
         {cocktail.scenario && (
           <div className="scenario">
             <span className="q">“</span>

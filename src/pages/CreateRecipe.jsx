@@ -3,7 +3,9 @@ import { TAGS } from '../data/cocktails'
 import { fileToCompressedDataURL } from '../lib/image'
 import { addRecipe, updateRecipe } from '../lib/storage'
 import { useDismissableSheet } from '../lib/hooks'
-import { IconImage } from '../components/icons'
+import { IconImage, IconFriends, IconLock } from '../components/icons'
+import { socialConfigured } from '../lib/firebase-config'
+import { useAccount } from '../lib/account'
 import { useToast } from '../components/Toast'
 import { useI18n } from '../lib/i18n'
 
@@ -17,6 +19,8 @@ const emptyForm = {
   garnish: '',
   ingredients: [{ name: '', amount: '' }],
   instructions: [''],
+  // A new drink goes to friends unless you say otherwise.
+  shared: true,
 }
 
 export default function CreateRecipe({ editing, onClose }) {
@@ -27,12 +31,16 @@ export default function CreateRecipe({ editing, onClose }) {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const { sheetRef, handleProps, sheetStyle, backdropStyle } = useDismissableSheet(() => onClose(false))
+  const social = socialConfigured()
+  const account = useAccount({ load: false })
 
   useEffect(() => {
     if (editing) {
       setForm({
         ...emptyForm,
         ...editing,
+        // Recipes from before sharing existed stay private until you choose.
+        shared: editing.shared === true,
         tags: editing.tags || [],
         ingredients: editing.ingredients?.length ? editing.ingredients : [{ name: '', amount: '' }],
         instructions: editing.instructions?.length ? editing.instructions : [''],
@@ -88,6 +96,7 @@ export default function CreateRecipe({ editing, onClose }) {
       garnish: form.garnish.trim(),
       ingredients: form.ingredients.filter((i) => i.name.trim()).map((i) => ({ name: i.name.trim(), amount: i.amount.trim() })),
       instructions: form.instructions.map((s) => s.trim()).filter(Boolean),
+      shared: social && form.shared,
     }
 
     if (cleaned.ingredients.length === 0) return setError('Add at least one ingredient.')
@@ -251,6 +260,42 @@ export default function CreateRecipe({ editing, onClose }) {
             </div>
             <button type="button" className="add-row" onClick={addStep}>{t('+ Add step')}</button>
           </div>
+
+          {/* who gets to see it */}
+          {social && (
+            <div className="field">
+              <label>{t('Who can see it')}</label>
+              <div className="share-choice">
+                <button
+                  type="button"
+                  className={'share-option' + (form.shared ? ' on' : '')}
+                  onClick={() => set({ shared: true })}
+                  aria-pressed={form.shared}
+                >
+                  <strong>
+                    <IconFriends width="18" height="18" /> {t('Share with friends')}
+                  </strong>
+                  <span>{t('Appears in your friends’ Social tab')}</span>
+                </button>
+                <button
+                  type="button"
+                  className={'share-option' + (!form.shared ? ' on' : '')}
+                  onClick={() => set({ shared: false })}
+                  aria-pressed={!form.shared}
+                >
+                  <strong>
+                    <IconLock width="18" height="18" /> {t('Keep private')}
+                  </strong>
+                  <span>{t('Only on this phone')}</span>
+                </button>
+              </div>
+              {form.shared && account.status !== 'ready' && (
+                <p className="muted" style={{ margin: '10px 2px 0', fontSize: 13 }}>
+                  {t('Shared as soon as you have a profile with a confirmed email address.')}
+                </p>
+              )}
+            </div>
+          )}
 
           {error && <div className="field-error">{error}</div>}
         </div>
